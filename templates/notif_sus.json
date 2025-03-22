@@ -1,0 +1,31 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "color": "#ff0000",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "fields": null
+  },
+  {
+   "description": [
+    "Hello {memberdisplayname},",
+    "",
+    "We have detected unusual activity on your account, which has raised some concerns. As a precaution, access to certain server channels has been temporarily restricted. ",
+    "",
+    "To restore full access, please complete the verification process in the [**Verification Channel**](https://discord.com/channels/1349136661971206268/1349244585947299921).",
+    "",
+    "If you have already completed the verification, please contact our support team via the [**Support Channel**](https://discord.com/channels/1349136661971206268/1349244644247998516).",
+    "",
+    "Should you need any assistance, feel free to reach out!",
+    "",
+    "Best regards,  ",
+    "**SFDating** Team"
+   ],
+   "color": "#ff0000",
+   "fields": null
+  }
+ ],
+ "components": null
+}

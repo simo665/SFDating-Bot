@@ -1,0 +1,17 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "color": "ff4af0"
+  },
+  {
+   "description": "Hello {memberdisplayname},\n\nA warning has been removed from your record with the following reason: **{reason}**.\n\nPlease continue following the server rules to maintain a positive experience for yourself and others.\n\nIf you have any concerns or questions, feel free to reach out to the moderation team.\n\nBest regards,\n**SFDating** Team",
+   "color": "ff4af0",
+   "image": "{proofurl}"
+  }
+ ],
+ "components": null
+}

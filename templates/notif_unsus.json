@@ -1,0 +1,27 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "color": "ff4af0"
+  },
+  {
+   "description": [
+    "Hello {memberdisplayname},",
+    "",
+    "We are pleased to inform you that the concerns regarding unusual activity on your account have been resolved. Your access to all server channels has been fully restored.",
+    "",
+    "Thank you for your cooperation during the verification process. If you need further assistance or have any questions, don't hesitate to reach out to our [**Support Channel**](https://discord.com/channels/1349136661971206268/1349244644247998516).",
+    "",
+    "We appreciate your continued presence in the community!",
+    "",
+    "Best regards,  ",
+    "**SFDating** Team"
+   ],
+   "color": "ff4af0"
+  }
+ ],
+ "components": null
+}

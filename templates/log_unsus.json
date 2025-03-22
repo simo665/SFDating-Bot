@@ -1,0 +1,43 @@
+{
+  "content": "",
+  "embeds": [
+    {
+      "title": "Member Was Unsuspected {emoji_skull}",
+      "description": "",
+      "color": "ff4af0",
+      "image": "{proofurl}",
+      "fields": [
+        {
+          "name": "{emoji_offender} Offender",
+          "value": [
+            "> {emoji_member} **Member:** {membermention}",
+            "> {emoji_id} **Id:** {memberid}",
+            "> {emoji_reason} **Reason**: {reason}"
+          ],
+          "inline": false
+        },
+        {
+          "name": "{emoji_responsible} Responsible",
+          "value": [
+            "> {emoji_responsible} **Moderator:** {modmention}",
+            "> {emoji_id} **Id:** {modid}"
+          ],
+          "inline": false
+        }
+      ],
+      "footer": {
+        "text": ""
+      },
+      "timestamp": "{timestamp}",
+      "author": {
+        "name": "{memberdisplayname}",
+        "url": "",
+        "icon_url": "{memberavatarurl}"
+      },
+      "thumbnail": {
+        "url": "{memberavatarurl}"
+      }
+    }
+  ],
+  "components": []
+}

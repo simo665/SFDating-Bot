@@ -1,0 +1,17 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "color": "fa0606"
+  },
+  {
+   "description": "Hello {memberdisplayname},\n\nYou have received a warning for the following reason: **{reason}**\n\nYou have {warnsleft} warnings left before you could be banned.\n\nPlease be mindful of the rules, and avoid further violations to ensure a positive experience for everyone in the server.\n\nBest regards,\n**SFDating** Team",
+   "color": "fa0606",
+   "image": "{proofurl}"
+  }
+ ],
+ "components": null
+}

@@ -1,0 +1,44 @@
+{
+  "content": "",
+  "embeds": [
+    {
+      "title": "Member Warned {emoji_warn}",
+      "description": "",
+      "color": 16711680,
+      "image": "{proofurl}",
+      "fields": [
+        {
+          "name": "{emoji_offender} Offender",
+          "value": [
+            "> {emoji_member} **Member:** {membermention}",
+            "> {emoji_id} **Id:** {memberid}",
+            "> {emoji_reason} **Reason**: {reason}",
+            "> {emoji_timeout} **Duration**: {duration}"
+          ],
+          "inline": false
+        },
+        {
+          "name": "{emoji_responsible} Responsible",
+          "value": [
+            "> {emoji_responsible} **Moderator:** {modmention}",
+            "> {emoji_id} **Id:** {modid}"
+          ],
+          "inline": false
+        }
+      ],
+      "footer": {
+        "text": ""
+      },
+      "timestamp": "{timestamp}",
+      "author": {
+        "name": "{memberdisplayname}",
+        "url": "",
+        "icon_url": "{memberavatarurl}"
+      },
+      "thumbnail": {
+        "url": "{memberavatarurl}"
+      }
+    }
+  ],
+  "components": []
+}

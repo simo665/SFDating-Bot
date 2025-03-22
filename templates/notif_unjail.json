@@ -1,0 +1,30 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "color": "#ff4af0",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "fields": null
+  },
+  {
+   "description": [
+    "Hello {memberdisplayname},  ",
+    "",
+    "Good news! You have successfully completed the verification process and you are no longer jailed on our server. You now have full access to all channels and can continue engaging with the community.  ",
+    "",
+    "We appreciate your cooperation and patience during the verification process. If you have any questions or need further assistance, feel free to reach out to us in the [**Support Channel**](https://discord.com/channels/1349136661971206268/1349244644247998516).  ",
+    "",
+    "Enjoy your time here and have fun connecting with others!  ",
+    "",
+    "**Best regards,**  ",
+    "**SFDating** Team"
+   ],
+   "color": "#ff4af0",
+   "fields": null,
+   "title": "**Subject: You Have Been Unjailed!  **"
+  }
+ ],
+ "components": null
+}

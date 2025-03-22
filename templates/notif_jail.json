@@ -1,0 +1,29 @@
+{
+ "content": "",
+ "embeds": [
+  {
+   "color": "#ff0000",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+    }
+  },
+  {
+   "description": [
+    "Hello {memberdisplayname},",
+    "",
+    "You have been temporarily jailed on our server due to suspicious activity. In order to continue participating, you must complete a verification process to confirm your identity.",
+    "",
+    "To verify that you are not underage, not beyond our age limit (40 years old) and that you are not a catfish, please follow the instructions in the [**Verification Channel**](https://discord.com/channels/1349136661971206268/1349244585947299921).",
+    "",
+    "If you believe you've already completed the verification process or need any assistance, please reach out to our team via the [**Support Channel**](https://discord.com/channels/1349136661971206268/1349244644247998516).",
+    "",
+    "Thank you for your cooperation!",
+    "",
+    "Best regards,  ",
+    "**SFDating** Team"
+   ],
+   "color": "#ff0000",
+   "title": "**Subject: Account Verification Required**"
+  }
+ ]
+}

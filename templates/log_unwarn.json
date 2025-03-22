@@ -1,0 +1,44 @@
+{
+  "content": "",
+  "embeds": [
+    {
+      "title": "Member Unwarned {emoji_warn}",
+      "color": "#ff4af0",
+      "fields": [
+        {
+          "name": "{emoji_member} Member",
+          "value": [
+            "> {emoji_member} **Member:** {membermention}",
+            "> {emoji_id} **Id:** {memberid}",
+            "> {emoji_reason} **Reason:** {reason}"
+          ],
+          "inline": false
+        },
+        {
+          "name": "{emoji_responsible} Responsible",
+          "value": [
+            "> {emoji_responsible} **Moderation:** {modmention}",
+            "> {emoji_id} **Id:** {modid}"
+          ],
+          "inline": false
+        }
+      ],
+      "footer": {
+        "text": ""
+      },
+      "timestamp": null,
+      "author": {
+        "name": "{memberdisplayname}",
+        "url": "",
+        "icon_url": "{memberavatarurl}"
+      },
+      "thumbnail": {
+        "url": "{memberavatarurl}"
+      },
+      "image": {
+        "url": "{proofurl}"
+      }
+    }
+  ],
+  "components": []
+}

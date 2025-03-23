@@ -3,43 +3,43 @@ import discord
 
 def get_member_variables(member):
     return {
-        "membermention": member.mention,
-        "memberid": str(member.id),
-        "memberdisplayname": member.display_name,
-        "memberuser": member.name,
-        "memberavatarurl": member.display_avatar.url,
-        "membercreatedat": member.created_at.isoformat() if member.created_at else None,
-        "memberjoinedat": member.joined_at.isoformat() if member.joined_at else None,
-        "memberroles": [role.name for role in member.roles if role.name != "@everyone"],
-        "membertoprole": member.top_role.name if member.top_role else None,
-        "memberstatus": str(member.status),
+        "membermention": member.mention if member else "/",
+        "memberid": str(member.id) if member else "/",
+        "memberdisplayname": member.display_name if member else "/",
+        "memberuser": member.name if member else "/",
+        "memberavatarurl": member.display_avatar.url if member else "",
+        "membercreatedat": (member.created_at.isoformat() if member.created_at else None) if member else "/",
+        "memberjoinedat": (member.joined_at.isoformat() if member.joined_at else None) if member else "/",
+        "memberroles": ([role.name for role in member.roles if role.name != "@everyone"]) if member else "/",
+        "membertoprole": (member.top_role.name if member.top_role else None) if member else "/",
+        "memberstatus": str(member.status) if member else "/",
     }
 
 
 def get_server_variables(guild):
     return {
-        "servername": guild.name,
-        "serverid": str(guild.id),
-        "serverownermention": guild.owner.mention if guild.owner else None,
-        "serverownerid": str(guild.owner_id),
-        "servermembercount": guild.member_count,
-        "servercreatedat": guild.created_at.isoformat(),
-        "servericonurl": guild.icon.url if guild.icon else None,
-        "serverbannerurl": guild.banner.url if guild.banner else None,
-        "serverboostcount": guild.premium_subscription_count,
-        "serverboosttier": guild.premium_tier,
-        "serverdescription": guild.description,
+        "servername": guild.name if guild else "/",
+        "serverid": str(guild.id) if guild else "/",
+        "serverownermention": (guild.owner.mention if guild.owner else None) if guild else "/",
+        "serverownerid": str(guild.owner_id) if guild else "/",
+        "servermembercount": guild.member_count if guild else "/",
+        "servercreatedat": guild.created_at.isoformat() if guild else "/",
+        "servericonurl": (guild.icon.url if guild.icon else None) if guild else "",
+        "serverbannerurl": (guild.banner.url if guild.banner else None) if guild else "",
+        "serverboostcount": guild.premium_subscription_count if guild else "/",
+        "serverboosttier": guild.premium_tier if guild else "/",
+        "serverdescription": guild.description if guild else "/",
     }
 
 
 def get_moderator_variables(moderator):
     return {
-        "modmention": moderator.mention,
-        "modid": str(moderator.id),
-        "moddisplayname": moderator.display_name,
-        "moduser": moderator.name,
-        "modavatarurl": moderator.display_avatar.url,
-        "modtoprole": moderator.top_role.name if moderator.top_role else None,
+        "modmention": moderator.mention if moderator else "/",
+        "modid": str(moderator.id) if moderator else "/",
+        "moddisplayname": moderator.display_name if moderator else "/",
+        "moduser": moderator.name if moderator else "/",
+        "modavatarurl": moderator.display_avatar.url if moderator else "",
+        "modtoprole": (moderator.top_role.name if moderator.top_role else None) if moderator else "/",
     }
 
 def get_emojis_variables():

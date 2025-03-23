@@ -1,7 +1,7 @@
 import discord 
 from discord import app_commands
 from discord.ext import commands 
-from utilities import Permissions, colors, get_message_from_template, get_all_variables
+from utilities import Permissions, colors, get_all_variables
 from utilities import send_log, send_notif, get_link, format_time
 import asyncio
 from errors.error_logger import error_send

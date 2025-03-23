@@ -81,7 +81,12 @@ def get_message_from_template(template_name, variables = {}):
     
     if not template:
         raise ValueError("Message template cannot be empty.")
- 
+    
+    return convert_to_message(template, variables)
+def get_message_from_dict(dictionary, variables = {}):
+    return convert_to_message(dictionary, variables)
+
+def convert_to_message(template, variables={}):
     # define variables
     content = ""
     embeds = []

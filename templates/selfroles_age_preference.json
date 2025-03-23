@@ -1,0 +1,64 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "color": "ff4af0",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/AgePreference.jpg"
+   },
+   "fields": null
+  }
+ ],
+ "components": [
+  {
+   "type": 1,
+   "components": [
+    {
+     "type": 3,
+     "custom_id": "Age preference",
+     "options": [
+      {
+       "label": "⸝⸝ Prefer Older",
+       "emoji": {
+        "name": "😌",
+        "animated": false
+       },
+       "value": "older",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Prefer Younger ",
+       "emoji": {
+        "name": "😝",
+        "animated": false
+       },
+       "value": "younger",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Same age or close",
+       "emoji": {
+        "name": "☺️",
+        "animated": false
+       },
+       "value": "same age",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ I don't mind ",
+       "emoji": {
+        "name": "😎",
+        "animated": false
+       },
+       "value": "no preference",
+       "default": false
+      }
+     ],
+     "placeholder": "👴 ─〃★ Your partner age preference?",
+     "min_values": 1,
+     "max_values": 1
+    }
+   ]
+  }
+ ]
+}

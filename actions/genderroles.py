@@ -1,0 +1,55 @@
+import discord
+import asyncio
+from utilities import colors
+import sqlite3 
+from errors.error_logger import error_send
+
+gender_roles_ids = {
+    "male": 1350851135501766746,
+    "female": 1350851138139852810,
+}
+ 
+async def send(interaction, embed):
+    if interaction.response.is_done():
+        if isinstance(embed, list):
+            await interaction.followup.send(embeds=embed, ephemeral=True)
+        else:
+            await interaction.followup.send(embed=embed, ephemeral=True)
+    else:
+        if isinstance(embed, list):
+            await interaction.response.send_message(embeds=embed, ephemeral=True)
+        else:
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+async def gender_roles(interaction, values):
+    user = interaction.user
+    guild = interaction.guild
+    try:
+        value = values[0]
+        female = discord.utils.get(guild.roles, id=gender_roles_ids["female"])
+        male = discord.utils.get(guild.roles, id=gender_roles_ids["male"])
+        if not female or not male:
+            embed1 = discord.Embed(title="", color=colors.forbidden)
+            embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
+            embed2 = discord.Embed(title="Oops", description="Technical issues, will be fixed soon 🙏", color=colors.forbidden)
+            await send(interaction, embed=[embed1, embed2])
+            return
+        
+        if female in user.roles or male in user.roles:
+            embed1 = discord.Embed(title="", color=colors.forbidden)
+            embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
+            embed2 = discord.Embed(title="Unauthorized", description="You already have a gender role assigned. If you selected it by mistake, you'll need to verify yourself first to prevent catfishing.\n\n**[Click To Verify](https://discord.com/channels/1349136661971206268/1349244585947299921)**.", color=colors.forbidden)
+            await send(interaction, embed=[embed1, embed2])
+            return 
+        
+        chosen_role = discord.utils.get(guild.roles, id=gender_roles_ids[value])
+        await user.add_roles(chosen_role, reason="Self roles")
+        embed = discord.Embed(title="Gender role assigned!", description=f"✅ You have claimed {chosen_role.mention} role!", color=colors.primary)
+        await send(interaction, embed=embed)
+        return 
+        
+    except Exception:
+        await error_send(interaction)
+    
+    
+    

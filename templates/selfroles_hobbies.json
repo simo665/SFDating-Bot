@@ -1,0 +1,91 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Hobbies.jpg"
+   },
+   "color": "ff4af0",
+   "fields": null
+  }
+ ],
+ "components": [
+  {
+   "type": 1,
+   "components": [
+    {
+     "type": 3,
+     "custom_id": "hobbies",
+     "options": [
+      {
+       "label": "⸝⸝ Gamer",
+       "emoji": {
+        "name": "🎮",
+        "animated": false
+       },
+       "value": "gamer",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Music Lover",
+       "emoji": {
+        "name": "🎵",
+        "animated": false
+       },
+       "value": "music",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Bookworm ",
+       "emoji": {
+        "name": "📕",
+        "animated": false
+       },
+       "value": "book",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Movie Buff",
+       "emoji": {
+        "name": "🎥",
+        "animated": false
+       },
+       "value": "movie",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Foodie ",
+       "emoji": {
+        "name": "🫕",
+        "animated": false
+       },
+       "value": "cooking",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Fitness Enthusiast",
+       "emoji": {
+        "name": "💪",
+        "animated": false
+       },
+       "value": "fitness",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Anime Lover",
+       "emoji": {
+        "name": "👹",
+        "animated": false
+       },
+       "value": "anime",
+       "default": false
+      }
+     ],
+     "placeholder": "🤽‍♂️───〃★ What are your interests?",
+     "min_values": 1,
+     "max_values": 7
+    }
+   ]
+  }
+ ]
+}

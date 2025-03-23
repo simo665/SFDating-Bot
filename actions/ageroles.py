@@ -63,9 +63,10 @@ async def ageroles(interaction, values):
         selected_age = age_roles_ids[value]
         age_role = discord.utils.get(interaction.guild.roles, id=selected_age)
         if not age_role:
-            embed = discord.Embed(title="Opps", description="Technical issues, will be fixed soon!", color=colors.error)
-            embed.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
-            await send(interaction, embed=embed)
+            embed1 = discord.Embed(title="", color=colors.error)
+            embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
+            embed2 = discord.Embed(title="Opps", description="Technical issues, will be fixed soon!", color=colors.error)
+            await send(interaction, embed=[embed1, embed2])
             return 
         await user.add_roles(age_role, reason="Self-roles assigned.")
         embed = discord.Embed(title="Age role assigned!", description=f"✅ You have claimed {age_role.mention} role!", color=colors.primary)

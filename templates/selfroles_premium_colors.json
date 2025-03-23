@@ -1,0 +1,94 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "color": "ff4af0",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/colors/premium%20colors.png"
+   },
+   "footer": {
+    
+   },
+   "fields": null
+  }
+ ],
+ "components": [
+  {
+   "type": 1,
+   "components": [
+    {
+     "type": 3,
+     "custom_id": "premium colors",
+     "options": [
+      {
+       "label": "𝜗𝜚 Sick black ⋆₊˚ ",
+       "emoji": {
+        "name": "🖤",
+        "animated": false
+       },
+       "value": "black",
+       "default": false
+      },
+      {
+       "label": "𝜗𝜚 Sick White ⋆₊˚",
+       "emoji": {
+        "name": "🤍",
+        "animated": false
+       },
+       "value": "white",
+       "default": false
+      },
+      {
+       "label": "𝜗𝜚 Aqua Mist ⋆₊˚",
+       "emoji": {
+        "name": "🩵",
+        "animated": false
+       },
+       "value": "Aqua",
+       "default": false
+      },
+      {
+       "label": "𝜗𝜚 Deep Blue ⋆₊˚",
+       "value": "deep blue",
+       "default": false,
+       "emoji": {
+        "name": "💙",
+        "animated": false
+       }
+      },
+      {
+       "label": "𝜗𝜚 Pale Lime ⋆₊˚",
+       "emoji": {
+        "name": "💛",
+        "animated": false
+       },
+       "value": "Pale lame",
+       "default": false
+      },
+      {
+       "label": "𝜗𝜚 Pastel Pink ⋆₊˚",
+       "emoji": {
+        "name": "🩷",
+        "animated": false
+       },
+       "value": "pastal pink",
+       "default": false
+      },
+      {
+       "label": "𝜗𝜚 Hot Pink ⋆₊˚",
+       "emoji": {
+        "name": "🩷",
+        "animated": false
+       },
+       "value": "hot pink",
+       "default": false
+      }
+     ],
+     "placeholder": "💎─〃★ Premium Colors",
+     "min_values": 1,
+     "max_values": 1
+    }
+   ]
+  }
+ ]
+}

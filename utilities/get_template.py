@@ -73,7 +73,7 @@ def get_message_from_template(template_name, variables = {}):
     
     file_path = f"templates/{template_name}.json"
     if not os.path.exists(file_path):
-        raise ValueError(f"{template_name} doesn't nit exists in messages templates.")
+        raise ValueError(f"{template_name} doesn't not exists in messages templates.")
         
     template = {}
     with open(file_path, "r") as f:

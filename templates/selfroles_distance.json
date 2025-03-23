@@ -4,7 +4,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Gender.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Distance.jpg"
    },
    "fields": null
   }
@@ -15,28 +15,28 @@
    "components": [
     {
      "type": 3,
-     "custom_id": "gender",
+     "custom_id": "distance",
      "options": [
       {
-       "label": "Female",
+       "label": "⸝⸝ Short Distance Only",
        "emoji": {
-        "name": "♀️",
+        "name": "☺️",
         "animated": false
        },
-       "value": "female",
+       "value": "Local",
        "default": false
       },
       {
-       "label": "Male",
+       "label": "⸝⸝ Long-Distance OK",
        "emoji": {
-        "name": "♂️",
+        "name": "😇",
         "animated": false
        },
-       "value": "male",
+       "value": "Long distance",
        "default": false
       }
      ],
-     "placeholder": "👦 ───〃★ Your Gender?",
+     "placeholder": "🗺️─〃★ Distance matters to you?",
      "min_values": 1,
      "max_values": 1
     }

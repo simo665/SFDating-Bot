@@ -2,8 +2,9 @@
 service_account.json
 dashboard/
 errors/errors.log
-__pycashe__/
+*/__pycache__/
 database/
 env/
 .git/
 storage/
+roles.py

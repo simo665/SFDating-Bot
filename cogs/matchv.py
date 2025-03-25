@@ -131,7 +131,7 @@ class MatchSySystems(commands.Cog):
         ]
         
     find = app_commands.Group(name="find", description="Find a match commands.") 
-    @app_commands.command(name="match", description="Find the best match for you! (In the experimental stage)")
+    @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
     async def find_match(self, interaction: discord.Interaction):
         try: 
             await interaction.response.defer()

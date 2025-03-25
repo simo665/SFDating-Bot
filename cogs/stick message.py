@@ -12,7 +12,7 @@ from utilities import colors
 class StickMessage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.conn = sqlite3.connect("dashboard/data.db")
+        self.conn = sqlite3.connect("database/data.db")
         self.stick_msgs = {}
         self.last_message_time = {}
 

@@ -62,7 +62,7 @@ class Engage(commands.Cog):
         self.bot = bot 
         bot.add_view(ButtonsUI(""))
         self.boring_messages = [
-            "hi", "hey", "hello", "yo", "sup", "hru", "hmm"
+            "hi", "hey", "hello", "yo", "hmm"
         ]
         self.boring_messages_count = {}
         self.last_boring_message_time = {}
@@ -103,7 +103,7 @@ class Engage(commands.Cog):
                 return 
             
             if user.id in self.boring_messages_count:
-                if self.boring_messages_count[user.id] == 2:
+                if self.boring_messages_count[user.id] == 3:
                     self.boring_messages_count[user.id] += 1
                     return 
             else:

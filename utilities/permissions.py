@@ -122,3 +122,15 @@ class Permissions:
             if not against_roles:
                 return False
         return True
+        
+    def is_admin():
+        interaction = self.interaction
+        async def predicate(interaction: discord.Interaction):
+            if interaction.user.guild_permissions.administrator:
+                return True
+            # generate creative response
+            response = no_permission_msg()
+            await interaction.response.send_message(f"{response}\nyou need admin permission.", ephemeral=True)
+            return False
+        return discord.app_commands.check(predicate)
+        

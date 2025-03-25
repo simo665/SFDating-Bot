@@ -12,10 +12,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-async def error_send(interaction, notify_user = True):
+async def error_send(interaction = None, notify_user = True):
     ## Notify user
     try:
-        if notify_user:
+        if notify_user and interaction:
             error_embed = discord.Embed(title="Error", description=f"Whoopsie! 😳 Something went wrong, try again!" , color=colors.error)
             if isinstance(interaction, discord.Interaction):
                 if interaction.response.is_done():

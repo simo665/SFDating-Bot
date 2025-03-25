@@ -4,7 +4,7 @@ from datetime import datetime
 import asyncio
 from utilities.get_template import get_message_from_template
 
-channel_id = 1351968758008254579
+channel_id = 1349918918231326800
 
 async def send_log(bot, variables, logname):
     data = get_message_from_template(logname, variables)

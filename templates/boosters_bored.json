@@ -1,0 +1,20 @@
+{
+ "embeds": [
+    {
+        "image": {
+            "url": "https://cdn.discordapp.com/attachments/1349263930156912640/1349756657806082139/New_Project_5_CCC09CE.gif?ex=67e2c2d8&is=67e17158&hm=82db85683ad7cc4e380d4d1d4c43c3b44d268c057c61971f16e52575482bc721&"
+        }
+    },
+  {
+   "color": "0xff4af0",
+   "title": "{HeartPopUp} Boosters Board",
+   "description": [
+    "{blowingHearts} ***Boost us and see your name shine on this board!*** ",
+    ""
+   ],
+   "thumbnail": {
+       "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/thumbnails/AnimeGirlHeart.jpeg"
+   }
+  }
+ ]
+}

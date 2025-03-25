@@ -46,11 +46,12 @@ async def load_cogs():
             except Exception:
                 traceback.print_exc()
                 exit()
-
+                
 async def main():
     async with bot:
         await load_cogs()
         await bot.start(TOKEN)
+
 
 
 asyncio.run(main())

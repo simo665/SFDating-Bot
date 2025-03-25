@@ -2,7 +2,8 @@
 service_account.json
 dashboard/
 errors/errors.log
-*/__pycache__/
+__pycache__/
+*.pyc
 database/
 env/
 .git/

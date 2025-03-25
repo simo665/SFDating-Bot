@@ -48,17 +48,7 @@ class Moderation(commands.Cog):
     
     async def check_perm(self, interaction, user_perms: List, bot_perms: List, target: discord.Member = None):
         permissions = Permissions(interaction)
-        is_user_has_perm = await permissions.check_guild_permission(interaction.user, user_perms)
-        if not is_user_has_perm:
-            return False 
-        is_bot_has_perm = await permissions.check_guild_permission(interaction.guild.me, bot_perms)
-        if not is_bot_has_perm:
-            return False
-        if target:
-            against_roles = await permissions.check_mod_rules(target)
-            if not against_roles:
-                return False
-        return True
+        return await permissions.check_perm(user_perms, bot_perms, target)
     
     def is_image(self, proof: discord.Attachment) -> bool:
         return proof.content_type.startswith('image/')

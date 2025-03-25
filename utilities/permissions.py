@@ -109,3 +109,16 @@ class Permissions:
     
         # If none of the above conditions are met, moderation is allowed
         return True
+    
+    async def check_perm(self, user_perms: List, bot_perms: List, target: discord.Member = None):
+        is_user_has_perm = await self.check_guild_permission(self.interaction.user, user_perms)
+        if not is_user_has_perm:
+            return False 
+        is_bot_has_perm = await self.check_guild_permission(self.interaction.guild.me, bot_perms)
+        if not is_bot_has_perm:
+            return False
+        if target:
+            against_roles = await self.check_mod_rules(target)
+            if not against_roles:
+                return False
+        return True

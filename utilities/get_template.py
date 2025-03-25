@@ -28,9 +28,11 @@ class PersistentView(discord.ui.View):
             emoji = None
             if emoji_data:
                 emoji = discord.PartialEmoji(
+                    id=emoji_data.get('id'),
                     name=emoji_data['name'],
                     animated=emoji_data.get('animated', False)
                 )
+               
             return CustomButton(
                 custom_id=component_data.get('custom_id'),
                 label=component_data.get('label'),

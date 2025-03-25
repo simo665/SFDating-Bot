@@ -61,7 +61,18 @@ def get_emojis_variables():
         "emoji_skull": "<:skull:1352037906075750491>",
         "emoji_reason": "<:reason:1352038968408936520>",
         "emoji_id": "<:id:1352039032934367243>",
-        "emoji_offender": "<:offender:1352040640535597056>"
+        "emoji_offender": "<:offender:1352040640535597056>",
+        "redglassheart": "<a:redglassheart:1353727228680212510>",
+        "PinkHearts": "<a:PinkHearts:1353727242177478687>",
+        "blowingHearts": "<a:blowingHearts:1353727249354064026>",
+        "TwoHearts": "<a:TwoHearts:1353727250394124328>",
+        "HeartMessage": "<a:HeartMessage:1353727263933464596>",
+        "PurpleHearts": "<a:PurpleHearts:1353727264054841386>",
+        "HeartPopUp": "<a:HeartPopUp:1353727277099126835>",
+        "Heartribbon": "<a:Heartribbon:1353727310276198494>",
+        "Heartspin": "<a:Heartspin:1353727321508679692>",
+        "FoxHi": "<a:FoxHi:1353732995130851408>",
+        "Crown": "<a:Crown:1353865280312578139>"
     }
 
 def get_all_variables(member, guild, moderator):

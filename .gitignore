@@ -1,10 +1,8 @@
 .env
-service_account.json
 dashboard/
 errors/errors.log
 __pycache__/
 *.pyc
-database/
 env/
 .git/
 storage/

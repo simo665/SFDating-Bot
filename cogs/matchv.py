@@ -130,8 +130,8 @@ class MatchSySystems(commands.Cog):
             "https://media3.giphy.com/media/13cSgdBHS5keeQ/giphy.gif?cid=6c09b952iq4pecrxq3pvkyweo6zmztkzji3kra0lpjdgj0va&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g",
         ]
         
-        
-    @app_commands.command(name="find_match", description="Find the best match for you! (In the experimental stage)")
+    find = app_commands.Group(name="find", description="Find a match commands.") 
+    @app_commands.command(name="match", description="Find the best match for you! (In the experimental stage)")
     async def find_match(self, interaction: discord.Interaction):
         try: 
             await interaction.response.defer()

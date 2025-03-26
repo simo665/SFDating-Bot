@@ -23,7 +23,7 @@ class InviteTracker(commands.Cog):
     async def on_member_join(self, member):
         try:
             now = datetime.utcnow()
-            three_months_ago = now - timedelta(days=90)
+            three_months_ago = now - timedelta(days=60)
             if not member.created_at.replace(tzinfo=None) <= three_months_ago:
                 return 
                     

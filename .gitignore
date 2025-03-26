@@ -6,4 +6,5 @@ __pycache__/
 env/
 .git/
 storage/
+*/data.db
 roles.py

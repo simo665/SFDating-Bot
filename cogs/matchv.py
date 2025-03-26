@@ -132,6 +132,7 @@ class MatchSySystems(commands.Cog):
         
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
+    @app_commands.checks.cooldown(1, 300)
     async def find_match(self, interaction: discord.Interaction):
         try: 
             await interaction.response.defer()
@@ -206,6 +207,12 @@ class MatchSySystems(commands.Cog):
         except Exception:
             await error_send(interaction)
     
+    @find_match.error
+    async def find_match_error(self, interaction: discord.Interaction, error):
+        if isinstance(error, app_commands.CommandOnCooldown):
+            embed = discord.Embed(title="Wait please!! >_<", description=f"Slow down! Try again in {error.retry_after:.2f} seconds.", color=colors.error)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            
     def get_max_score(self):
         max_score = 0
         for value in self.category_weights.values():

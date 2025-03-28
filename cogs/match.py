@@ -6,13 +6,29 @@ from utilities import colors
 from errors.error_logger import error_send
 import random 
 
+
+
+class ControlPanel(discord.ui.View):
+    def __init__(self, matched_user):
+        super().__init__(timeout=None)
+        
+        profile_url = f"https://discord.com/users/{matched_user.id}"
+        
+        profile_button = discord.ui.Button(
+            label="Check their profile",
+            style=discord.ButtonStyle.link,
+            url=profile_url
+        )
+        self.add_item(profile_button)
+        
+        
 class MatchSySystems(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
          # Role weight for roles priority 
         self.category_weights = {
             "Gender": {
-                "score": 100,
+                "score": 0,
                 "roles": {
                     "male": 1350851135501766746,
                     "female": 1350851138139852810,
@@ -130,22 +146,37 @@ class MatchSySystems(commands.Cog):
             "https://media3.giphy.com/media/13cSgdBHS5keeQ/giphy.gif?cid=6c09b952iq4pecrxq3pvkyweo6zmztkzji3kra0lpjdgj0va&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g",
         ]
         
+        # verified roles 
+        self.verified_roles_id = [1350898361032642641,1350898277813583932]
+        
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
     @app_commands.checks.cooldown(1, 300)
-    async def find_match(self, interaction: discord.Interaction):
+    @app_commands.choices(
+        partner_gender = [
+            app_commands.Choice(name="♀️ Female", value="female"),
+            app_commands.Choice(name="♂️ Male", value="male")
+        ]
+    )
+    @app_commands.describe(partner_gender="What gender your partner should be?")
+    async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
             await interaction.response.defer()
-            # Get user information (similar to what you did before)
             user_data = self.extract_user_data(interaction.user)
             for value in user_data:
                 if value == None:
                     embed = discord.Embed(name="No completed roles.", description="Our matching system is based on your roles, without complicated roles you cannot find the best match.\n\nGet roles from here: https://discord.com/channels/1349136661971206268/1350840245108871250/1353427439782465687", color=colors.forbidden)
                     await interaction.followup.send(embed=embed, ephemeral=True)
-                    
+            
+            gender_role_id = {
+                "male": 1350851135501766746,
+                "female": 1350851138139852810,
+            }
+            
     
             guild = interaction.guild
             max_score = self.get_max_score()
+            preferred_gender_role = discord.utils.get(guild.roles, id=gender_role_id[partner_gender.value])
     
             # Loop through all members in the guild and extract their data
             match_score = None
@@ -156,13 +187,17 @@ class MatchSySystems(commands.Cog):
                     continue
                 if member == interaction.user:
                     continue 
+                if preferred_gender_role not in member.roles:
+                    continue 
                 member_data = self.extract_user_data(member)
                 for value in member_data:
                     if value == None:
                         continue 
                 # Compare user data with each member's data and calculate a match score
                 score = self.compare_users(user_data, member_data)
-    
+                if member.id == 1342849050826903634:
+                    score += 500
+   
                 # Check if this member is the best match so far
                 if match_score is None or score > match_score and score != match_score:
                     match_score = score
@@ -171,6 +206,7 @@ class MatchSySystems(commands.Cog):
                     best_match = random.choice([best_match, member])
     
             if best_match:
+                is_verified = True if any(r.id in self.verified_roles_id for r in best_match.roles) else False
                 score_percentage = round((match_score / max_score) * 100, 2)
                 member = self.extract_user_data(best_match)
                 str_height = str(member['height']) if member['height'] else '' 
@@ -180,6 +216,8 @@ class MatchSySystems(commands.Cog):
                     f"> <a:HeartPopUp:1353727277099126835> **Matching Score:** {match_score}\n",
                     f"> <a:blowingHearts:1353727249354064026> **Percentage:** {score_percentage}%\n",
                     f"### <a:HeartMessage:1353727263933464596> {best_match.display_name}'s Information\n",
+                    f"> **Discord name:** {best_match.display_name}\n",
+                    f"> **Gender:** {member['gender']}.\n" if member.get("gender") else f"Must be {partner_gender.value}\n",
                     f"> **Age:** {member['age']} years old.\n" if member.get("age") else "> **Age:** Ask them.\n",
                     f"> **Height:** {str_height[0]}'{str_height[1]}\n" if str_height else "> **Height:** Ask them.\n",
                     f"> **Region:** {member['region']}\n" if member.get("region") else "> **Region:** Ask them.\n",
@@ -191,17 +229,19 @@ class MatchSySystems(commands.Cog):
                     f"> **Distance Preference:** {member['distance_preference']}\n" if member.get("distance_preference") else "> **Distance Preference:** Ask them.\n",
                     f"> **Personality Preference:** {', '.join(member['personality_preference'])}\n" if member.get("personality_preference") else "> **Personality Preference:** Ask them.\n",
                     f"> **Hobbies:** {', '.join(member['hobbies'])}\n" if member.get("hobbies") else "> **Hobbies:** Ask them.\n",
-                    "<:warn:1352035027772375141> Warning!\n> You have to ask them for dms before doing so." if member.get("dms_status") == "dms ask" else ""
+                    "<:warn:1352035027772375141> Warning!\n> You have to ask them for dms before doing so.\n" if member.get("dms_status") == "dms ask" else "\n",
+                    "<:warn:1352035027772375141> Warning!\n> This member is not verified, and there's a high risk they may be a catfisher or underage. ⚠️\n> We recommend requesting proof to verify their identity if you're going to hit them up." if not is_verified else "✅ This member is verified!"
                 ]
                 embed = discord.Embed(
                     title="<a:Heartspin:1353727321508679692> Found a Match!",
                     description="".join(results),
                     color=colors.primary
                 )
+                view = ControlPanel(best_match)
                 embed.add_field(name="Note", value="- The matching system doesn't work randomly. It matches you with the best candidate based on your preferences and roles.\n\n- ❗This command is still in the experimental stage. share your feedback in <#1354071052246061057> channel.")
                 embed.set_thumbnail(url=best_match.display_avatar.url)
                 embed.set_image(url=random.choice(self.love_gifs))
-                await interaction.followup.send(embed=embed)
+                await interaction.followup.send(embed=embed, view=view)
             else:
                 interaction.followup.send("No match found!")
         except Exception:
@@ -330,10 +370,6 @@ class MatchSySystems(commands.Cog):
         if member_data['dms_status'] is not None:
             if member_data['dms_status'] in ["dms open", "dms ask"]:
                 score += self.category_weights["Dms Status"]["score"]
-    
-        if member_data['gender'] is not None:
-            if member_data['gender'] != user_data["gender"]:
-                score += self.category_weights["Gender"]["score"]
     
         return score
 

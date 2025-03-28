@@ -28,8 +28,9 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def ageroles(interaction, values):
-    from utilities.variables import get_member_variables
+    from utilities.variables import get_all_variables
     from utilities.user_notif import send_notif
+    from utilities.logging_handler import send_log
     user = interaction.user
     try:
         value = values[0]
@@ -46,8 +47,10 @@ async def ageroles(interaction, values):
                 cur.close()
             if jail_role_id and discord.utils.get(interaction.guild.roles, id=jail_role_id):
                 await user.add_roles(discord.utils.get(interaction.guild.roles, id=jail_role_id), reason=value)
-                variables = get_member_variables(user) 
+                variables = get_all_variables(user, interaction.guild, interaction.user)
+                variables.update({'reason': value, 'proofurl': ""})
                 await send_notif(user, variables, "notif_jail")
+                await send_log(interaction.client, variables, "log_jail")
             else:
                 await user.ban(reason=value)
             return 

@@ -1,0 +1,26 @@
+{
+ "embeds": [
+  {
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport.jpg"
+   },
+   "color": "#00ff00"
+  },
+  {
+   "description": [
+    "Hello {memberdisplayname},",
+    "",
+    "Your verification has been successfully completed! You now have full access to the server. Feel free to explore, engage with the community, and enjoy your time here.",
+    "",
+    "If you have any questions or need assistance, don’t hesitate to reach out to the moderation team. We’re here to help!",
+    "",
+    "Welcome aboard, and we look forward to seeing you around!",
+    "",
+    "Best regards,",
+    "SFDating Team"
+   ],
+   "color": "#00ff00",
+   "title": "Subject: Welcome to Our Community, {memberdisplayname}!"
+  }
+ ]
+}

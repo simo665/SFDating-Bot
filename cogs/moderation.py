@@ -511,5 +511,132 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
         except Exception as e:
             await error_send(interaction)
 
+    #  _______________________ Verification Commands  _______________________
+    verify = app_commands.Group(name="verify", description="Verification commands.")
+    @verify.command(name="add", description="Verify a member.")
+    @app_commands.choices(
+        gender = [
+            app_commands.Choice(name="♀️ Female", value="female"),
+            app_commands.Choice(name="♂️ Male", value="male")
+        ]
+    )
+    @app_commands.choices(
+        age = [
+            app_commands.Choice(name="18 years old", value=18),
+            app_commands.Choice(name="19 years old", value=19),
+            app_commands.Choice(name="20 years old", value=20),
+            app_commands.Choice(name="21 years old", value=21),
+            app_commands.Choice(name="22 years old", value=22),
+            app_commands.Choice(name="23 years old", value=23),
+            app_commands.Choice(name="24 years old", value=24),
+            app_commands.Choice(name="25+ years old", value=25)
+        ]
+    )
+    @app_commands.describe(member="Who is the member you are trying to verify?", gender="What is their gender?", age="What is their age?", proof="Show a proof of their verification (e.g screenshot)")
+    async def verify_cmd(self, interaction: discord.Interaction, member: discord.Member, gender: app_commands.Choice[str], age: app_commands.Choice[int], proof: discord.Attachment):
+        try:
+            await interaction.response.defer(ephemeral=True)
+            authorized = await self.check_perm(interaction, ["moderate_members"], ["manage_roles"])
+            if not authorized:
+                return 
+            
+            if member == interaction.user:
+                await interaction.followup.send("I'm not gonna to allow you to verify yourself duh 🙄 ", ephemeral=True)
+            if member.bot:
+                await interaction.followup.send("You can't verify a bot duh 🙄 ", ephemeral=True)
+                
+            
+            guild = interaction.guild
+            gender_roles_ids = {
+                "male": 1350851135501766746,
+                "female": 1350851138139852810,
+            }
+            age_roles_ids = {
+                18: 1350851110021238795,
+                19: 1350851112437026876,
+                20: 1350851115096473651,
+                21: 1350851117000425562,
+                22: 1350851119215280139,
+                23: 1350851123531218965,
+                24: 1350851127897358410,
+                25: 1350851131961511957
+            }
+            issues = []
+            
+            gender_role = discord.utils.get(guild.roles, id=gender_roles_ids[gender.value])
+            if gender_role:
+                # remove any other gender roles from user if exists 
+                for role in member.roles:
+                    if role.id in gender_roles_ids.values() and role.id != gender_role.id:
+                        await member.remove_roles(role, reason="Verification; roles replacement.")
+                # add the correct gender role if not exists 
+                if gender_role not in member.roles:
+                    await member.add_roles(gender_role, reason="Verification; gender role.")
+            else:
+                issues.append(f"!! • {gender.value} role not found.")
+            
+            age_role = discord.utils.get(guild.roles, id=age_roles_ids[age.value])
+            if age_role:
+                for role in member.roles:
+                    if role.id in age_roles_ids.values() and role.id != age_role.id:
+                        await member.remove_roles(role, reason="Verification; roles replacement.")
+                if age_role not in member.roles:
+                    await member.add_roles(age_role, reason="Verification; age role.")
+            else:
+                issues.append(f"!! • {age.value} role not found.")
+            
+            verified_roles = {
+                "male": 1350898361032642641, # verified Male 
+                "female": 1350898277813583932 # verified Female 
+            }
+            
+            verified_role = discord.utils.get(guild.roles, id=verified_roles[gender.value])
+            
+            if not verified_role:
+                embed = discord.Embed(title="<:forbidden:1352035161444847686> Error", description=f"verified {gender.value} role is not found! member can't be verified.\nReport this to Simo.", color=colors.error)
+                if issues:
+                    embed.add_feild(name="<:warn:1352035027772375141> Other issues:", value="\n".join(issues))
+                await interaction.followup.send(embed=embed, ephemeral=True)
+                return 
+            
+            # Check in case the user have already the opposite gender verification role
+            for role in member.roles:
+                if role.id in verified_roles.values() and role.id != verified_role.id:
+                    await member.remove_roles(role, reason="Remove previous verification roles. prolly assigned by mistake.")
+             
+            await member.add_roles(verified_role, reason="Verified member role added!")
+            
+            # Remove jail/sus roles if exists 
+            sus_role = discord.utils.get(guild.roles, id=1350895174124961909)
+            jail_role = discord.utils.get(guild.roles, id=1350169044191285348)
+            # get variables 
+            variables = get_all_variables(member, guild, interaction.user)
+            
+            if sus_role in member.roles:
+                await send_notif(member, variables, "notif_unsus")
+            if jail_role in member.roles:
+                await send_notif(member, variables, "notif_unjail")
+                
+            await member.remove_roles(sus_role, jail_role, reason="Remove previous verification roles. prolly assigned by mistake.")
+            # response 
+            embed = discord.Embed(title="<a:TwoHearts:1353727250394124328> Verified Successfully!", description=f"<a:Heartribbon:1353727310276198494> {member.mention} Was verified successfully!", color=colors.primary)
+            if issues:
+                embed.add_feild(name="<:warn:1352035027772375141> Other issues:", value="\n".join(issues))
+                
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            
+            # logs and notification 
+            proof_url = None
+            if proof:
+                proof_url = await get_link(proof)
+            variables.update({"proofurl": proof_url if proof_url else ""})
+            # send log
+            await send_log(self.bot, variables, "log_verified")
+            await send_notif(member, variables, "notif_verified")
+        except Exception as e:
+            await error_send(interaction)
+    
+
+
 async def setup(bot):
     await bot.add_cog(Moderation(bot))

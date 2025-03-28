@@ -1,5 +1,6 @@
 .env
 dashboard/
+database/
 errors/errors.log
 __pycache__/
 *.pyc
@@ -8,3 +9,4 @@ env/
 storage/
 */data.db
 roles.py
+service_account.json

@@ -54,6 +54,16 @@
        "default": false
       },
       {
+       "label": "⸝⸝ Unemployed",
+       "value": "unemployed",
+       "default": false,
+       "emoji": {
+        "id": "1353719355309035561",
+        "name": "AnimeMiyukiFlustered",
+        "animated": true
+       }
+      },
+      {
        "label": "⸝⸝ Others",
        "emoji": {
         "name": "😀",
@@ -65,7 +75,7 @@
      ],
      "placeholder": "💼 ───〃★ Occupation",
      "min_values": 1,
-     "max_values": 2
+     "max_values": 6
     }
    ]
   }

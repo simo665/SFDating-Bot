@@ -195,9 +195,7 @@ class MatchSySystems(commands.Cog):
                         continue 
                 # Compare user data with each member's data and calculate a match score
                 score = self.compare_users(user_data, member_data)
-                if member.id == 1342849050826903634:
-                    score += 500
-   
+               
                 # Check if this member is the best match so far
                 if match_score is None or score > match_score and score != match_score:
                     match_score = score

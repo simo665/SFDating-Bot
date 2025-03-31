@@ -25,11 +25,6 @@
      "custom_id": "ageroles",
      "options": [
       {
-       "label": "⸝⸝ Age 17-",
-       "value": "underage",
-       "default": false
-      },
-      {
        "label": "⸝⸝ Age 18",
        "value": "age18",
        "default": false
@@ -68,11 +63,6 @@
        "label": "⸝⸝ Age 25-40",
        "description": "",
        "value": "age25",
-       "default": false
-      },
-      {
-       "label": "⸝⸝  Age 40+",
-       "value": "overage",
        "default": false
       }
      ],

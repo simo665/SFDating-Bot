@@ -149,9 +149,12 @@ class MatchSySystems(commands.Cog):
         # verified roles 
         self.verified_roles_id = [1350898361032642641,1350898277813583932]
         
+        # matches history
+        self.match_history = {}
+        
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
-    @app_commands.checks.cooldown(1, 3600)
+    @app_commands.checks.cooldown(1, 3)
     @app_commands.choices(
         partner_gender = [
             app_commands.Choice(name="♀️ Female", value="female"),
@@ -162,7 +165,7 @@ class MatchSySystems(commands.Cog):
     async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
             channel = interaction.channel
-            if channel.id != 1354185377371525271:
+            if channel.id != 1354861828047503461:
                 embed = discord.Embed(title="Not the appropriate channel", description=f"This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return 
@@ -185,39 +188,51 @@ class MatchSySystems(commands.Cog):
             preferred_gender_role = discord.utils.get(guild.roles, id=gender_role_id[partner_gender.value])
     
             # Loop through all members in the guild and extract their data
-            match_score = None
-            best_match = None
+            match_candidates = []
+            user_id = interaction.user.id
     
             for member in guild.members:
-                if member.bot:
-                    continue
-                if member == interaction.user:
+                if member.bot or member == interaction.user or preferred_gender_role not in member.roles:
                     continue 
-                if preferred_gender_role not in member.roles:
-                    continue 
+                
                 member_data = self.extract_user_data(member)
-                for value in member_data:
-                    if value == None:
-                        continue 
                 # Compare user data with each member's data and calculate a match score
                 score = self.compare_users(user_data, member_data)
                
-                # Check if this member is the best match so far
-                if match_score is None or score > match_score and score != match_score:
-                    match_score = score
-                    best_match = member
-                elif score == match_score:
-                    best_match = random.choice([best_match, member])
+                # Exclude users who are in the match history
+                if user_id in self.match_history and member.id in self.match_history[user_id]:
+                    continue
+                
+                match_candidates.append((member, score))
+               
+            if not match_candidates:
+                await interaction.followup.send("No new matches found!")
+                return
+
+            # Sort candidates by score (descending)
+            match_candidates.sort(key=lambda x: x[1], reverse=True)
+            highest_score = match_candidates[0][1]
+            best_matches = [candidate for candidate, score in match_candidates if score == highest_score]
+            best_match = random.choice(best_matches)
+            
+            # Update match history
+            if user_id not in self.match_history:
+                self.match_history[user_id] = []
+            self.match_history[user_id].append(best_match.id)
     
+            # Limit match history to the last 5 matches
+            if len(self.match_history[user_id]) > 5:
+                self.match_history[user_id].pop(0)
+
             if best_match:
                 is_verified = True if any(r.id in self.verified_roles_id for r in best_match.roles) else False
-                score_percentage = round((match_score / max_score) * 100, 2)
+                score_percentage = round((highest_score / max_score) * 100, 2)
                 member = self.extract_user_data(best_match)
                 str_height = str(member['height']) if member['height'] else '' 
                 results = [
                     "### <a:PinkHearts:1353727242177478687> Results\n",
                     f"> <a:Heartribbon:1353727310276198494> **Your best match:** {best_match.mention}\n",
-                    f"> <a:HeartPopUp:1353727277099126835> **Matching Score:** {match_score}\n",
+                    f"> <a:HeartPopUp:1353727277099126835> **Matching Score:** {highest_score}\n",
                     f"> <a:blowingHearts:1353727249354064026> **Percentage:** {score_percentage}%\n",
                     f"### <a:HeartMessage:1353727263933464596> {best_match.display_name}'s Information\n",
                     f"> **Discord name:** {best_match.display_name}\n",

@@ -59,7 +59,7 @@ class MatchSySystems(commands.Cog):
                 }
             },
             "Personality Preference": {
-                "score": 6,
+                "score": 3,
                 "roles": {
                     "introvert": 1350851082862989463,
                     "extrovert": 1350851086008975422,
@@ -71,7 +71,7 @@ class MatchSySystems(commands.Cog):
                 }
             },
             "Hobbies and Interests": { 
-                "score": 8,
+                "score": 2,
                 "roles": {
                     "gamer": 1350851095173271593,
                     "music": 1350851096746397737,
@@ -152,6 +152,9 @@ class MatchSySystems(commands.Cog):
         # matches history
         self.match_history = {}
         
+        # Already matched user 
+        self.matched_users = []
+        
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
     @app_commands.checks.cooldown(1, 1000)
@@ -195,6 +198,9 @@ class MatchSySystems(commands.Cog):
                 if member.bot or member == interaction.user or preferred_gender_role not in member.roles:
                     continue 
                 
+                if member.id in self.matched_users:
+                    continue
+                
                 member_data = self.extract_user_data(member)
                 # Compare user data with each member's data and calculate a match score
                 score = self.compare_users(user_data, member_data)
@@ -223,6 +229,10 @@ class MatchSySystems(commands.Cog):
             # Limit match history to the last 5 matches
             if len(self.match_history[user_id]) > 5:
                 self.match_history[user_id].pop(0)
+            
+            self.matched_users.append(best_match.id)
+            if len(self.matched_users) > 10:
+                self.matched_users.pop(0)
 
             if best_match:
                 is_verified = True if any(r.id in self.verified_roles_id for r in best_match.roles) else False
@@ -402,17 +412,27 @@ class MatchSySystems(commands.Cog):
     
         # Personality preference comparison
         if member_data['personality'] is not None and user_data['personality_preference'] is not None:
+            cap = 3
+            i = 0
             for p1 in user_data['personality_preference']:
+                if i >= cap:
+                    break
                 for p2 in member_data['personality']:
                     if p1 == p2:
                         score += self.category_weights["Personality Preference"]["score"]
+                        i += 1
         
         # Hobbies and interests comparison
         if member_data['hobbies'] is not None and user_data['hobbies'] is not None:
+            cap = 3
+            i = 0
             for h1 in user_data['hobbies']:
+                if i >= cap:
+                    break
                 for h2 in member_data['hobbies']:
                     if h1 == h2:
                         score += self.category_weights["Hobbies and Interests"]["score"]
+                        i += 1
     
         return score
 

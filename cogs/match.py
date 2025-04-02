@@ -154,7 +154,7 @@ class MatchSySystems(commands.Cog):
         
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
-    @app_commands.checks.cooldown(1, 3)
+    @app_commands.checks.cooldown(1, 1000)
     @app_commands.choices(
         partner_gender = [
             app_commands.Choice(name="♀️ Female", value="female"),

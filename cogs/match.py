@@ -59,7 +59,7 @@ class MatchSySystems(commands.Cog):
                 }
             },
             "Personality Preference": {
-                "score": 12,
+                "score": 6,
                 "roles": {
                     "introvert": 1350851082862989463,
                     "extrovert": 1350851086008975422,
@@ -151,7 +151,7 @@ class MatchSySystems(commands.Cog):
         
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
-    @app_commands.checks.cooldown(1, 300)
+    @app_commands.checks.cooldown(1, 3600)
     @app_commands.choices(
         partner_gender = [
             app_commands.Choice(name="♀️ Female", value="female"),
@@ -161,6 +161,12 @@ class MatchSySystems(commands.Cog):
     @app_commands.describe(partner_gender="What gender your partner should be?")
     async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
+            channel = interaction.channel
+            if channel.id != 1354185377371525271:
+                embed = discord.Embed(title="Not the appropriate channel", description=f"This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return 
+            
             await interaction.response.defer()
             user_data = self.extract_user_data(interaction.user)
             for value in user_data:
@@ -300,6 +306,9 @@ class MatchSySystems(commands.Cog):
             # Preferences data
             if role.id in self.category_weights["Height Preference"]["roles"].values():
                 user_data['height_preference'] = next((key for key, value in self.category_weights["Height Preference"]["roles"].items() if value == role.id), None)
+                if user_data["age"] and user_data['height_preference']:
+                    if user_data["height_preference"] == "younger" and user_data["age"] == 18:
+                        user_data['height_preference'] = "same age"
 
             if role.id in self.category_weights["Age Preference"]["roles"].values():
                 user_data['age_preference'] = next((key for key, value in self.category_weights["Age Preference"]["roles"].items() if value == role.id), None)
@@ -322,52 +331,73 @@ class MatchSySystems(commands.Cog):
         Compare two users based on their preferences and return a match score.
         """
         score = 0
-    
+        
+        # Dms preference 
+        if member_data['dms_status'] is not None:
+            if member_data['dms_status'] == "dms closed":
+                return 0
+            else:
+                score += self.category_weights["Dms Status"]["score"]
+        
+        # Relationship status preference comparison
+        if member_data['relationship_status'] is not None:
+            if member_data['relationship_status'] == "taken" or member_data['relationship_status'] == "not looking":
+                return 0
+            else:
+                score += self.category_weights["Relationship Status"]["score"]
+         
         # Age preference comparison
         if member_data['age'] is not None and user_data['age'] is not None:
             if user_data['age_preference'] == "older" and user_data['age'] < member_data['age']:
-                score += self.category_weights["Age Preference"]["score"]
+                if member_data["age_preference"] == "younger" or member_data["age_preference"] == "no preference":
+                    score += self.category_weights["Age Preference"]["score"]
+                
             elif user_data['age_preference'] == "younger" and user_data['age'] > member_data['age']:
-                score += self.category_weights["Age Preference"]["score"]
+                if member_data["age_preference"] == "older" or member_data["age_preference"] == "no preference":
+                    score += self.category_weights["Age Preference"]["score"]
+                
             elif user_data['age_preference'] == "same age" and user_data['age'] == member_data['age']:
-                score += self.category_weights["Age Preference"]["score"]
-            elif user_data['age_preference'] == "no preference":
+                if member_data["age_preference"] == "same age" or member_data["age_preference"] == "no preference":
+                    score += self.category_weights["Age Preference"]["score"]
+                
+            elif user_data['age_preference'] == "no preference" and member_data['age'] == "no preference":
                 score += self.category_weights["Age Preference"]["score"]
                 
+                
         # Height preference comparison
-        if member_data['height'] is not None and user_data['height'] is not None:
+        if member_data['height'] is not None and user_data['height'] is not None and user_data['height_preference'] is not None and member_data['height_preference'] is not None:
+            
             if user_data['height_preference'] == "taller" and user_data['height'] < member_data['height']:
-                score += self.category_weights["Height Preference"]["score"]
+                if member_data['height_preference'] == "shorter" or member_data['height_preference'] == "no preference":
+                    score += self.category_weights["Height Preference"]["score"]
+                    
             elif user_data['height_preference'] == "shorter" and user_data['height'] > member_data['height']:
-                score += self.category_weights["Height Preference"]["score"]
-            elif user_data['height_preference'] == "no preference":
+                if member_data['height_preference'] == "taller" or member_data['height_preference'] == "no preference":
+                    score += self.category_weights["Height Preference"]["score"]
+                    
+            elif user_data['height_preference'] == "no preference" and member_data['height_preference'] == "no preference":
                 score += self.category_weights["Height Preference"]["score"]
     
         # Distance preference comparison
-        if user_data['distance_preference'] == "Local" and member_data['region'] is not None and user_data['region'] == member_data['region']:
-            score += self.category_weights["Distance Preference"]["score"]
-        elif user_data['distance_preference'] == "Long distance":
-            score += self.category_weights["Distance Preference"]["score"]
+        if user_data['distance_preference'] is not None and user_data['region'] is not None and member_data['region'] is not None and member_data['distance_preference'] is not None:
+            if user_data['distance_preference'] == "Local" and user_data['region'] == member_data['region']:
+                score += self.category_weights["Distance Preference"]["score"]
+            elif user_data['distance_preference'] == "Long distance" and member_data['distance_preference'] == "Long distance":
+                score += self.category_weights["Distance Preference"]["score"]
     
         # Personality preference comparison
         if member_data['personality'] is not None and user_data['personality_preference'] is not None:
-            if set(user_data['personality_preference']).intersection(member_data['personality']):
-                score += self.category_weights["Personality Preference"]["score"]
-    
+            for p1 in user_data['personality_preference']:
+                for p2 in member_data['personality']:
+                    if p1 == p2:
+                        score += self.category_weights["Personality Preference"]["score"]
+        
         # Hobbies and interests comparison
         if member_data['hobbies'] is not None and user_data['hobbies'] is not None:
-            if set(user_data['hobbies']).intersection(member_data['hobbies']):
-                score += self.category_weights["Hobbies and Interests"]["score"]
-    
-        # Relationship status preference comparison
-        if member_data['relationship_status'] is not None:
-            if member_data['relationship_status'] in ["single", "complicated"] and member_data['relationship_status'] not in ["taken", "not looking"]:
-                score += self.category_weights["Relationship Status"]["score"]
-    
-        # DMs status preference comparison
-        if member_data['dms_status'] is not None:
-            if member_data['dms_status'] in ["dms open", "dms ask"]:
-                score += self.category_weights["Dms Status"]["score"]
+            for h1 in user_data['hobbies']:
+                for h2 in member_data['hobbies']:
+                    if h1 == h2:
+                        score += self.category_weights["Hobbies and Interests"]["score"]
     
         return score
 

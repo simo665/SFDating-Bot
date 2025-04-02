@@ -8,7 +8,7 @@ from utilities import PersistentView
 import traceback
 
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN2")
 
 intents = discord.Intents.default()
 intents.presences = True

@@ -122,7 +122,7 @@ class Moderation(commands.Cog):
 
     @jail_group.command(name="add", description="Jail a member.")
     @app_commands.describe(member="Target member.", reason="Why are they getting jailed? what did they do?", proof="Do you have a proof against them?")
-    async def jail(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment = None):
+    async def jail(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             # Check permissions
             authorized = await self.check_perm(interaction, user_perms = ["moderate_members"], bot_perms = ["manage_roles"], target = member)
@@ -176,7 +176,7 @@ class Moderation(commands.Cog):
     
     @jail_group.command(name="remove", description="Unjail a user.")
     @app_commands.describe(member="Target member.", reason="Why are they getting Unjailed? did they verify themselves?", proof="Do you have a proof you want to provide?")
-    async def unjail(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment = None):
+    async def unjail(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             authorized = await self.check_perm(interaction, user_perms = ["moderate_members"], bot_perms = ["manage_roles"], target = member)
             if not authorized:
@@ -298,7 +298,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
     
     @sus_group.command(name="add", description="Add suspicious role to a specific member.")
     @app_commands.describe(member="Target member.", reason="Why are they suspicious? what did they do?", proof="Do you have a proof against them?")
-    async def sus(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment = None):
+    async def sus(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             authorized = await self.check_perm(interaction, ["moderate_members"], ["manage_roles"])
             if not authorized:
@@ -343,7 +343,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
     
     @sus_group.command(name="remove", description="Remove suspicious role from a specific member.")
     @app_commands.describe(member="Target member.", reason="Why are they getting unsus? did they verify?", proof="Do you have a proof against them?")
-    async def unsus(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment = None):
+    async def unsus(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             authorized = await self.check_perm(interaction, ["moderate_members"], ["manage_roles"])
             if not authorized:
@@ -412,7 +412,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
         app_commands.Choice(name="20 days", value=1728000),
         app_commands.Choice(name="30 days", value=2419200)
     ])
-    async def warn(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment = None):
+    async def warn(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
         try:
             await interaction.response.defer()
             # Check permissions
@@ -470,7 +470,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             await error_send(interaction)
     
     @warn_group.command(name="remove", description="Remove a warning from a member.")
-    async def unwarn(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment = None):
+    async def unwarn(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             await interaction.response.defer(ephemeral=False)
             authorized = await self.check_perm(interaction, ["moderate_members"], ["moderate_members", "manage_roles"], target = member)

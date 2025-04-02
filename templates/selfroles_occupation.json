@@ -58,9 +58,8 @@
        "value": "unemployed",
        "default": false,
        "emoji": {
-        "id": "1353719355309035561",
-        "name": "AnimeMiyukiFlustered",
-        "animated": true
+        "name": "😕",
+        "animated": false
        }
       },
       {

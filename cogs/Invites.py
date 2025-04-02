@@ -33,7 +33,7 @@ class InviteTracker(commands.Cog):
                 if invite.uses < self.find_invite_by_code(invites_after_join, invite.code).uses:
                     inviter = invite.inviter
                     inviter_member = member.guild.get_member(inviter.id)  # Get the Member object
-                    if inviter_member:  # Check if inviter is a member of the guild
+                    if inviter_member and inviter_member != member:  # Check if inviter is a member of the guild
                         role = discord.utils.get(member.guild.roles, id=1354089800944058500)
                         if role:
                             await inviter_member.add_roles(role, reason="Invited a member!")

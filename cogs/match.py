@@ -165,7 +165,7 @@ class MatchSySystems(commands.Cog):
     async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
             channel = interaction.channel
-            if channel.id != 1354861828047503461:
+            if channel.id != 1354185377371525271:
                 embed = discord.Embed(title="Not the appropriate channel", description=f"This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return 

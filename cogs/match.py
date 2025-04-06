@@ -7,19 +7,25 @@ from errors.error_logger import error_send
 import random 
 
 
-
 class ControlPanel(discord.ui.View):
     def __init__(self, matched_user):
         super().__init__(timeout=None)
-        
-        profile_url = f"https://discord.com/users/{matched_user.id}"
-        
+        self.matched_user = matched_user
+
         profile_button = discord.ui.Button(
             label="Check their profile",
-            style=discord.ButtonStyle.link,
-            url=profile_url
+            style=discord.ButtonStyle.green,
+            custom_id="check_profile"
         )
+        profile_button.callback = self.send_profile_link
         self.add_item(profile_button)
+
+    async def send_profile_link(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            content=f"Click here to see their profile: {self.matched_user.mention}",
+            ephemeral=True
+        )
+
         
         
 class MatchSySystems(commands.Cog):
@@ -157,7 +163,7 @@ class MatchSySystems(commands.Cog):
         
     find = app_commands.Group(name="find", description="Find a match commands.") 
     @find.command(name="match", description="Find the best match for you! (In the experimental stage)")
-    @app_commands.checks.cooldown(1, 1000)
+    @app_commands.checks.cooldown(1, 1)
     @app_commands.choices(
         partner_gender = [
             app_commands.Choice(name="♀️ Female", value="female"),
@@ -168,7 +174,7 @@ class MatchSySystems(commands.Cog):
     async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
             channel = interaction.channel
-            if channel.id != 1354185377371525271:
+            if not channel.id in [1354185377371525271, 1354861828047503461]:
                 embed = discord.Embed(title="Not the appropriate channel", description=f"This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return 

@@ -4,6 +4,7 @@ from discord import app_commands
 from utilities import get_message_from_template
 from utilities import get_member_variables, get_emojis_variables
 from errors.error_logger import error_send 
+import asyncio 
 
 class Joins(commands.Cog):
     def __init__(self, bot):
@@ -35,6 +36,9 @@ class Joins(commands.Cog):
     
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+        if member.bot:
+            return 
+        await asyncio.sleep(3)
         await self.send_welcome_message(member)
     
     joins = app_commands.Group(name="joins", description="Joins related commands.")

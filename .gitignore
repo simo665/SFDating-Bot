@@ -10,3 +10,4 @@ storage/
 */data.db
 roles.py
 service_account.json
+venv/

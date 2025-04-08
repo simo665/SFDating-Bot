@@ -36,7 +36,7 @@ class Moderation(commands.Cog):
     def upsert_config(self, guild_id: int, column: str, value: int):
         cur = self.conn.cursor()
         try:
-            cur.execute(f"SELECT 1 FROM configs WHERE guild_id = ?", (guild_id,))
+            cur.execute("SELECT 1 FROM configs WHERE guild_id = ?", (guild_id,))
             exists = cur.fetchone()
             if exists:
                 cur.execute(f"UPDATE configs SET {column} = ? WHERE guild_id = ?", (value, guild_id))
@@ -88,7 +88,7 @@ class Moderation(commands.Cog):
                 role = await guild.create_role(name="Jailed", color=0xec1a1a)
                 self.upsert_config(guild.id, "jail_role_id", role.id)
             except discord.Forbidden:
-                response_embed.description = f"I don't have permission to create roles. make sure to give me manage roles permission."
+                response_embed.description = "I don't have permission to create roles. make sure to give me manage roles permission."
                 await original_response.edit(embed=response_embed)
                 return 
             # Get bot top role position 
@@ -171,7 +171,7 @@ class Moderation(commands.Cog):
             variables.update({"proofurl": proof_url if proof_url else ""})
             await send_log(self.bot, variables, "log_jail")
             await send_notif(member, variables, "notif_jail")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
     @jail_group.command(name="remove", description="Unjail a user.")
@@ -223,7 +223,7 @@ class Moderation(commands.Cog):
             variables.update({"proofurl": proof_url if proof_url else ""})
             await send_log(self.bot, variables, "log_unjail")
             await send_notif(member, variables, "notif_unjail")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
 
     #  _______________________ Sus Commands  _______________________ 
@@ -238,6 +238,7 @@ class Moderation(commands.Cog):
             # set up the role
             guild = interaction.guild
             role = None
+            response_embed = discord.Embed(title="Setting Up", description="Creating and setting up sus role is in progress..", color=colors.primary)
             cur = self.conn.cursor()
             try: 
                 cur.execute("SELECT sus_role_id FROM configs WHERE guild_id = ?", (guild.id,))
@@ -248,7 +249,7 @@ class Moderation(commands.Cog):
                     role = await guild.create_role(name="Sus", color=0xfa0606)
                     self.upsert_config(guild.id, "sus_role_id", role.id)
             except discord.Forbidden:
-                response_embed.description = f"I don't have permission to create roles. make sure to give me manage roles permission."
+                response_embed.description = "I don't have permission to create roles. make sure to give me manage roles permission."
                 await interaction.followup.send(embed=response_embed)
                 return 
             finally:
@@ -261,7 +262,7 @@ class Moderation(commands.Cog):
             guide = (f"""
 I've already created the {role.mention} role, but the rest of the setup needs to be done manually. Here's a simple guide to help you:
 
-1. Go to each channel where you **don’t** want suspicious users to have access.  
+1. Go to each channel where you **don't** want suspicious users to have access.  
 2. **Hold-click** on the channel → **Edit Channel** → **Permissions**.  
 3. Click **Add Role** and select {role.mention}.  
 4. Under **Permissions**, disable the following:  
@@ -269,7 +270,7 @@ I've already created the {role.mention} role, but the rest of the setup needs to
    - **Send Messages** = ❌  
 5. (Optional) Adjust other permissions as needed. If you want to **completely hide** the channel from them, ensure both settings above are disabled.  
 
-That's it! Now, suspicious users won’t be able to see or interact in those channels.
+That's it! Now, suspicious users won't be able to see or interact in those channels.
             """)
             guide_embed = discord.Embed(title="Sus Role Setup", description=guide, color=colors.primary)
             guide_embed.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/guides/channelperm.gif")
@@ -338,7 +339,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             variables.update({"proofurl": proof_url if proof_url else ""})
             await send_log(self.bot, variables, "log_sus")
             await send_notif(member, variables, "notif_sus")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
     @sus_group.command(name="remove", description="Remove suspicious role from a specific member.")
@@ -387,7 +388,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             variables.update({"proofurl": proof_url if proof_url else ""})
             await send_log(self.bot, variables, "log_unsus")
             await send_notif(member, variables, "notif_unsus")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
     
@@ -466,7 +467,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             await send_notif(member, variables, "notif_warn")
             await asyncio.sleep(max(0, self.delete_delay - (time.time() - sent_time)))
             await response.delete()
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
     @warn_group.command(name="remove", description="Remove a warning from a member.")
@@ -508,7 +509,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             await send_notif(member, variables, "notif_unwarn")
             await asyncio.sleep(max(0, self.delete_delay - (time.time() - sent_time)))
             await response.delete()
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
 
     #  _______________________ Verification Commands  _______________________
@@ -633,7 +634,7 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             # send log
             await send_log(self.bot, variables, "log_verified")
             await send_notif(member, variables, "notif_verified")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
 

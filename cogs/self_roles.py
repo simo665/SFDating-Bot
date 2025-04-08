@@ -1,9 +1,8 @@
 import discord 
 from discord.ext import commands 
 from discord import app_commands
-from utilities import get_message_from_template, PersistentView
+from utilities import get_message_from_template
 from errors.error_logger import error_send
-import asyncio
 
 
 class SelfRoles(commands.Cog):

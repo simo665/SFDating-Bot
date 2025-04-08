@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-import re
 from utilities import colors
 from errors.error_logger import error_send
 import random 
@@ -174,15 +173,15 @@ class MatchSySystems(commands.Cog):
     async def find_match(self, interaction: discord.Interaction, partner_gender: app_commands.Choice[str]):
         try: 
             channel = interaction.channel
-            if not channel.id in [1354185377371525271, 1354861828047503461]:
-                embed = discord.Embed(title="Not the appropriate channel", description=f"This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
+            if channel.id not in [1354185377371525271, 1354861828047503461]:
+                embed = discord.Embed(title="Not the appropriate channel", description="This command can be used in <#1354185377371525271> channel only.", color=colors.forbidden)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return 
             
             await interaction.response.defer()
             user_data = self.extract_user_data(interaction.user)
             for value in user_data:
-                if value == None:
+                if value is None:
                     embed = discord.Embed(name="No completed roles.", description="Our matching system is based on your roles, without complicated roles you cannot find the best match.\n\nGet roles from here: https://discord.com/channels/1349136661971206268/1350840245108871250/1353427439782465687", color=colors.forbidden)
                     await interaction.followup.send(embed=embed, ephemeral=True)
             

@@ -517,7 +517,10 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
     @app_commands.choices(
         gender = [
             app_commands.Choice(name="♀️ Female", value="female"),
-            app_commands.Choice(name="♂️ Male", value="male")
+            app_commands.Choice(name="♂️ Male", value="male"),
+            app_commands.Choice(name="🏳️‍⚧️ Trans Male", value="transM"),
+            app_commands.Choice(name="🏳️‍⚧️ Trans Female", value="transF"),
+            app_commands.Choice(name="🌈 Non-binary", value="none"),
         ]
     )
     @app_commands.choices(
@@ -550,6 +553,9 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             gender_roles_ids = {
                 "male": 1350851135501766746,
                 "female": 1350851138139852810,
+                "transM": 1359888608508510430,
+                "transF": 1359888703211704431,
+                "none": 1359888867750318160
             }
             age_roles_ids = {
                 18: 1350851110021238795,
@@ -586,8 +592,11 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
                 issues.append(f"!! • {age.value} role not found.")
             
             verified_roles = {
-                "male": 1350898361032642641, # verified Male 
-                "female": 1350898277813583932 # verified Female 
+                "male": 1350898361032642641,
+                "female": 1350898277813583932,
+                "transM": 1350898361032642641,
+                "transF": 1350898277813583932,
+                "none": 1359897374289563829
             }
             
             verified_role = discord.utils.get(guild.roles, id=verified_roles[gender.value])

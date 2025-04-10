@@ -14,7 +14,8 @@ from .colors_roles import colors_roles
 from .basic_colors import basic_colors
 from .boosters_colors import boosters_colors
 from .premium_colors import premium_colors
-from.self_height import height 
+from .self_height import height 
+from .sexuality import sexuality 
 
 __all__ = [
     "ageroles", "gender_roles", "occupation_roles",
@@ -22,5 +23,5 @@ __all__ = [
     "age_prefer_status_roles", "region_roles", "height_preference",
     "distance_preference", "personality_roles", "partner_personality_roles",
     "hobbies_roles", "colors_roles", "basic_colors", "boosters_colors", "premium_colors",
-    "height"
+    "height", "sexuality"
 ]

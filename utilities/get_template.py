@@ -28,7 +28,7 @@ class PersistentView(discord.ui.View):
             emoji = None
             if emoji_data:
                 emoji = discord.PartialEmoji(
-                    id=emoji_data.get('id'),
+                    id=emoji_data.get('id', None),
                     name=emoji_data['name'],
                     animated=emoji_data.get('animated', False)
                 )
@@ -40,7 +40,7 @@ class PersistentView(discord.ui.View):
                 emoji=emoji,
                 url=component_data.get('url', "") if component_data.get('style') == 5 else None
             )
-
+            
         elif component_type == 3:  # Select menu
             options = [
                 discord.SelectOption(
@@ -48,12 +48,13 @@ class PersistentView(discord.ui.View):
                     value=opt.get('value'),
                     emoji=discord.PartialEmoji(
                         name=opt['emoji']['name'],
+                        id=opt['emoji'].get('id', None),  # Use None if there's no 'id' field
                         animated=opt['emoji'].get('animated', False)
                     ) if 'emoji' in opt else None,
                     default=opt.get('default', False))
-                    
                 for opt in component_data.get('options', [])
             ]
+        
             
             return DropDownSelect( 
                 options=options,

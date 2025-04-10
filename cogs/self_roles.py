@@ -18,9 +18,9 @@ class SelfRoles(commands.Cog):
         try:
             await interaction.response.send_message("Ok!", ephemeral=True)
             templates = [
-                "selfroles_age", "selfroles_gender", "selfroles_region", "selfroles_occupation", "selfroles_relationship", "selfroles_dms",
+                "selfroles_age", "selfroles_gender", "selfroles_sexuality", "selfroles_region", "selfroles_occupation", "selfroles_relationship", "selfroles_dms",
                 "selfroles_age_preference", "selfroles_height", "selfroles_height_preference", "selfroles_distance", "selfroles_personality",
-                "selfroles_personality_preference", "selfroles_hobbies", "selfroles_colors"
+                "selfroles_personality_preference", "selfroles_hobbies", "selfroles_colors",
             ]
             channel = channel if channel else interaction.channel
             

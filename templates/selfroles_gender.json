@@ -34,6 +34,33 @@
        },
        "value": "male",
        "default": false
+      },
+      {
+       "label": "Trans Female",
+       "emoji": {
+        "name": "🏳️‍⚧️",
+        "animated": false
+       },
+       "value": "transfemale",
+       "default": false
+      },
+      {
+       "label": "Trans Male",
+       "emoji": {
+        "name": "🏳️‍⚧️",
+        "animated": false
+       },
+       "value": "transmale",
+       "default": false
+      },
+      {
+       "label": "Non binary",
+       "emoji": {
+        "name": "🌈",
+        "animated": false
+       },
+       "value": "none",
+       "default": false
       }
      ],
      "placeholder": "👦 ───〃★ Your Gender?",

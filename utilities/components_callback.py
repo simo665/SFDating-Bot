@@ -28,7 +28,8 @@ class DropDownSelect(discord.ui.Select):
             "basic colors": basic_colors,
             "boosters colors": boosters_colors,
             "premium colors": premium_colors,
-            "height": height 
+            "height": height,
+            "sexuality": sexuality
         }
 
     async def callback(self, interaction: discord.Interaction):

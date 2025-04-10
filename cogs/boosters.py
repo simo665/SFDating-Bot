@@ -142,7 +142,7 @@ class Boosters(commands.Cog):
             return []
         
         # Format boosters list
-        members = [f"<a:PinkHearts:1353727242177478687>・ {m.display_name} <a:redglassheart:1353727228680212510>" for m in role.members] or ["No boosters"]
+        members = [f"<a:PinkHearts:1359829058942144594>・ {m.display_name} <a:redglassheart:1359831104995070183>" for m in role.members] or ["No boosters"]
         
         # Split into pages
         pages = [members[i:i+10] for i in range(0, len(members), 10)]

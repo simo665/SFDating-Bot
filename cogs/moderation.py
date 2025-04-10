@@ -593,9 +593,9 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
             verified_role = discord.utils.get(guild.roles, id=verified_roles[gender.value])
             
             if not verified_role:
-                embed = discord.Embed(title="<:forbidden:1352035161444847686> Error", description=f"verified {gender.value} role is not found! member can't be verified.\nReport this to Simo.", color=colors.error)
+                embed = discord.Embed(title="<:forbidden:1359820382177198308> Error", description=f"verified {gender.value} role is not found! member can't be verified.\nReport this to Simo.", color=colors.error)
                 if issues:
-                    embed.add_feild(name="<:warn:1352035027772375141> Other issues:", value="\n".join(issues))
+                    embed.add_feild(name="<:warn:1359816466513526885> Other issues:", value="\n".join(issues))
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return 
             
@@ -619,9 +619,9 @@ That's it! Now, suspicious users won’t be able to see or interact in those cha
                 
             await member.remove_roles(sus_role, jail_role, reason="Remove previous verification roles. prolly assigned by mistake.")
             # response 
-            embed = discord.Embed(title="<a:TwoHearts:1353727250394124328> Verified Successfully!", description=f"<a:Heartribbon:1353727310276198494> {member.mention} Was verified successfully!", color=colors.primary)
+            embed = discord.Embed(title="<a:TwoHearts:1359827390616047726> Verified Successfully!", description=f"<a:Heartribbon:1359828243947061339> {member.mention} Was verified successfully!", color=colors.primary)
             if issues:
-                embed.add_feild(name="<:warn:1352035027772375141> Other issues:", value="\n".join(issues))
+                embed.add_feild(name="<:warn:1359816466513526885> Other issues:", value="\n".join(issues))
                 
             await interaction.followup.send(embed=embed, ephemeral=True)
             

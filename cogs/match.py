@@ -246,11 +246,11 @@ class MatchSySystems(commands.Cog):
                 member = self.extract_user_data(best_match)
                 str_height = str(member['height']) if member['height'] else '' 
                 results = [
-                    "### <a:PinkHearts:1353727242177478687> Results\n",
-                    f"> <a:Heartribbon:1353727310276198494> **Your best match:** {best_match.mention}\n",
-                    f"> <a:HeartPopUp:1353727277099126835> **Matching Score:** {highest_score}\n",
-                    f"> <a:blowingHearts:1353727249354064026> **Percentage:** {score_percentage}%\n",
-                    f"### <a:HeartMessage:1353727263933464596> {best_match.display_name}'s Information\n",
+                    "### <a:PinkHearts:1359829058942144594> Results\n",
+                    f"> <a:Heartribbon:1359828243947061339> **Your best match:** {best_match.mention}\n",
+                    f"> <a:HeartPopUp:1359829671503466536> **Matching Score:** {highest_score}\n",
+                    f"> <a:blowingHearts:1359829944774955058> **Percentage:** {score_percentage}%\n",
+                    f"### <a:HeartMessage:1359827376644821113> {best_match.display_name}'s Information\n",
                     f"> **Discord name:** {best_match.display_name}\n",
                     f"> **Gender:** {member['gender']}.\n" if member.get("gender") else f"Must be {partner_gender.value}\n",
                     f"> **Age:** {member['age']} years old.\n" if member.get("age") else "> **Age:** Ask them.\n",
@@ -264,8 +264,8 @@ class MatchSySystems(commands.Cog):
                     f"> **Distance Preference:** {member['distance_preference']}\n" if member.get("distance_preference") else "> **Distance Preference:** Ask them.\n",
                     f"> **Personality Preference:** {', '.join(member['personality_preference'])}\n" if member.get("personality_preference") else "> **Personality Preference:** Ask them.\n",
                     f"> **Hobbies:** {', '.join(member['hobbies'])}\n" if member.get("hobbies") else "> **Hobbies:** Ask them.\n",
-                    "<:warn:1352035027772375141> Warning!\n> You have to ask them for dms before doing so.\n" if member.get("dms_status") == "dms ask" else "\n",
-                    "<:warn:1352035027772375141> Warning!\n> This member is not verified, and there's a high risk they may be a catfisher or underage. ⚠️\n> We recommend requesting proof to verify their identity if you're going to hit them up." if not is_verified else "✅ This member is verified!"
+                    "<:warn:1359816466513526885> Warning!\n> You have to ask them for dms before doing so.\n" if member.get("dms_status") == "dms ask" else "\n",
+                    "<:warn:1359816466513526885> Warning!\n> This member is not verified, and there's a high risk they may be a catfisher or underage. ⚠️\n> We recommend requesting proof to verify their identity if you're going to hit them up." if not is_verified else "✅ This member is verified!"
                 ]
                 embed = discord.Embed(
                     title="<a:Heartspin:1353727321508679692> Found a Match!",

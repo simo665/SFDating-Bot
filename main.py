@@ -7,8 +7,13 @@ from dotenv import load_dotenv
 from utilities import PersistentView
 import traceback
 
+
+databae_f = "database"
+if not os.path.exists(databae_f):
+    os.makedirs(databae_f)
+
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN2")
+TOKEN = os.getenv("BOT_TOKEN")
 
 intents = discord.Intents.default()
 intents.presences = True

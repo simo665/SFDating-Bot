@@ -3,13 +3,14 @@ from discord.ext import commands
 import time 
 import random 
 from utilities import responses, colors
-import sqlite3 
+from utilities.database import Database
 
 
 class ButtonsUI(discord.ui.View):
-    def __init__(self, channel_link):
+    def __init__(self, channel_link, bot):
         super().__init__(timeout=None)
-        self.con = sqlite3.connect("database/data.db")
+        self.db = Database()
+        self.bot = bot
         self.add_item(discord.ui.Button(
             label="Back to chat!", 
             url=channel_link, 
@@ -25,80 +26,78 @@ class ButtonsUI(discord.ui.View):
         self.block_button.callback = self.block_notification  # Set the callback
         self.add_item(self.block_button)
         
-    def update_settings(self, userid, new_value):
-        cur = self.con.cursor()
-        try:
-            cur.execute(f"SELECT 1 FROM user_settings WHERE user_id = ?", (userid,))
-            exists = cur.fetchone()
-            if exists:
-                cur.execute(f"UPDATE user_settings SET dm_notif = ? WHERE user_id = ?", (new_value, userid))
-            else:
-                cur.execute(f"INSERT INTO user_settings (user_id, dm_notif) VALUES (?, ?)", (userid, new_value))
-            self.con.commit()
-        finally:
-            cur.close()
+    async def update_settings(self, userid, new_value):
+        # Check if the user exists
+        exists = await self.db.fetchvalue(
+            "SELECT 1 FROM user_settings WHERE user_id = ?", 
+            (userid,)
+        )
+        
+        if exists:
+            # Update existing user
+            await self.db.update(
+                "user_settings",
+                {"dm_notif": new_value},
+                "user_id = ?",
+                (userid,)
+            )
+        else:
+            # Create new user
+            await self.db.insert(
+                "user_settings",
+                {"user_id": userid, "dm_notif": new_value}
+            )
 
     async def block_notification(self, interaction: discord.Interaction):
-        cur = self.con.cursor()
-        current_setting = ""
         user = interaction.user
-        try:
-            cur.execute("SELECT dm_notif FROM user_settings WHERE user_id = ?", (user.id,))
-            result = cur.fetchone()
-            notif_settings = result[0] if result else "enabled"
-        finally:
-            cur.close()
+        notif_settings = await self.db.fetchvalue(
+            "SELECT dm_notif FROM user_settings WHERE user_id = ?",
+            (user.id,)
+        ) or "enabled"
         
         if notif_settings == "enabled":
-            self.update_settings(user.id, "disabled")
+            await self.update_settings(user.id, "disabled")
             await interaction.response.send_message("❌ You will no longer receive these notifications.", ephemeral=True)
         else:
-            self.update_settings(user.id, "enabled")
+            await self.update_settings(user.id, "enabled")
             await interaction.response.send_message("✅ You will receive these notifications.", ephemeral=True)
 
 
 class Engage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
-        bot.add_view(ButtonsUI(""))
+        self.db = Database()
+        # We'll initialize the view in the setup method instead
         self.boring_messages = [
             "hi", "hey", "hello", "yo", "hmm"
         ]
         self.boring_messages_count = {}
         self.last_boring_message_time = {}
         self.delay = 3600
-        self.con = sqlite3.connect("database/data.db")
-        self.create_table()
+        self.bot.loop.create_task(self.create_table())
    
-    def create_table(self):
-        cur = self.con.cursor()
-        try:
-            cur.execute("""CREATE TABLE IF NOT EXISTS user_settings (
-                user_id INTEGER PRIMARY KEY,
-                dm_notif TEXT
-            )""")
-            self.con.commit()
-        finally:
-            cur.close()
+    async def create_table(self):
+        await self.db.create_table("user_settings", """
+            user_id INTEGER PRIMARY KEY,
+            dm_notif TEXT
+        """)
+        # Initialize the view after the table is created
+        self.bot.add_view(ButtonsUI("", self.bot))
        
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
             # check if it's a boring message
-            if message.content not in self.boring_messages:
+            if message.content.lower() not in self.boring_messages:
                 return 
             
             user = message.author
             # is notif enabled for that user?
-            notif_settings = "enabled"
-            cur = self.con.cursor()
-            try:
-                cur.execute("SELECT dm_notif FROM user_settings WHERE user_id = ?", (user.id,))
-                result = cur.fetchone()
-                notif_settings = result[0] if result else "enabled"
-                self.con.commit()
-            finally:
-                cur.close()
+            notif_settings = await self.db.fetchvalue(
+                "SELECT dm_notif FROM user_settings WHERE user_id = ?",
+                (user.id,)
+            ) or "enabled"
+            
             if notif_settings == "disabled":
                 return 
             
@@ -109,18 +108,21 @@ class Engage(commands.Cog):
             else:
                 self.boring_messages_count[user.id] = 1
                 return 
+                
             # Check if the message was already sent in the last hour 
             current_time = time.time()
             if user.id in self.last_boring_message_time:
                 if (current_time - self.last_boring_message_time[user.id]) < self.delay:
                     return 
+                    
             # pick an motivating/engaging message 
             random_message = random.choice(responses).format(msg=message.content)
             # sent it to user
             embed = discord.Embed(title=f"Heyy {user.display_name}", description=random_message, color=colors.primary)
-            view = ButtonsUI(f"https://discord.com/channels/{message.guild.id}")
+            view = ButtonsUI(f"https://discord.com/channels/{message.guild.id}", self.bot)
             await message.author.send(embed=embed, view=view)
             self.last_boring_message_time[user.id] = current_time
+            
         except Exception as e:
             print(e)
 

@@ -10,10 +10,10 @@ from utilities import get_message_from_template, get_emojis_variables
 CONFIG_FILE = 'boosters_config.json'
 
 def load_config():
-    return json.load(open(CONFIG_FILE)) if os.path.exists(CONFIG_FILE) else {}
+    return json.load(open(CONFIG_FILE, encoding="utf-8")) if os.path.exists(CONFIG_FILE) else {}
 
 def save_config(config):
-    with open(CONFIG_FILE, 'w') as f:
+    with open(CONFIG_FILE, 'w', encoding="utf-8") as f:
         json.dump(config, f, indent=4)
 
 class BoostersView(discord.ui.View):
@@ -210,7 +210,6 @@ class Boosters(commands.Cog):
                 if 'Page' in footer_text:
                     current_page = int(footer_text.split('Page ')[1].split('/')[0]) - 1  # Convert to 0-based index
                     current_page = min(current_page, len(embeds) - 1)  # Clamp to valid range
-            print(current_page)
             view = BoostersView(self.bot, guild.id)
             view.embeds = embeds
             view.current_page = current_page  # Preserve pagination state

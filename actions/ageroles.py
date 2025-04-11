@@ -1,5 +1,4 @@
 import discord
-import asyncio
 from utilities import colors
 import sqlite3 
 from errors.error_logger import error_send

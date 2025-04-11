@@ -1,7 +1,5 @@
 import discord
-import asyncio
 from utilities import colors
-import sqlite3 
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
@@ -34,7 +32,7 @@ async def premium_colors(interaction, values):
     guild = interaction.guild
     premium_role = discord.utils.get(guild.roles, id=premium_role_id)
     try:
-        if not premium_role in user.roles:
+        if premium_role not in user.roles:
             embed1 = discord.Embed(title="", color=colors.error)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
             embed2 = discord.Embed(title="Missing Premium", description="These colors are for premium members only. please join the premium membership first.\n\n-> **[Premium Info](https://discord.com/channels/1349136661971206268/1350270161000599612)**", color=colors.error)

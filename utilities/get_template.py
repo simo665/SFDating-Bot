@@ -1,7 +1,5 @@
 import discord
 from datetime import datetime
-import discord
-from datetime import datetime
 import time
 from utilities.components_callback import DropDownSelect, CustomButton 
 import os
@@ -79,7 +77,7 @@ def get_message_from_template(template_name, variables = {}):
         raise ValueError(f"{template_name} doesn't not exists in messages templates.")
         
     template = {}
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         template = json.load(f)
     
     if not template:
@@ -94,10 +92,10 @@ def convert_to_message(template, variables={}):
     content = ""
     embeds = []
     # check if there's a text content 
-    if "content" in template and template["content"] != None:
+    if "content" in template and template["content"] is not None:
         content = template.get("content", " ").format(**variables)
     # check for embeds 
-    if "embeds" in template and template["embeds"] != None:
+    if "embeds" in template and template["embeds"] is not None:
         for embed in template["embeds"]:
             discord_embed = discord.Embed(
                 title = content_format(embed.get("title", "")).format(**variables),
@@ -105,14 +103,14 @@ def convert_to_message(template, variables={}):
                 color = int(embed.get("color", "#ff4af0").lstrip("#"), 16) if not isinstance(embed.get("color", "#ff4af0"), int) else embed.get("color", "#ff4af0")
             )
             # add author
-            if "author" in embed and embed["author"] != None:
+            if "author" in embed and embed["author"] is not None:
                 discord_embed.set_author(
                     name = content_format(embed["author"].get("name", "")).format(**variables), 
                     url = embed["author"].get("url", "").format(**variables), 
                     icon_url = embed["author"].get("icon_url", "").format(**variables)
                 )
             # add fields
-            if "fields" in embed and embed["fields"] != None:
+            if "fields" in embed and embed["fields"] is not None:
                 for field in embed["fields"]:
                     discord_embed.add_field(
                         name=content_format(field.get("name", "")).format(**variables),
@@ -120,23 +118,23 @@ def convert_to_message(template, variables={}):
                         inline=field.get("inline", False)
                     )
             # add thumbnail
-            if "thumbnail" in embed and embed["thumbnail"] != None:
+            if "thumbnail" in embed and embed["thumbnail"] is not None:
                 thumbnail = embed["thumbnail"]
                 thumbnail_url = thumbnail.get("url", "") if isinstance(thumbnail, dict) else thumbnail
                 discord_embed.set_thumbnail(url=thumbnail_url.format(**variables))
             # add image 
-            if "image" in embed and embed["image"] != None:
+            if "image" in embed and embed["image"] is not None:
                 image = embed["image"]
                 image_url = image.get("url", "") if isinstance(image, dict) else image
                 discord_embed.set_image(url=image_url.format(**variables))
             # add footer
-            if "footer" in embed and embed["footer"] != None:
+            if "footer" in embed and embed["footer"] is not None:
                 discord_embed.set_footer(
                     text=content_format(embed["footer"].get("text", "")).format(**variables), 
                     icon_url=embed["footer"].get("icon_url", "").format(**variables)
                 )
             # add timestamp
-            if "timestamp" in embed and embed["timestamp"] != None:
+            if "timestamp" in embed and embed["timestamp"] is not None:
                 discord_embed.set_footer(text=discord_embed.footer.text, icon_url=discord_embed.footer.icon_url)  # Ensure the footer is set
                 timestamp = embed.get("timestamp", None)
                 if timestamp == "{timestamp}":
@@ -149,7 +147,7 @@ def convert_to_message(template, variables={}):
         
         # Add components 
         view = None
-        if "components" in template and template["components"] != None:
+        if "components" in template and template["components"] is not None:
             view = PersistentView(template["components"])
             
     return {"content": content, "embeds": embeds, "view": view}

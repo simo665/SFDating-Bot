@@ -3,59 +3,42 @@ from discord.ext import commands
 from discord import app_commands
 from errors.error_logger import error_send 
 from utilities import Permissions
-import sqlite3
+from utilities.database import Database
 from typing import List
-import json 
 
 class Thread(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
         self.thread_channels = {}
-        self.conn = sqlite3.connect("database/data.db")
-        self._modtable_()
+        self.db = Database()
+        self.bot.loop.create_task(self._modtable_())
         
-    def _modtable_(self):
-        cur = self.conn.cursor()
-        try:
-            cur.execute("""CREATE TABLE IF NOT EXISTS threading(
-                guild_id INTEGER PRIMARY KEY,
-                thread_channel TEXT
-            )""")
-            self.conn.commit()
-        finally:
-            cur.close()
+    async def cog_unload(self):
+        """No cleanup needed as Database class manages its own connections"""
+        pass
+        
+    async def _modtable_(self):
+        """Initialize the database table for threading"""
+        await self.db.create_table("threading", """
+            guild_id INTEGER PRIMARY KEY,
+            thread_channel TEXT
+        """)
 
     # auto threading 
-    def save_thread_channels(self, guild_id):
-        cur = self.conn.cursor()
-        try:
-            thread_channels = json.dumps(self.thread_channels.get(str(guild_id), {}))
-            cur.execute("""
-                INSERT INTO threading (guild_id, thread_channel) 
-                VALUES (?, ?) 
-                ON CONFLICT(guild_id) DO UPDATE SET thread_channel = excluded.thread_channel
-            """, (guild_id, thread_channels))
-            self.conn.commit()
-        finally:
-            cur.close()
+    async def save_thread_channels(self, guild_id):
+        """Save thread channel configuration to database"""
+        await self.db.json_set(
+            "threading", 
+            "guild_id", 
+            guild_id, 
+            "thread_channel", 
+            self.thread_channels.get(str(guild_id), {})
+        )
             
-    def get_auto_thread_channels(self, guild_id):
-        cur = self.conn.cursor()
-        try:
-            cur.execute("""
-                SELECT thread_channel FROM threading
-                WHERE guild_id = ?
-            """, (guild_id,)
-            )
-            result = cur.fetchone()
-            
-            if result and result[0]:
-                self.thread_channels[str(guild_id)] = json.loads(result[0]) 
-            else:
-                self.thread_channels[str(guild_id)] = {}  
-                
-        finally:
-            cur.close()
+    async def get_auto_thread_channels(self, guild_id):
+        """Get thread channel configuration from database"""
+        thread_channels = await self.db.get_auto_thread_channels(guild_id)
+        self.thread_channels[str(guild_id)] = thread_channels
     
     async def check_perm(self, interaction, user_perms: List, bot_perms: List, target: discord.Member = None):
         permissions = Permissions(interaction)
@@ -70,19 +53,19 @@ class Thread(commands.Cog):
             if not authorized:
                 return 
             
-            self.get_auto_thread_channels(interaction.guild.id)
+            await self.get_auto_thread_channels(interaction.guild.id)
             thread_channel_config = {
                 "name": thread_name,
                 "first_message": first_message,
                 "media_only": media_only
             }
-            if not str(interaction.guild.id) in self.thread_channels:
+            if str(interaction.guild.id) not in self.thread_channels:
                 self.thread_channels[str(interaction.guild.id)] = {}
             self.thread_channels[str(interaction.guild.id)][str(channel.id)] = thread_channel_config
-            self.save_thread_channels(interaction.guild.id)
+            await self.save_thread_channels(interaction.guild.id)
             await interaction.response.send_message(f"Auto-threading set up in {channel.mention} Successfully!")
             
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
             
     @thread.command(name="remove", description="Remove a thread for every message automatically.")
@@ -91,7 +74,7 @@ class Thread(commands.Cog):
             authorized = await self.check_perm(interaction, ["administrator"], ["create_public_threads"])
             if not authorized:
                 return 
-            self.get_auto_thread_channels(interaction.guild.id)
+            await self.get_auto_thread_channels(interaction.guild.id)
             # Check if the channel exists in the stored thread channels
             guild_id = str(interaction.guild.id)
             if guild_id not in self.thread_channels or not self.thread_channels[guild_id]:
@@ -102,14 +85,14 @@ class Thread(commands.Cog):
                     description=f"There is no auto-threading set up for {channel.mention}.", 
                     color=0xef214e
                 )
-                response = await interaction.followup.send(embed=no_thread_embed)
+                await interaction.followup.send(embed=no_thread_embed)
                 return
             # Remove the channel from the thread configuration
             del self.thread_channels[guild_id][str(channel.id)]
-            self.save_thread_channels(interaction.guild.id)
+            await self.save_thread_channels(interaction.guild.id)
             # Confirmation message
             await interaction.response.send_message(f"Auto-threading has been removed for {channel.mention} successfully!")
-        except Exception as e:
+        except Exception:
             await error_send(interaction)
     
     @commands.Cog.listener()
@@ -122,14 +105,14 @@ class Thread(commands.Cog):
         
         # Check if message starts with any of the prefixes
         if isinstance(prefixes, str):
-            prefixes = [prefixes]  # Convert single prefix to a list
+            prefixes = [prefixes] 
         
         if any(message.content.startswith(prefix) for prefix in prefixes):
             await message.delete()
             
         guild_id = str(message.guild.id)
         try:
-            self.get_auto_thread_channels(message.guild.id)
+            await self.get_auto_thread_channels(message.guild.id)
             if guild_id not in self.thread_channels or not self.thread_channels[guild_id]:
                 return
             if str(message.channel.id) not in self.thread_channels[guild_id]:
@@ -140,14 +123,14 @@ class Thread(commands.Cog):
             if media_only:
                 if not message.attachments:
                     await message.delete()
-                    await message.channel.send(f"{message.author.mention} This channel is fot media only, no text messages. Talk in the thread instead!", delete_after=8)
+                    await message.channel.send(f"{message.author.mention} This channel is for media only, no text messages. Talk in the thread instead!", delete_after=8)
                     return 
             thread = await message.create_thread(
                 name=thread_name if thread_name else "Public Thread", 
             )
             if first_message:
                 await thread.send(first_message)
-        except Exception as e:
+        except Exception:
             await error_send()
 
 async def setup(bot):

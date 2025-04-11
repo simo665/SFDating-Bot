@@ -1,63 +1,48 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-import sqlite3
 import time
-import os
-import json
 from utilities import colors
+from utilities.database import Database
 
 
 
 class StickMessage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.conn = sqlite3.connect("database/data.db")
+        self.db = Database()
         self.stick_msgs = {}
         self.last_message_time = {}
 
         # Initialize database table
-        self._initialize_database()
+        self.bot.loop.create_task(self._initialize_database())
 
     # Database initialization
-    def _initialize_database(self):
-        cursor = self.conn.cursor()
-        try:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS stick_messages(
-                    guild_id INTEGER PRIMARY KEY,
-                    stick_messages TEXT
-                )
-            """)
-            self.conn.commit()
-        finally:
-            cursor.close()
+    async def _initialize_database(self):
+        await self.db.create_table("stick_messages", """
+            guild_id INTEGER PRIMARY KEY,
+            stick_messages TEXT
+        """)
 
     # Save stick messages to the database
-    def _save_to_db(self, guild_id):
-        cursor = self.conn.cursor()
-        try:
-            stick_messages_json = json.dumps(self.stick_msgs)
-            cursor.execute("""
-                INSERT OR REPLACE INTO stick_messages(guild_id, stick_messages)
-                VALUES (?, ?)
-            """, (guild_id, stick_messages_json))
-            self.conn.commit()
-        finally:
-            cursor.close()
+    async def _save_to_db(self, guild_id):
+        await self.db.json_set(
+            "stick_messages", 
+            "guild_id", 
+            guild_id, 
+            "stick_messages", 
+            self.stick_msgs
+        )
 
     # Load stick messages from the database
-    def _load_from_db(self, guild_id):
-        cursor = self.conn.cursor()
-        try:
-            cursor.execute("SELECT stick_messages FROM stick_messages WHERE guild_id = ?", (guild_id,))
-            result = cursor.fetchone()
-            if result:
-                self.stick_msgs = json.loads(result[0])
-            else:
-                self.stick_msgs = {}
-        finally:
-            cursor.close()
+    async def _load_from_db(self, guild_id):
+        data = await self.db.json_get(
+            "stick_messages", 
+            "guild_id", 
+            guild_id, 
+            "stick_messages"
+        )
+        self.stick_msgs = data or {}
 
     # Check if a channel is on cooldown
     def _is_on_cooldown(self, channel_id):
@@ -69,7 +54,7 @@ class StickMessage(commands.Cog):
     # Fetch the last bot message in the channel with the stick message content
     async def _get_last_bot_message(self, channel, stick_message):
         async for message in channel.history(limit=15):
-            if message.author.id == self.bot.user.id and stick_message in message.embeds[0].description:
+            if message.author.id == self.bot.user.id and message.embeds and stick_message in message.embeds[0].description:
                 return message
         return None
 
@@ -81,7 +66,7 @@ class StickMessage(commands.Cog):
 
         guild_id = message.guild.id
         channel_id = message.channel.id
-        self._load_from_db(guild_id)
+        await self._load_from_db(guild_id)
 
         # Ignore channels without a stick message or if the channel is on cooldown
         if str(channel_id) not in self.stick_msgs or self._is_on_cooldown(channel_id):
@@ -113,11 +98,11 @@ class StickMessage(commands.Cog):
             return
 
         guild_id = channel.guild.id
-        self._load_from_db(guild_id)
+        await self._load_from_db(guild_id)
 
         # Set the stick message
         self.stick_msgs[str(channel.id)] = message
-        self._save_to_db(guild_id)
+        await self._save_to_db(guild_id)
 
         # Send the stick message to the channel
         embed = discord.Embed(description=message, color=colors.primary)
@@ -134,7 +119,7 @@ class StickMessage(commands.Cog):
             return
 
         guild_id = channel.guild.id
-        self._load_from_db(guild_id)
+        await self._load_from_db(guild_id)
 
         if str(channel.id) in self.stick_msgs:
             stick_msg = self.stick_msgs[str(channel.id)]
@@ -145,7 +130,7 @@ class StickMessage(commands.Cog):
                 await last_stick_message.delete()
 
             del self.stick_msgs[str(channel.id)]
-            self._save_to_db(guild_id)
+            await self._save_to_db(guild_id)
             await interaction.followup.send(f"Stick message in {channel.mention} has been removed successfully!", ephemeral=True)
         else:
             await interaction.followup.send(f"No stick message found in {channel.mention}.", ephemeral=True)

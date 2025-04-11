@@ -10,10 +10,10 @@ from utilities import get_message_from_template, get_emojis_variables
 CONFIG_FILE = 'boosters_config.json'
 
 def load_config():
-    return json.load(open(CONFIG_FILE)) if os.path.exists(CONFIG_FILE) else {}
+    return json.load(open(CONFIG_FILE, encoding="utf-8")) if os.path.exists(CONFIG_FILE) else {}
 
 def save_config(config):
-    with open(CONFIG_FILE, 'w') as f:
+    with open(CONFIG_FILE, 'w', encoding="utf-8") as f:
         json.dump(config, f, indent=4)
 
 class BoostersView(discord.ui.View):
@@ -176,24 +176,33 @@ class Boosters(commands.Cog):
 
     async def update_board(self, guild):
         """Update existing boosters board message"""
-        config = self.config.get(str(guild.id))
-        if not config or not config.get('message_id'):
-            return
-        
-        channel = guild.get_channel(config['channel_id'])
-        if not channel:
-            return
         try:
-            message = await channel.fetch_message(config['message_id'])
-            embeds = await self.build_embeds(str(guild.id))
-            # Update message with fresh data
-            view = BoostersView(self.bot, guild.id)
-            view.embeds = embeds
-            await message.edit(embed=embeds[0], view=view)
-        except discord.NotFound:
-            pass
+            config = self.config.get(str(guild.id), {})
+            if not config or not config.get('message_id'):
+                return
+            
+            channel = guild.get_channel(config['channel_id'])
+            if not channel:
+                print(f"Warning: Channel with ID {config['channel_id']} not found in guild {guild.name}")
+                return
+                
+            try:
+                message = await channel.fetch_message(config['message_id'])
+                embeds = await self.build_embeds(str(guild.id))
+                view = BoostersView(self.bot, guild.id)
+                view.embeds = embeds
+                await message.edit(embed=embeds[0], view=view)
+            except discord.NotFound:
+                print(f"Warning: Message {config['message_id']} not found in channel {channel.name}")
+                pass
+            except discord.Forbidden:
+                print(f"Missing permission to access message in channel {channel.name} for guild {guild.name}")
+                pass
+            except Exception as e:
+                print(f"Error updating booster board in {guild.name}: {str(e)}")
+                await error_send()
         except Exception as e:
-            await error_send()
+            print(f"Error in update_board for {guild.name if guild else 'unknown guild'}: {str(e)}")
 
 async def setup(bot):
     # Ensure required intents are enabled

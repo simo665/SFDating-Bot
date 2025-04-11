@@ -1,7 +1,5 @@
 import discord
-import asyncio
 from utilities import colors
-import sqlite3 
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
@@ -31,7 +29,7 @@ async def boosters_colors(interaction, values):
     guild = interaction.guild
     boosters_role = discord.utils.get(guild.roles, id=boosters_role_id)
     try:
-        if not boosters_role in user.roles:
+        if not boosters_role in user.roles:  # noqa: E713
             embed1 = discord.Embed(title="", color=colors.error)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
             embed2 = discord.Embed(title="Missing Boost role", description="These colors are for boosters members only. please boost the server first.\n\n-> **[How do i boost a server?](https://support.discord.com/hc/en-us/articles/360028038352#h_01HGX7DJ331AJ25MPQRD6R83KJ)**", color=colors.error)

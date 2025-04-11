@@ -45,21 +45,23 @@ class BoostersView(discord.ui.View):
             embed=self.embeds[self.current_page],
             view=self
         )
-
     @discord.ui.button(label="⬅️ Previous", style=discord.ButtonStyle.secondary, custom_id="prev")
     async def previous(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.current_page > 0:
             self.current_page -= 1
             await self.update_message(interaction)
-        await interaction.response.send_message("There's no more embeds message duh 🙄 ", ephemeral=True)
+        else:
+            await interaction.response.send_message("There's no more embeds message duh 🙄 ", ephemeral=True)
 
     @discord.ui.button(label="➡️ Next", style=discord.ButtonStyle.secondary, custom_id="next")
     async def next(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.current_page < len(self.embeds) - 1:
             self.current_page += 1
             await self.update_message(interaction)
-        await interaction.response.send_message("This is the final embed duh 🙄", ephemeral=True)
-        
+        else:
+            await interaction.response.send_message("This is the final embed duh 🙄", ephemeral=True)
+
+
 
 class Boosters(commands.Cog):
     def __init__(self, bot):
@@ -145,16 +147,30 @@ class Boosters(commands.Cog):
         members = [f"<a:PinkHearts:1359829058942144594>・ {m.display_name} <a:redglassheart:1359831104995070183>" for m in role.members] or ["No boosters"]
         
         # Split into pages
-        pages = [members[i:i+10] for i in range(0, len(members), 10)]
+        max_m = 25
+        pages = [members[i:i+max_m] for i in range(0, len(members), max_m)]
         
         # Create embeds
         embeds = []
         variables = get_emojis_variables()
         data = get_message_from_template("boosters_bored", variables)
         for idx, page in enumerate(pages):
-            embed = data["embeds"][1]
-            embed.description = "\n".join(page)
+            # Create a new embed for each page
+            template_embed = data["embeds"][1]
+            embed = discord.Embed(
+                title=template_embed.title,
+                description="\n".join(page),
+                color=template_embed.color
+            )
             embed.set_footer(text=f"Page {idx+1}/{len(pages)}")
+            # Copy other attributes if present (author, thumbnail, etc.)
+            if template_embed.author:
+                embed.set_author(name=template_embed.author.name, icon_url=template_embed.author.icon_url)
+            if template_embed.thumbnail:
+                embed.set_thumbnail(url=template_embed.thumbnail.url)
+            # Add fields if needed
+            for field in template_embed.fields:
+                embed.add_field(name=field.name, value=field.value, inline=field.inline)
             embeds.append(embed)
         return embeds
         
@@ -173,9 +189,9 @@ class Boosters(commands.Cog):
         # Check if booster role changed
         if (role in before.roles) != (role in after.roles):
             await self.update_board(after.guild)
-
+            
     async def update_board(self, guild):
-        """Update existing boosters board message"""
+        """Update existing boosters board message while preserving pagination state"""
         config = self.config.get(str(guild.id))
         if not config or not config.get('message_id'):
             return
@@ -186,14 +202,24 @@ class Boosters(commands.Cog):
         try:
             message = await channel.fetch_message(config['message_id'])
             embeds = await self.build_embeds(str(guild.id))
-            # Update message with fresh data
+            
+            # Get current page from existing embed footer
+            current_page = 0
+            if message.embeds and message.embeds[0].footer.text:
+                footer_text = message.embeds[0].footer.text
+                if 'Page' in footer_text:
+                    current_page = int(footer_text.split('Page ')[1].split('/')[0]) - 1  # Convert to 0-based index
+                    current_page = min(current_page, len(embeds) - 1)  # Clamp to valid range
+            print(current_page)
             view = BoostersView(self.bot, guild.id)
             view.embeds = embeds
-            await message.edit(embed=embeds[0], view=view)
+            view.current_page = current_page  # Preserve pagination state
+            await message.edit(embed=embeds[current_page], view=view)
         except discord.NotFound:
             pass
         except Exception as e:
             await error_send()
+    
 
 async def setup(bot):
     # Ensure required intents are enabled

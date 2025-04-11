@@ -268,7 +268,7 @@ class MatchSySystems(commands.Cog):
                     "<:warn:1359816466513526885> Warning!\n> This member is not verified, and there's a high risk they may be a catfisher or underage. ⚠️\n> We recommend requesting proof to verify their identity if you're going to hit them up." if not is_verified else "✅ This member is verified!"
                 ]
                 embed = discord.Embed(
-                    title="<a:Heartspin:1353727321508679692> Found a Match!",
+                    title="<a:Heartspin:1359829315633680497> Found a Match!",
                     description="".join(results),
                     color=colors.primary
                 )

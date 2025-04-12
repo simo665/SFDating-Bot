@@ -6,13 +6,16 @@ import math
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 from utilities.database import Database
+from utilities.variables import get_emojis_variables
+from utilities import colors
+from errors.error_logger import error_send
 
 class LevelingSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db = Database()
         self.xp_cooldown: Dict[int, datetime] = {}
-        self.cooldown_time = 60
+        self.cooldown_time = 45
         self.min_xp = 15
         self.max_xp = 25
         self.bot.loop.create_task(self._init_db())
@@ -185,12 +188,20 @@ class LevelingSystem(commands.Cog):
         )
         
         try:
+            emoji_vars = get_emojis_variables()
+            embed = discord.Embed(
+                title="{HeartPopUp} You levelled up!".format(**emoji_vars),
+                description=formatted_message,
+                color=colors.primary
+            )
+            rand_emoji = random.choice(["<a:HeartPopUp:1359829671503466536>", "<a:Heartribbon:1359828243947061339>", "<a:LikeHeart:1359823755307778189>"])
             if channel_id:
                 channel = guild.get_channel(channel_id)
                 if channel and channel.permissions_for(guild.me).send_messages:
-                    await channel.send(formatted_message)
+                    await channel.send(content=f"{rand_emoji} {user.mention} {rand_emoji}",embed=embed)
             else:
-                await user.send(f"**{guild.name}**: {formatted_message}")
+                embed.set_footer(text="Sent from SFDating Server")
+                await user.send(embed=embed)
         except discord.Forbidden:
             pass
     
@@ -325,42 +336,46 @@ class LevelingSystem(commands.Cog):
         interaction: discord.Interaction,
         user: Optional[discord.Member] = None
     ):
-        """Check the rank of yourself or another user"""
-        if not user:
-            user = interaction.user
-        
-        guild_id = interaction.guild.id
-        level, xp, rank = await self._get_user_level(user.id, guild_id)
-        
-        next_level_xp = self._calculate_xp_for_level(level + 1)
-        current_level_xp = self._calculate_xp_for_level(level)
-        xp_needed = next_level_xp - current_level_xp
-        xp_progress = xp - current_level_xp
-        progress_percentage = int((xp_progress / xp_needed) * 100) if xp_needed > 0 else 100
-        
-        filled = int(progress_percentage / 10)
-        progress_bar = "⋆" + "•" * filled + "⋅" * (10 - filled) + "⋆"
-        
-        embed = discord.Embed(
-            title=f"{user.display_name}'s Level",
-            color=0xff4af0
-        )
-        
-        embed.set_thumbnail(url=user.display_avatar.url)
-        embed.add_field(name="Level", value=str(level), inline=True)
-        embed.add_field(name="Total XP", value=str(xp), inline=True)
-        embed.add_field(name="Rank", value=f"#{rank}" if rank else "Unranked", inline=True)
-
-        embed.add_field(
-            name=f"Progress to Level {level + 1}",
-            value=f"{progress_bar} {progress_percentage}%\n{xp_progress}/{xp_needed} XP",
-            inline=False
-        )
-        
-        embed.set_footer(text="⋆₊˚ XP is earned by chatting in the server ⋆₊˚")
-        
-        await interaction.response.send_message(embed=embed)
+        try:
+            """Check the rank of yourself or another user"""
+            if not user:
+                user = interaction.user
+            
+            guild_id = interaction.guild.id
+            level, xp, rank = await self._get_user_level(user.id, guild_id)
+            
+            next_level_xp = self._calculate_xp_for_level(level + 1)
+            current_level_xp = self._calculate_xp_for_level(level)
+            xp_needed = next_level_xp - current_level_xp
+            xp_progress = xp - current_level_xp
+            progress_percentage = int((xp_progress / xp_needed) * 100) if xp_needed > 0 else 100
+            
+            filled = int(progress_percentage / 10)
+            progress_bar = "⋆" + "•" * filled + "⋅" * (10 - filled) + "⋆"
+            
+            var_e = get_emojis_variables()
+            embed = discord.Embed(
+                title=f"{user.display_name}'s Level",
+                color=colors.primary
+            )
+            
+            embed.set_thumbnail(url=user.display_avatar.url)
+            embed.description = f"{var_e['level']} **Level:** {str(level)}"
+            embed.description += f"\n{var_e['xp']} **Total XP:** {str(xp)}"
+            embed.description += f"\n{var_e['rank']} **Rank:** #{rank}" if rank else "Unranked"
     
+            embed.add_field(
+                name=f"{var_e["HeartPopUp"]} Progress to Level {level + 1}",
+                value=f"> {progress_bar} {progress_percentage}%\n> {xp_progress}/{xp_needed} XP",
+                inline=False
+            )
+            
+            embed.set_footer(text="⋆₊˚ XP is earned by chatting in the server ⋆₊˚")
+            
+            await interaction.response.send_message(embed=embed)
+        except Exception:
+            await error_send(interaction)
+        
     @level.command(name="leaderboard", description="View the server's XP leaderboard")
     async def view_leaderboard(self, interaction: discord.Interaction, page: int = 1):
         """View the server's XP leaderboard"""
@@ -383,7 +398,7 @@ class LevelingSystem(commands.Cog):
             embed = discord.Embed(
                 title="XP Leaderboard",
                 description="No one has earned XP yet!",
-                color=0xff4af0
+                color=colors.primary
             )
             await interaction.response.send_message(embed=embed)
             return

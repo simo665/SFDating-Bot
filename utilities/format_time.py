@@ -1,29 +1,33 @@
+import datetime
 from datetime import timedelta
 
-def format_time(seconds: int) -> str:
-    # Create a timedelta object from the seconds
-    delta = timedelta(seconds=seconds)
 
-    # Extract days, hours, minutes, and seconds
+
+def format_time(input_time) -> str:
+    if isinstance(input_time, int):
+        delta = timedelta(seconds=input_time)
+    elif isinstance(input_time, timedelta):
+        delta = input_time
+    else:
+        raise TypeError("Input must be either an integer (seconds) or a timedelta object.")
+
     days = delta.days
     hours, remainder = divmod(delta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
 
-    # Build the readable string
-    parts = []
-    if days > 0:
-        parts.append(f"{days} day{'s' if days != 1 else ''}")
-    if hours > 0:
-        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
-    if minutes > 0:
-        parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
-    if seconds > 0:
-        parts.append(f"{seconds} second{'s' if seconds != 1 else ''}")
+    time_part = f"{hours:02}:{minutes:02}:{seconds:02}"
+    return f"{days} days, {time_part}" if days else time_part
 
-    # Join the parts with commas and "and" for the last part
-    if len(parts) > 1:
-        readable_time = ", ".join(parts[:-1]) + f" and {parts[-1]}"
-    else:
-        readable_time = parts[0] if parts else "0 seconds"
+def get_account_age(created_at):
+    created_at_naive = created_at.replace(tzinfo=None)
+    now = datetime.datetime.utcnow()
+    delta = now - created_at_naive
 
-    return readable_time
+    # Convert the time difference into days, hours, and minutes
+    days = delta.days
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    # Format it into a readable string
+    time_string = f"{days} days, {hours}:{minutes}"
+    return time_string

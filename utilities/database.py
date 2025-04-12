@@ -16,7 +16,7 @@ class Database:
             cls._instance = super().__new__(cls)
         return cls._instance
     
-    def __init__(self, db_path: str = "database/data.db", **kwargs):
+    def __init__(self, db_path: str = "database/data2.db", **kwargs):
         """Initialize the database connection"""
         if self._initialized:
             return

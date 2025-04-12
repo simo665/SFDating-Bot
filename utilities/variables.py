@@ -72,7 +72,10 @@ def get_emojis_variables():
         "Heartribbon": "<a:Heartribbon:1359828243947061339>",
         "Heartspin": "<a:Heartspin:1359829315633680497>",
         "FoxHi": "<a:FoxHi:1359830431771398154>",
-        "Crown": "<a:Crown:1359833023373115514>"
+        "Crown": "<a:Crown:1359833023373115514>",
+        "level": "<:level:1360397834419175505>",
+        "rank": "<:rank:1360397817373261864>",
+        "xp": "<:xp:1360397798184452465>",
     }
 
 def get_all_variables(member, guild, moderator):

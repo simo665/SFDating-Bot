@@ -7,7 +7,7 @@ from .variables import get_member_variables, get_server_variables, get_moderator
 from .logging_handler import send_log
 from .user_notif import send_notif
 from .get_perm_link import get_link
-from .format_time import format_time
+from .format_time import format_time, get_account_age
 from .engaging_response import responses 
 from .database import Database
 from .roles_change import replace_roles
@@ -17,5 +17,5 @@ __all__ = [
     "PersistentView", "DropDownSelect", "CustomButton", "get_member_variables", "get_emojis_variables",
     "get_server_variables", "get_moderator_variables", "get_all_variables", 
     "send_notif", "get_link", "format_time", "responses", "get_message_from_dict", "Database",
-    "replace_roles", "send_log"
+    "replace_roles", "send_log", "get_account_age"
 ]

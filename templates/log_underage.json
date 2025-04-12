@@ -1,0 +1,29 @@
+{
+ "embeds": [
+  {
+   "title": "Underage Banned (AutoMod)",
+   "color": "#ff0000",
+   "fields": [
+    {
+     "name": "{emoji_member} Member",
+     "value": [
+      "> {emoji_member} **Member:** {membermention}",
+      "> {emoji_id} **Id:** {memberid}",
+      "> {emoji_reason} **Reason:** {reason}"
+     ],
+     "inline": false
+    }
+   ],
+   "timestamp": "{timestamp}",
+   "author": {
+    "name": "{memberdisplayname}",
+    "url": "",
+    "icon_url": "{memberavatarurl}"
+   },
+   "thumbnail": {
+    "url": "{memberavatarurl}"
+   }
+  }
+ ],
+ "components": []
+}

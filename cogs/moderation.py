@@ -1,7 +1,7 @@
 import discord 
 from discord import app_commands
 from discord.ext import commands 
-from utilities import Permissions, colors, get_all_variables
+from utilities import Permissions, colors, get_all_variables, get_emojis_variables, get_message_from_template
 from utilities import send_log, send_notif, get_link, format_time
 import asyncio
 from errors.error_logger import error_send
@@ -11,7 +11,72 @@ import datetime
 import time
 
 
+class ServerLinkView(discord.ui.View):
+    def __init__(self, guild_name, channel_link):
+        super().__init__(timeout=None)
+        self.add_item(discord.ui.Button(
+            label=f"Sent from {guild_name}", 
+            url=channel_link, 
+            style=discord.ButtonStyle.link
+        ))
+  
+class ReportActionView(discord.ui.View):
+    def __init__(self, bot, target: discord.Member, reporter: discord.User, timeout=None):
+        super().__init__(timeout=timeout)
+        self.bot = bot
+        self.target = target
+        self.reporter = reporter
+        
+        self.link_view = ServerLinkView(target.guild.name, f"https://discord.com/channels/{target.guild.id}")
+        self.response_embed = discord.Embed(title="Report Received – Thank You for Your Support", description="Thank you for your report. Our team has reviewed it and is taking the appropriate action. While we cannot disclose specific details regarding the outcome, we truly appreciate your effort in helping us maintain a safe and respectful community by reporting rule violations.", color=colors.primary)
+        self.response_embed.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport5.png")
+        self.response_embed.set_author(name=target.guild.name, url=f"https://discord.com/channels/{target.guild.id}", icon_url=target.guild.icon.url if target.guild.icon else None)
+     
+    
+    async def disable(self, interaction):
+        for child in self.children:
+            if isinstance(child, discord.ui.Button):
+                child.disabled = True
+        embed = interaction.message.embeds[0]
+        embed.color = colors.green
+        await interaction.message.edit(embed=embed, view=self)
 
+
+    @discord.ui.button(label="Warn and timeout", style=discord.ButtonStyle.primary, custom_id="report_timeout")
+    async def timeout_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            await interaction.response.send_message(f"**Click: </warn add:1361075068939276532>**", ephemeral=True)
+            await self.reporter.send(embed=self.response_embed, view=self.link_view)
+            await self.disable(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to timeout: {e}", ephemeral=True)
+
+    @discord.ui.button(label="Kick", style=discord.ButtonStyle.danger, custom_id="report_kick")
+    async def kick_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            await interaction.response.send_message(f"**Click </kick:678344927997853742>**", ephemeral=True)
+            await self.reporter.send(embed=self.response_embed, view=self.link_view)
+            await self.disable(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to kick: {e}", ephemeral=True)
+
+    @discord.ui.button(label="Ban", style=discord.ButtonStyle.danger, custom_id="report_ban")
+    async def ban_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            await interaction.response.send_message(f"**Click </ban:1350827584488869971>**", ephemeral=True)
+            await self.reporter.send(embed=self.response_embed, view=self.link_view)
+            await self.disable(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"Failed to ban: {e}", ephemeral=True)
+
+    @discord.ui.button(label="Pass", style=discord.ButtonStyle.secondary, custom_id="report_respond")
+    async def respond_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            await interaction.response.send_message("Responded to the reporter.", ephemeral=True)
+            await self.reporter.send(embed=self.response_embed, view=self.link_view)
+            await self.disable(interaction)
+        except Exception as e:
+            await interaction.response.send_message(f"Could not message reporter: {e}", ephemeral=True)
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -19,6 +84,7 @@ class Moderation(commands.Cog):
         self.delete_delay = 5
         self.conn = sqlite3.connect("database/data.db")
         self.create_table()
+        self.reports_channel_id = 1361091376162410547
         
     def create_table(self):
         cur = self.conn.cursor()
@@ -396,7 +462,7 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
     warn_group = app_commands.Group(name="warn", description="Warn/Unwarn a member with timeout if needed.")
     @warn_group.command(name="add", description="Add a warning to a member.")
     @app_commands.choices(timeout=[
-        app_commands.Choice(name="No timeout needed.", value=300),
+        app_commands.Choice(name="No timeout needed.", value=0),
         app_commands.Choice(name="5 minute", value=300),
         app_commands.Choice(name="10 minutes", value=600),
         app_commands.Choice(name="1 hour", value=3600),
@@ -413,6 +479,7 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
         app_commands.Choice(name="20 days", value=1728000),
         app_commands.Choice(name="30 days", value=2419200)
     ])
+    @app_commands.describe(member="Target member.", timeout="Add a timeout to member.", reason="For what reason are they getting warned?", proof="Attach screenshots as proof.")
     async def warn(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
         try:
             await interaction.response.defer()
@@ -446,7 +513,8 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
                     break 
             
             # apply timeout
-            await member.timeout(datetime.timedelta(seconds=timeout.value), reason=reason)
+            if timeout.value != 0:
+                await member.timeout(datetime.timedelta(seconds=timeout.value), reason=reason)
             
             # respond to user
             warns_left = 3 - warns_number
@@ -646,6 +714,52 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
         except Exception:
             await error_send(interaction)
     
+    
+    #  _______________________ Verification Commands  _______________________
+    @app_commands.command(name="report", description="Quick report a user.")
+    @app_commands.describe(member="The target member you want to report.", reason="What did they do?", proof="Upload a screenshot of what they did.", message_link="Link of the message. (hold click on the message then copy link.)")
+    async def quick_report(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment, message_link: str = None):
+        try:
+            await interaction.response.defer(ephemeral=True)
+            reporter = interaction.user
+            
+            if reporter == member:
+                await interaction.followup.send("Why would you report yourself? 😭🙏")
+                return 
+            
+            if member.id == self.bot.user.id:
+                await interaction.followup.send("Nice try bit I'm the dominant here 😏 you cannot report ne sweetie.")
+                return 
+            
+            if member.bot:
+                await interaction.followup.send("You cannot report a bot 😔")
+                return 
+            
+            channel = self.bot.get_channel(self.reports_channel_id)
+            if not channel:
+                await interaction.followup.send("Opps, haha do sorry 😅 there's a technical issue, please reach the support through support channel in the server.")
+                return 
+            
+            var = get_all_variables(member, interaction.guild, reporter)
+            var.update({"reason": reason})
+            var.update({"proof_url": proof.url})
+            var.update({"message_link": message_link if message_link else "Not provided"})
+            message_data = get_message_from_template("notif_report", var)
+            view = ReportActionView(self.bot, member, reporter)
+            await channel.send(content=message_data["content"], embeds=message_data["embeds"], view=view)
+            
+            response_embed = discord.Embed(
+                title="Reported successfully!",
+                description=(
+                    "Thank you for your report. Our moderation team has received the details and will review the situation and responsd shortly.\n\n"
+                    "Please avoid engaging further with the reported user while we investigate. Your safety and the community’s well-being are our priority."
+                ),
+                color=colors.green
+            )
+            response_embed.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport4.png")
+            await interaction.followup.send(embed=response_embed, ephemeral=True)
+        except Exception:
+            await error_send(interaction)
 
 
 async def setup(bot):

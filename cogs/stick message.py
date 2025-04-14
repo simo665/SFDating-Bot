@@ -48,7 +48,7 @@ class StickMessage(commands.Cog):
     def _is_on_cooldown(self, channel_id):
         current_time = time.time()
         last_time = self.last_message_time.get(channel_id, 0)
-        cooldown_duration = 2  # seconds
+        cooldown_duration = 3
         return (current_time - last_time) < cooldown_duration
 
     # Fetch the last bot message in the channel with the stick message content
@@ -61,9 +61,9 @@ class StickMessage(commands.Cog):
     # Process stick messages when a new message is sent
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot or message.guild is None:
-            return
-
+        if message.guild is None:
+            return 
+        
         guild_id = message.guild.id
         channel_id = message.channel.id
         await self._load_from_db(guild_id)
@@ -75,7 +75,14 @@ class StickMessage(commands.Cog):
         stick_message = self.stick_msgs[str(channel_id)]
         if not stick_message:
             return
-
+        
+        if message.author.id == self.bot.user.id:
+            if message.embeds and len(message.embeds) > 0:
+                embed = message.embeds[0]
+                if embed.description and embed.description == stick_message:
+                    return
+           
+        
         # Delete the previous stick message
         last_stick_message = await self._get_last_bot_message(message.channel, stick_message)
         if last_stick_message:

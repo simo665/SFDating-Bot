@@ -84,6 +84,7 @@ def get_message_from_template(template_name, variables = {}):
         raise ValueError("Message template cannot be empty.")
     
     return convert_to_message(template, variables)
+    
 def get_message_from_dict(dictionary, variables = {}):
     return convert_to_message(dictionary, variables)
 

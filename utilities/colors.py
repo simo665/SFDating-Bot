@@ -1,3 +1,5 @@
 primary = 0xff4af0
 forbidden = 0xac53eb
 error = 0xda0c0c
+report = 0xe16202
+green = 0x25ff56

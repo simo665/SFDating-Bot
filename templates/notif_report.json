@@ -1,0 +1,78 @@
+{
+ "content": "@here",
+ "embeds": [
+  {
+   "title": "{emoji_warn} New Report! {emoji_warn}",
+   "color": "0xff0000",
+   "description": [
+    "> {emoji_offender} Reported member: {membermention} *({memberuser})*",
+    "> {emoji_reason} Reason: {reason}",
+    "> {emoji_channel} Message link: {message_link}",
+    "",
+    "> {emoji_responsible} Reporter member: {modmention} *({moduser})*"
+   ],
+   "timestamp": "{timestamp}",
+   "author": {
+    "name": "{moddisplayname}",
+    "url": "https://discord.com/users/{modid}",
+    "icon_url": "{memberavatarurl}"
+   },
+   "thumbnail": {
+    "url": "{memberavatarurl}"
+   },
+   "footer": {
+    "text": "{memberid}",
+    "icon_url": "{memberavatarurl}"
+   },
+   "image": {
+    "url": "{proof_url}"
+   }
+  }
+ ],
+ "components": [
+  {
+   "type": 1,
+   "components": [
+    {
+     "type": 2,
+     "style": 4,
+     "label": "Timeout",
+     "custom_id": "timeout",
+     "emoji": {
+      "id": "1353616620030922824",
+      "name": "FunEmojiYaa",
+      "animated": true
+     }
+    },
+    {
+     "type": 2,
+     "style": 4,
+     "label": "Ban",
+     "custom_id": "ban",
+     "emoji": {
+      "id": "1353612450653802526",
+      "name": "MilkMochaHeartLovely",
+      "animated": true
+     }
+    },
+    {
+     "type": 2,
+     "style": 4,
+     "label": "Kick",
+     "custom_id": "kick",
+     "emoji": {
+      "id": "1353612417120079884",
+      "name": "MilkMochaLoveTeasing",
+      "animated": true
+     }
+    },
+    {
+     "type": 2,
+     "style": 1,
+     "label": "Respond",
+     "custom_id": "respond"
+    }
+   ]
+  }
+ ]
+}

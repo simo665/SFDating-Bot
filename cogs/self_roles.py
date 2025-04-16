@@ -63,7 +63,7 @@ class SelfRoles(commands.Cog):
             if user.id not in self.last_remind:
                 self.last_remind[user.id] = 0
                 
-            if current_time - self.last_remind[user.id] < 45:
+            if current_time - self.last_remind[user.id] < 90:
                 return 
             
             age_roles_ids = {
@@ -118,15 +118,16 @@ class SelfRoles(commands.Cog):
                 )
                 view = RolesLinkView()
                 try: 
-                    await message.reply(embed=notif_embed, delete_after=12, view=view)
+                    await message.reply(embed=notif_embed, delete_after=20, view=view)
                 except discord.HTTPException:
-                    await message.channel.send(content=user.mention, embed=notif_embed, delete_after=12, view=view)
+                    await message.channel.send(content=user.mention, embed=notif_embed, delete_after=20, view=view)
                     
                 if self.warns[user.id] == 3:
                     try:
                         await user.timeout(timedelta(minutes=2), reason="Muted for not getting the roles.")
                     except discord.Forbidden:
                         pass
+                    self.warns[user.id] = 0
                 
                 self.warns[user.id] += 1
                 self.last_remind[user.id] = time.time()

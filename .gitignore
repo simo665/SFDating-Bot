@@ -11,3 +11,4 @@ storage/
 roles.py
 service_account.json
 venv/
+main.py

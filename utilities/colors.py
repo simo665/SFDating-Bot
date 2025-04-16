@@ -3,3 +3,4 @@ forbidden = 0xac53eb
 error = 0xda0c0c
 report = 0xe16202
 green = 0x25ff56
+red = 0xee0000

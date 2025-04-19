@@ -4,3 +4,7 @@ error = 0xda0c0c
 report = 0xe16202
 green = 0x25ff56
 red = 0xee0000
+purple = 0xaf43f1
+orange = 0xf6a630
+softpink = 0xf297ec
+black = 0x000000

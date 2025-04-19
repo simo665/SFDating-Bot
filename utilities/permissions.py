@@ -128,9 +128,7 @@ class Permissions:
         async def predicate(interaction: discord.Interaction):
             if interaction.user.guild_permissions.administrator:
                 return True
-            # generate creative response
-            response = no_permission_msg()
-            await interaction.response.send_message(f"{response}\nyou need admin permission.", ephemeral=True)
+            await interaction.response.send_message(f"You need admin permission.", ephemeral=True)
             return False
         return discord.app_commands.check(predicate)
         

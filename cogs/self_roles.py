@@ -63,7 +63,7 @@ class SelfRoles(commands.Cog):
             if user.id not in self.last_remind:
                 self.last_remind[user.id] = 0
                 
-            if current_time - self.last_remind[user.id] < 90:
+            if current_time - self.last_remind[user.id] < 60:
                 return 
             
             age_roles_ids = {

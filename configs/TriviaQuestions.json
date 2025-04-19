@@ -1,0 +1,937 @@
+{
+  "questions": [
+    {
+      "question": "What is the capital city of France?",
+      "options": {
+        "Berlin": false,
+        "Paris": true,
+        "Madrid": false
+      }
+    },
+    {
+      "question": "Who painted the Mona Lisa?",
+      "options": {
+        "Vincent van Gogh": false,
+        "Pablo Picasso": false,
+        "Leonardo da Vinci": true
+      }
+    },
+    {
+      "question": "What’s the tallest mountain in the world?",
+      "options": {
+        "Mount Everest": true,
+        "K2": false,
+        "Mount Kilimanjaro": false
+      }
+    },
+    {
+      "question": "How many continents are there?",
+      "options": {
+        "5": false,
+        "7": true,
+        "6": false
+      }
+    },
+    {
+      "question": "Who wrote the play 'Romeo and Juliet'?",
+      "options": {
+        "Charles Dickens": false,
+        "William Shakespeare": true,
+        "Jane Austen": false
+      }
+    },
+    {
+      "question": "What is the smallest planet in our solar system?",
+      "options": {
+        "Mars": false,
+        "Venus": false,
+        "Mercury": true
+      }
+    },
+    {
+      "question": "What does 'www' stand for in a website browser?",
+      "options": {
+        "World Wide Web": true,
+        "Web World Wide": false,
+        "Web Wide Web": false
+      }
+    },
+    {
+      "question": "What year did the Titanic sink?",
+      "options": {
+        "1898": false,
+        "1912": true,
+        "1920": false
+      }
+    },
+    {
+      "question": "What is the hardest natural substance on Earth?",
+      "options": {
+        "Gold": false,
+        "Iron": false,
+        "Diamond": true
+      }
+    },
+    {
+      "question": "How many colors are there in a rainbow?",
+      "options": {
+        "7": true,
+        "6": false,
+        "8": false
+      }
+    },
+    {
+      "question": "Which country is known as the Land of the Rising Sun?",
+      "options": {
+        "China": false,
+        "Japan": true,
+        "South Korea": false
+      }
+    },
+    {
+      "question": "What is the chemical symbol for gold?",
+      "options": {
+        "Ag": false,
+        "Pb": false,
+        "Au": true
+      }
+    },
+    {
+      "question": "Which planet is known as the Red Planet?",
+      "options": {
+        "Mars": true,
+        "Jupiter": false,
+        "Saturn": false
+      }
+    },
+    {
+      "question": "Who is the author of the Harry Potter series?",
+      "options": {
+        "George R.R. Martin": false,
+        "J.K. Rowling": true,
+        "J.R.R. Tolkien": false
+      }
+    },
+    {
+      "question": "What is the currency of Japan?",
+      "options": {
+        "Won": false,
+        "Ringgit": false,
+        "Yen": true
+      }
+    },
+    {
+      "question": "Which ocean is the largest?",
+      "options": {
+        "Atlantic Ocean": false,
+        "Pacific Ocean": true,
+        "Indian Ocean": false
+      }
+    },
+    {
+      "question": "In which year did World War II end?",
+      "options": {
+        "1939": false,
+        "1950": false,
+        "1945": true
+      }
+    },
+    {
+      "question": "What is the longest river in the world?",
+      "options": {
+        "Nile River": true,
+        "Amazon River": false,
+        "Yangtze River": false
+      }
+    },
+    {
+      "question": "What’s the main ingredient in guacamole?",
+      "options": {
+        "Tomato": false,
+        "Avocado": true,
+        "Onion": false
+      }
+    },
+    {
+      "question": "Who discovered penicillin?",
+      "options": {
+        "Marie Curie": false,
+        "Isaac Newton": false,
+        "Alexander Fleming": true
+      }
+    },
+    {
+      "question": "What’s the national sport of Canada?",
+      "options": {
+        "Ice Hockey": true,
+        "Football": false,
+        "Basketball": false
+      }
+    },
+    {
+      "question": "How many bones are in the adult human body?",
+      "options": {
+        "200": false,
+        "206": true,
+        "250": false
+      }
+    },
+    {
+      "question": "What’s the name of the fairy in Peter Pan?",
+      "options": {
+        "Tinker Bell": true,
+        "Wendy": false,
+        "Cinderella": false
+      }
+    },
+    {
+      "question": "What’s the only mammal capable of flight?",
+      "options": {
+        "Bird": false,
+        "Bat": true,
+        "Flying Squirrel": false
+      }
+    },
+    {
+      "question": "Which famous scientist developed the theory of relativity?",
+      "options": {
+        "Isaac Newton": false,
+        "Nikola Tesla": false,
+        "Albert Einstein": true
+      }
+    },
+    {
+      "question": "What’s the capital of Australia?",
+      "options": {
+        "Canberra": true,
+        "Sydney": false,
+        "Melbourne": false
+      }
+    },
+    {
+      "question": "How many legs does a spider have?",
+      "options": {
+        "6": false,
+        "8": true,
+        "10": false
+      }
+    },
+    {
+      "question": "Which country invented pizza?",
+      "options": {
+        "France": false,
+        "Italy": true,
+        "Greece": false
+      }
+    },
+    {
+      "question": "Which bird is known for mimicking sounds?",
+      "options": {
+        "Parrot": false,
+        "Eagle": false,
+        "Mockingbird": true
+      }
+    },
+    {
+      "question": "What gas do plants absorb from the atmosphere?",
+      "options": {
+        "Carbon Dioxide": true,
+        "Oxygen": false,
+        "Nitrogen": false
+      }
+    },
+    {
+      "question": "What’s the largest internal organ in the human body?",
+      "options": {
+        "Heart": false,
+        "Liver": true,
+        "Brain": false
+      }
+    },
+    {
+      "question": "Which Disney princess has a pet tiger named Rajah?",
+      "options": {
+        "Ariel": false,
+        "Belle": false,
+        "Jasmine": true
+      }
+    },
+    {
+      "question": "Who was the first man to walk on the moon?",
+      "options": {
+        "Buzz Aldrin": false,
+        "Neil Armstrong": true,
+        "Yuri Gagarin": false
+      }
+    },
+    {
+      "question": "What is the tallest animal in the world?",
+      "options": {
+        "Giraffe": true,
+        "Elephant": false,
+        "Horse": false
+      }
+    },
+    {
+      "question": "What element does 'O' represent on the periodic table?",
+      "options": {
+        "Osmium": false,
+        "Ozone": false,
+        "Oxygen": true
+      }
+    },
+    {
+      "question": "What is the most common flower given on a first date?",
+      "options": {
+        "Rose": false,
+        "Lily": false,
+        "Sunflower": true
+      }
+    },
+    {
+      "question": "Which of these is a traditional romantic gesture during a date?",
+      "options": {
+        "Taking a long walk": true,
+        "Playing video games": false,
+        "Watching a horror movie": false
+      }
+    },
+    {
+      "question": "What is the term for the first romantic meeting between two people?",
+      "options": {
+        "Blind date": false,
+        "First date": true,
+        "Second chance": false
+      }
+    },
+    {
+      "question": "Which of these is considered a classic romantic dinner setting?",
+      "options": {
+        "Fast food restaurant": false,
+        "Picnic under the stars": true,
+        "Drive-thru": false
+      }
+    },
+    {
+      "question": "What is the term for a gift given on a first date to show interest?",
+      "options": {
+        "Flower": false,
+        "Token of affection": true,
+        "Business card": false
+      }
+    },
+    {
+      "question": "Which of these is a common icebreaker question on a first date?",
+      "options": {
+        "What's your favorite color?": false,
+        "Tell me about your last vacation": true,
+        "What's your salary?": false
+      }
+    },
+    {
+      "question": "What is the term for a casual, unstructured date?",
+      "options": {
+        "Blind date": false,
+        "Casual date": true,
+        "Formal date": false
+      }
+    },
+    {
+      "question": "Which of these is a popular first date activity?",
+      "options": {
+        "Going to a museum": false,
+        "Skydiving": false,
+        "Coffee at a café": true
+      }
+    },
+    {
+      "question": "What is the term for a date where both parties split the bill?",
+      "options": {
+        "Traditional date": true,
+        "One-sided date": false,
+        "Casual hookup": false
+      }
+    },
+    {
+      "question": "Which of these is a common way to impress someone on a first date?",
+      "options": {
+        "Bringing a pet": false,
+        "Knowing their favorite book": true,
+        "Showing up late": false
+      }
+    },
+    {
+      "question": "What is the term for a date that leads to a relationship?",
+      "options": {
+        "Hookup": false,
+        "Serious date": true,
+        "Casual date": false
+      }
+    },
+    {
+      "question": "Which of these is a classic romantic meal?",
+      "options": {
+        "Sushi": false,
+        "Pizza": false,
+        "Dinner at a fancy restaurant": true
+      }
+    },
+    {
+      "question": "What is the term for a date where one person pays?",
+      "options": {
+        "Casual date": false,
+        "One-sided date": true,
+        "Shared expense date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Shopping": false,
+        "Watching a sunrise together": true,
+        "Playing online games": false
+      }
+    },
+    {
+      "question": "What is the term for a date that happens after a long friendship?",
+      "options": {
+        "Friendship date": false,
+        "Casual date": false,
+        "Friend-to-lover transition": true
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Texting during the date": false,
+        "Opening the car door for them": true,
+        "Checking social media": false
+      }
+    },
+    {
+      "question": "What is the term for a date where both parties are looking for love?",
+      "options": {
+        "Serious date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic place for a date?",
+      "options": {
+        "Theme park": false,
+        "Beach at sunset": true,
+        "Arcade": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves physical intimacy?",
+      "options": {
+        "Casual date": false,
+        "Hookup date": true,
+        "Serious date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Karaoke": false,
+        "Cooking together": true,
+        "Playing competitive sports": false
+      }
+    },
+    {
+      "question": "What is the term for a date that focuses on conversation?",
+      "options": {
+        "Deep conversation date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Surprising them with tickets": true,
+        "Being late": false,
+        "Ignoring their preferences": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves going out multiple times?",
+      "options": {
+        "Casual date": false,
+        "Serial dating": true,
+        "One-time date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Visiting a zoo": false,
+        "Taking a dance class together": true,
+        "Competitive gaming": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves taking things slow?",
+      "options": {
+        "Casual date": false,
+        "Slow burn date": true,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Remembering their favorite snack": true,
+        "Forgetting their name": false,
+        "Being distracted": false
+      }
+    },
+    {
+      "question": "What is the term for a date that is planned in advance?",
+      "options": {
+        "Spontaneous date": false,
+        "Planned date": true,
+        "Casual date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a concert": false,
+        "Attending a comedy show": true,
+        "Browsing social media": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared interests?",
+      "options": {
+        "Interest-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Complimenting their outfit": true,
+        "Ignoring their conversation": false,
+        "Being rude": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves trying new things?",
+      "options": {
+        "Adventure date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a museum": false,
+        "Trying a new cuisine": true,
+        "Watching TV alone": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves mutual respect?",
+      "options": {
+        "Respectful date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Listening attentively": true,
+        "Being disinterested": false,
+        "Interrupting them": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves physical attraction?",
+      "options": {
+        "Physical attraction date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a spa": false,
+        "Taking a walk in nature": true,
+        "Staying indoors all day": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves emotional connection?",
+      "options": {
+        "Emotional connection date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Writing a thoughtful note": true,
+        "Being dismissive": false,
+        "Being distant": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves building trust?",
+      "options": {
+        "Trust-building date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to an art gallery": false,
+        "Volunteering together": true,
+        "Playing loud music": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves mutual goals?",
+      "options": {
+        "Goal-oriented date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Planning something special": true,
+        "Being unreliable": false,
+        "Being self-centered": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared values?",
+      "options": {
+        "Value-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a theater": false,
+        "Building a garden together": true,
+        "Focusing on work": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves deep conversation?",
+      "options": {
+        "Deep conversation date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Making eye contact": true,
+        "Avoiding eye contact": false,
+        "Being argumentative": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared hobbies?",
+      "options": {
+        "Hobby-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a concert": false,
+        "Building a puzzle together": true,
+        "Focusing on technology": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared experiences?",
+      "options": {
+        "Experience-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Remembering their birthday": true,
+        "Forgetting important dates": false,
+        "Being indifferent": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves mutual understanding?",
+      "options": {
+        "Understanding-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a cooking class": false,
+        "Building a treehouse together": true,
+        "Focusing on individual achievements": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared dreams?",
+      "options": {
+        "Dream-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Supporting their goals": true,
+        "Being critical": false,
+        "Being unsupportive": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves mutual growth?",
+      "options": {
+        "Growth-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a pottery class": false,
+        "Building a birdhouse together": true,
+        "Focusing on personal problems": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared responsibilities?",
+      "options": {
+        "Responsibility-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Helping with chores": true,
+        "Being neglectful": false,
+        "Being dismissive": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared laughter?",
+      "options": {
+        "Laughter-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a comedy club": false,
+        "Building a fort together": true,
+        "Focusing on serious topics": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared memories?",
+      "options": {
+        "Memory-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Sharing stories": true,
+        "Being aloof": false,
+        "Being distant": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared creativity?",
+      "options": {
+        "Creativity-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a painting class": false,
+        "Building a scrapbook together": true,
+        "Focusing on work": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared spirituality?",
+      "options": {
+        "Spirituality-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Practicing mindfulness together": true,
+        "Being judgmental": false,
+        "Being critical": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared culture?",
+      "options": {
+        "Culture-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a cultural festival": false,
+        "Building a cultural collage together": true,
+        "Focusing on individual achievements": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared emotions?",
+      "options": {
+        "Emotion-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Expressing gratitude": true,
+        "Being indifferent": false,
+        "Being dismissive": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared ambitions?",
+      "options": {
+        "Ambition-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a motivational seminar": false,
+        "Building a vision board together": true,
+        "Focusing on personal problems": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared responsibility?",
+      "options": {
+        "Responsibility-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Helping with household tasks": true,
+        "Being neglectful": false,
+        "Being dismissive": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared joy?",
+      "options": {
+        "Joy-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a theme park": false,
+        "Building a memory jar together": true,
+        "Focusing on work": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared goals?",
+      "options": {
+        "Goal-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic gesture on a date?",
+      "options": {
+        "Planning a surprise": true,
+        "Being unreliable": false,
+        "Being self-centered": false
+      }
+    },
+    {
+      "question": "What is the term for a date that involves shared passions?",
+      "options": {
+        "Passion-based date": true,
+        "Casual date": false,
+        "Hookup date": false
+      }
+    },
+    {
+      "question": "Which of these is a romantic activity for a date?",
+      "options": {
+        "Going to a concert": false,
+        "Building a dream board together": true,
+        "Focusing on personal problems": false
+      }
+    }
+  ],
+  "previous_q": [
+    "59",
+    "29",
+    "72",
+    "88",
+    "48",
+    "26",
+    "97",
+    "32",
+    "53",
+    "46",
+    "4"
+  ]
+}

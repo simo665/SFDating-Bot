@@ -41,7 +41,7 @@ class Joins(commands.Cog):
     async def is_account_new(self, member):
         try: 
             
-            min_age = 3
+            min_age = 1
             
             variables = get_all_variables(member, member.guild, member)
             account_age = discord.utils.utcnow() - member.created_at

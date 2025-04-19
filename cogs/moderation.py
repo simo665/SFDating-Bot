@@ -459,28 +459,7 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
     
     
     #  _______________________ Warn Commands  _______________________
-    warn_group = app_commands.Group(name="warn", description="Warn/Unwarn a member with timeout if needed.")
-    @warn_group.command(name="add", description="Add a warning to a member.")
-    @app_commands.choices(timeout=[
-        app_commands.Choice(name="No timeout needed.", value=0),
-        app_commands.Choice(name="5 minute", value=300),
-        app_commands.Choice(name="10 minutes", value=600),
-        app_commands.Choice(name="1 hour", value=3600),
-        app_commands.Choice(name="6 hours", value=21600),
-        app_commands.Choice(name="12 hours", value=43200),
-        app_commands.Choice(name="1 day", value=86400),
-        app_commands.Choice(name="2 days", value=172800),
-        app_commands.Choice(name="3 days", value=259200),
-        app_commands.Choice(name="4 days", value=345600),
-        app_commands.Choice(name="5 days", value=432000),
-        app_commands.Choice(name="6 days", value=518400),
-        app_commands.Choice(name="7 days", value=604800),
-        app_commands.Choice(name="15 days", value=1296000),
-        app_commands.Choice(name="20 days", value=1728000),
-        app_commands.Choice(name="30 days", value=2419200)
-    ])
-    @app_commands.describe(member="Target member.", timeout="Add a timeout to member.", reason="For what reason are they getting warned?", proof="Attach screenshots as proof.")
-    async def warn(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
+    async def warn_handler(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
         try:
             await interaction.response.defer()
             # Check permissions
@@ -537,9 +516,7 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             await response.delete()
         except Exception:
             await error_send(interaction)
-    
-    @warn_group.command(name="remove", description="Remove a warning from a member.")
-    async def unwarn(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
+    async def unwarn_handler(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
         try:
             await interaction.response.defer(ephemeral=False)
             authorized = await self.check_perm(interaction, ["moderate_members"], ["moderate_members", "manage_roles"], target = member)
@@ -579,7 +556,65 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             await response.delete()
         except Exception:
             await error_send(interaction)
-
+           
+    warn_group = app_commands.Group(name="warn", description="Warn/Unwarn a member with timeout if needed.")
+    @warn_group.command(name="add", description="Add a warning to a member.")
+    @app_commands.choices(timeout=[
+        app_commands.Choice(name="No timeout needed.", value=0),
+        app_commands.Choice(name="5 minute", value=300),
+        app_commands.Choice(name="10 minutes", value=600),
+        app_commands.Choice(name="1 hour", value=3600),
+        app_commands.Choice(name="6 hours", value=21600),
+        app_commands.Choice(name="12 hours", value=43200),
+        app_commands.Choice(name="1 day", value=86400),
+        app_commands.Choice(name="2 days", value=172800),
+        app_commands.Choice(name="3 days", value=259200),
+        app_commands.Choice(name="4 days", value=345600),
+        app_commands.Choice(name="5 days", value=432000),
+        app_commands.Choice(name="6 days", value=518400),
+        app_commands.Choice(name="7 days", value=604800),
+        app_commands.Choice(name="15 days", value=1296000),
+        app_commands.Choice(name="20 days", value=1728000),
+        app_commands.Choice(name="30 days", value=2419200)
+    ])
+    @app_commands.describe(member="Target member.", timeout="Add a timeout to member.", reason="For what reason are they getting warned?", proof="Attach screenshots as proof.")
+    async def warn(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
+        await self.warn_handler(interaction, member, timeout, reason, proof)
+    
+    @warn_group.command(name="remove", description="Remove a warning from a member.")
+    async def unwarn(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
+        await self.unwarn_handler(interaction, member, reason, proof)
+    
+    #  _______________________ Warn Commands  _______________________
+    mute_group = app_commands.Group(name="mute", description="mute/unmute a member with timeout if needed.")
+    @mute_group.command(name="add", description="Add a mute to a member.")
+    @app_commands.choices(timeout=[
+        app_commands.Choice(name="5 minute", value=300),
+        app_commands.Choice(name="10 minutes", value=600),
+        app_commands.Choice(name="1 hour", value=3600),
+        app_commands.Choice(name="6 hours", value=21600),
+        app_commands.Choice(name="12 hours", value=43200),
+        app_commands.Choice(name="1 day", value=86400),
+        app_commands.Choice(name="2 days", value=172800),
+        app_commands.Choice(name="3 days", value=259200),
+        app_commands.Choice(name="4 days", value=345600),
+        app_commands.Choice(name="5 days", value=432000),
+        app_commands.Choice(name="6 days", value=518400),
+        app_commands.Choice(name="7 days", value=604800),
+        app_commands.Choice(name="15 days", value=1296000),
+        app_commands.Choice(name="20 days", value=1728000),
+        app_commands.Choice(name="30 days", value=2419200)
+    ])
+    @app_commands.describe(member="Target member.", timeout="Add a timeout to member.", reason="For what reason are they getting muted?", proof="Attach screenshots as proof.")
+    async def mute(self, interaction: discord.Interaction, member: discord.Member, timeout: app_commands.Choice[int], reason: str, proof: discord.Attachment):
+        await self.warn_handler(interaction, member, timeout, reason, proof)
+        
+    @mute_group.command(name="remove", description="Remove a timeout from a member.")
+    async def unmute(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
+        await self.unwarn_handler(interaction, member, reason, proof)
+    
+    
+    
     #  _______________________ Verification Commands  _______________________
     verify = app_commands.Group(name="verify", description="Verification commands.")
     @verify.command(name="add", description="Verify a member.")

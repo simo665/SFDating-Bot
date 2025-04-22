@@ -3,14 +3,8 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "pink": 1350447292469084231,
-    "soft purple": 1350447559751106610,
-    "yellow": 1350447796401999892, 
-    "orange": 1350447997791506503
-}
 
-boosters_role_id = 1353417520664805446
+
  
 async def send(interaction, embed):
     if interaction.response.is_done():
@@ -25,8 +19,11 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def boosters_colors(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
+    roles_ids = load_roles_ids("colors_boosters", interaction.guild.id)
+    boosters_role_id = load_roles_ids("boosters_role", interaction.guild.id)
     boosters_role = discord.utils.get(guild.roles, id=boosters_role_id)
     try:
         if not boosters_role in user.roles:  # noqa: E713

@@ -3,18 +3,7 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "black": 1350448502596960430,
-    "white": 1350448774157303949,
-    "Aqua": 1350449493438500894, 
-    "deep blue": 1350450233783353447,
-    "Pale lame": 1350452051166892094,
-    "pastal pink": 1350460935755792384,
-    "hot pink": 1350462526655299584,
-}
 
-premium_role_id = 1350592103645839522
- 
 async def send(interaction, embed):
     if interaction.response.is_done():
         if isinstance(embed, list):
@@ -28,10 +17,13 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def premium_colors(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
-    premium_role = discord.utils.get(guild.roles, id=premium_role_id)
+    roles_ids = load_roles_ids("colors_premium", guild.id)
+    premium_role_id = load_roles_ids("premium_role", guild.id)
     try:
+        premium_role = discord.utils.get(guild.roles, id=premium_role_id)
         if premium_role not in user.roles:
             embed1 = discord.Embed(title="", color=colors.error)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")

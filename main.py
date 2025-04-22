@@ -29,7 +29,7 @@ prefix = "s!"
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 
-def _print(*args, sep=' ', end='\n', delay=0.01):
+def _print(*args, sep=' ', end='\n', delay=0.005):
     text = sep.join(str(arg) for arg in args)
     for char in text:
         sys.stdout.write(char)
@@ -93,7 +93,7 @@ async def on_ready():
         #upload_backup.start()
     except Exception as e:
         _print(f"Error in on_ready: {e}")
-        traceback._print_exc()
+        traceback.print_exc()
 
 @tasks.loop(hours=1)
 async def upload_backup():
@@ -109,34 +109,53 @@ def load_components():
                         bot.add_view(PersistentView(data["components"]))
         except Exception:
             _print(f"Error loading file: {file}\n", "="*50)
-            traceback._print_exc()
+            traceback.print_exc()
             _print("="*50)
 
-async def load_cogs():
+async def load_cogs(selected_cogs=None):
+    """Load cogs specified in selected_cogs or all if None."""
     _print("Loading cogs:")
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
+    if selected_cogs:
+        _print("Loading selected cogs:", ", ".join(selected_cogs))
+        for cog in selected_cogs:
             try:
-                await bot.load_extension(f"cogs.{file[:-3]}")
-                _print(f"  ✓ {file}")
+                # Load the cog by name (without .py)
+                await bot.load_extension(f"cogs.{cog}")
+                _print(f"  ✓ {cog}.py")
             except Exception as e:
-                _print(f"  ✗ {file} - Error loading cog: {str(e)}")
-                traceback._print_exc()
-                continue  
+                _print(f"  ✗ {cog}.py - Error loading cog: {str(e)}\n\n", "="*50,"\n\n")
+                traceback.print_exc()
+                os._exit(1)
+    else:
+        # Original behavior: load all cogs
+        for file in os.listdir("./cogs"):
+            if file.endswith(".py"):
+                try:
+                    await bot.load_extension(f"cogs.{file[:-3]}")
+                    _print(f"  ✓ {file}")
+                except Exception as e:
+                    _print(f"  ✗ {file} - Error loading cog: {str(e)}")
+                    traceback.print_exc()
+                    os._exit(1)
     _print("All cogs loaded successfully!\n")
 
 async def main():
     try:
         async with bot:
-            await load_cogs()
+            # Get cog names from command-line arguments (exclude script name)
+            args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
+            selected_cogs = args if args else None  # Use args if provided
+            await load_cogs(selected_cogs)
             await bot.start(TOKEN)
     except KeyboardInterrupt:
         _print("Bot has shut down.")
         os._exit(0)
     except Exception as e:
         _print(f"Fatal error: {e}")
-        traceback._print_exc()
+        traceback.print_exc()
         os._exit(1)
+
+
 
 if __name__ == "__main__":
     try:
@@ -146,5 +165,6 @@ if __name__ == "__main__":
         os._exit(0)
     except Exception as e:
         _print(f"Uncaught exception: {e}")
-        traceback._print_exc()
+        traceback.print_exc()
         os._exit(1)
+        

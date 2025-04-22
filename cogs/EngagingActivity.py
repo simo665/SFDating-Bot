@@ -46,6 +46,7 @@ class TruthOrDareView(View):
         embed.color = colors.primary
         await interaction.channel.send(
             embed=embed,
+            view=TruthOrDareView(self.bot, self.data_path),
             allowed_mentions=discord.AllowedMentions(users=True)
         )
 
@@ -103,6 +104,32 @@ class EngageActivity(commands.Cog):
                 await self.TruthOrDare(channel)
         except Exception:
             await error_send()
+    
+    @app_commands.command(name="engage", description="Send an engaging activity!")
+    @app_commands.choices(
+        activity=[
+            app_commands.Choice(name="Random", value="random"),
+            app_commands.Choice(name="Fun Questions", value="FunQ"),
+            app_commands.Choice(name="Fun Poll", value="FunPoll"),
+            app_commands.Choice(name="Trivia", value="Trivia"),
+            app_commands.Choice(name="Truth Or Dare", value="TruthOrDare")
+        ]
+    )
+    async def engage_command(self, interaction: discord.Interaction, activity: app_commands.Choice[str], channel: discord.TextChannel):
+        activities = [
+               "FunQ", "FunPoll", "TruthOrDare", "Trivia"
+        ]
+        activity = random.choice(activities) if activity.value == "random" else activity.value
+        if activity == "FunQ":
+            await self.FunQuestion(channel)
+        if activity == "FunPoll":
+            await self.FunPoll(channel)
+        if activity == "Trivia":
+            await self.Trivia(channel)
+        if activity == "TruthOrDare":
+            await self.TruthOrDare(channel)
+        await interaction.response.send_message(f"Sent in {channel.mention}", ephemeral=True)
+    
     
     # random question activity 
     async def FunQuestion(self, channel):
@@ -263,7 +290,7 @@ class EngageActivity(commands.Cog):
             # add random reaction to messages 
             react = random.choices(
                 [True, False],
-                weights=[0.05, 0.95],
+                weights=[0.02, 0.98],
                 k=1
             )[0]
             if react:
@@ -271,6 +298,7 @@ class EngageActivity(commands.Cog):
                 await message.add_reaction(random.choice(emojis))
         except Exception:
             await error_send()
+    
 async def setup(bot):
     cog = EngageActivity(bot)
     await bot.add_cog(cog)

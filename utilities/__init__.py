@@ -12,11 +12,12 @@ from .engaging_response import responses
 from .database import Database
 from .roles_change import replace_roles
 from .filter import censor_text
+from .load_roles import load_roles_ids
 
 __all__ = [
     "Permissions", "send_message", "colors", "get_message_from_template", 
     "PersistentView", "DropDownSelect", "CustomButton", "get_member_variables", "get_emojis_variables",
     "get_server_variables", "get_moderator_variables", "get_all_variables", 
     "send_notif", "get_link", "format_time", "responses", "get_message_from_dict", "Database",
-    "replace_roles", "send_log", "get_account_age", "censor_text"
+    "replace_roles", "send_log", "get_account_age", "censor_text", "load_roles_ids"
 ]

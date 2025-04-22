@@ -3,11 +3,6 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "taller": 1350851044359278603,
-    "shorter": 1350851045609181266,
-    "no preference": 1350851047244955770,
-}
  
 async def send(interaction, embed):
     if interaction.response.is_done():
@@ -25,8 +20,10 @@ async def send(interaction, embed):
     
 
 async def height_preference(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
+    roles_ids = load_roles_ids("height_preference", guild.id)
     try:
         added_roles, removed_roles = await replace_roles(user, guild, values, roles_ids)
         embed = discord.Embed(title="Height Preference roles!", description=f"The following roles has been added successfully:\n{'\n'.join(added_roles)}"+(f"\nRemoved roles:\n{'\n'.join(removed_roles)}" if removed_roles else ""), color=colors.primary)

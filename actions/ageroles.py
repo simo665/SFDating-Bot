@@ -3,17 +3,6 @@ from utilities import colors
 import sqlite3 
 from errors.error_logger import error_send
 
-age_roles_ids = {
-    "age18": 1350851110021238795,
-    "age19": 1350851112437026876,
-    "age20": 1350851115096473651,
-    "age21": 1350851117000425562,
-    "age22": 1350851119215280139,
-    "age23": 1350851123531218965,
-    "age24": 1350851127897358410,
-    "age25": 1350851131961511957
-}
-
 async def send(interaction, embed):
     if interaction.response.is_done():
         if isinstance(embed, list):
@@ -30,30 +19,12 @@ async def ageroles(interaction, values):
     from utilities.variables import get_all_variables
     from utilities.user_notif import send_notif
     from utilities.logging_handler import send_log
+    from utilities import load_roles_ids
+    age_roles_ids = load_roles_ids("age", interaction.guild.id)
     user = interaction.user
     try:
         value = values[0]
-        if value == "underage" or value == "overage":
-            con = sqlite3.connect("database/data.db")
-            jail_role_id = None
-            cur = con.cursor()
-            try:
-                cur.execute("SELECT jail_role_id FROM configs WHERE guild_id = ?", (interaction.guild.id,))
-                result = cur.fetchone()
-                con.commit()
-                jail_role_id = result[0] if result else None
-            finally:
-                cur.close()
-            if jail_role_id and discord.utils.get(interaction.guild.roles, id=jail_role_id):
-                await user.add_roles(discord.utils.get(interaction.guild.roles, id=jail_role_id), reason=value)
-                variables = get_all_variables(user, interaction.guild, interaction.user)
-                variables.update({'reason': value, 'proofurl': ""})
-                await send_notif(user, variables, "notif_jail")
-                await send_log(interaction.client, variables, "log_jail")
-            else:
-                await user.ban(reason=value)
-            return 
-        
+    
         for role in user.roles:
             if role.id in age_roles_ids.values():
                 embed1 = discord.Embed(title="", color=colors.forbidden)

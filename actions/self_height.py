@@ -3,16 +3,6 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "48": 1353905823381848115,
-    "50": 1353905959491338333,
-    "52": 1353906092668747857,
-    "54": 1353906187686383636,
-    "56": 1353906287871656007,
-    "58": 1353906388463521832,
-    "60": 1353906493266854018,
-    "62": 1353906593175179295,
-}
  
 async def send(interaction, embed):
     if interaction.response.is_done():
@@ -28,8 +18,10 @@ async def send(interaction, embed):
 
 
 async def height(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
+    roles_ids = load_roles_ids("height", guild.id)
     try:
         added_roles, removed_roles = await replace_roles(user, guild, values, roles_ids)
         embed = discord.Embed(title="Height roles!", description=f"The following roles has been added successfully:\n{'\n'.join(added_roles)}"+(f"\nRemoved roles:\n{'\n'.join(removed_roles)}" if removed_roles else ""), color=colors.primary)

@@ -3,14 +3,6 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "older": 1350851051519086683,
-    "younger": 1350851053587005481,
-    "same age": 1350851055881031884,
-    "no preference": 1350851057814736909,
-}
-
-
 async def send(interaction, embed):
     if interaction.response.is_done():
         if isinstance(embed, list):
@@ -24,6 +16,8 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def age_prefer_status_roles(interaction, values):
+    from utilities import load_roles_ids
+    roles_ids = load_roles_ids("age_preference", interaction.guild.id)
     user = interaction.user
     guild = interaction.guild
     try:

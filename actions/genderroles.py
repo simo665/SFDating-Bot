@@ -2,14 +2,7 @@ import discord
 from utilities import colors
 from errors.error_logger import error_send
 
-gender_roles_ids = {
-    "male": 1350851135501766746,
-    "female": 1350851138139852810,
-    "transmale": 1359888608508510430,
-    "transfemale": 1359888703211704431,
-    "none": 1359888867750318160
-}
- 
+
 async def send(interaction, embed):
     if interaction.response.is_done():
         if isinstance(embed, list):
@@ -23,8 +16,10 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def gender_roles(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
+    gender_roles_ids = load_roles_ids("gender_roles", guild.id)
     try:
         value = values[0]
         female = discord.utils.get(guild.roles, id=gender_roles_ids["female"])

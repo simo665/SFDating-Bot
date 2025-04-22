@@ -3,16 +3,7 @@ from utilities import colors
 from errors.error_logger import error_send
 from utilities.roles_change import replace_roles
 
-roles_ids = {
-    "introvert partner": 1350851082862989463,
-    "extrovert partner": 1350851086008975422,
-    "optimistic partner": 1350987464960905226,
-    "ambivert partner": 1350987302930743401,
-    "realist partner": 1350987715310518423,
-    "intellectual partner": 1350851089003450453,
-    "goofy partner": 1350851091633274921,
-}
- 
+
 async def send(interaction, embed):
     if interaction.response.is_done():
         if isinstance(embed, list):
@@ -26,8 +17,10 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def partner_personality_roles(interaction, values):
+    from utilities import load_roles_ids
     user = interaction.user
     guild = interaction.guild
+    roles_ids = load_roles_ids("partner_personality", guild.id)
     try:
         added_roles, removed_roles = await replace_roles(user, guild, values, roles_ids)
         embed = discord.Embed(title="Partner Personality roles!", description=f"The following roles has been added successfully:\n{'\n'.join(added_roles)}"+(f"\nRemoved roles:\n{'\n'.join(removed_roles)}" if removed_roles else ""), color=colors.primary)

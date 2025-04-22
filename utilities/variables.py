@@ -52,6 +52,7 @@ def get_emojis_variables():
         "emoji_memberleft": "<:mekberleft:1359816477603270877>",
         "emoji_memberjoined": "<:memberjoin:1359816496934817863>",
         "emoji_member": "<:member:1359816515867771012>",
+        "emoji_members": "<:members:1359816510805119057>",
         "emoji_created": "<:Crested_at:1359816533005832385>",
         "emoji_kicked": "<:Kick:1359816537107857489>",
         "emoji_responsible": "<:mod:1359820357107974244>",
@@ -79,6 +80,8 @@ def get_emojis_variables():
         "level": "<:level:1360397834419175505>",
         "rank": "<:rank:1360397817373261864>",
         "xp": "<:xp:1360397798184452465>",
+        "online": "<a:Online:1363514658136522852>",
+        "offline": "<:offline:1363514572572594196>",
     }
 
 def get_all_variables(member, guild, moderator):

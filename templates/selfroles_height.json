@@ -3,7 +3,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/height.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/HeightRoles.jpg"
    }
   }
  ],
@@ -21,13 +21,38 @@
        "default": false
       },
       {
+       "label": "⸝⸝ 4'9",
+       "value": "49",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 4'10",
+       "value": "49.1",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 4'11",
+       "value": "49.2",
+       "default": false
+      },
+      {
        "label": "⸝⸝ 5'0",
        "value": "50",
        "default": false
       },
       {
-       "label": "⸝⸝ 5'2 ",
+       "label": "⸝⸝ 5'1",
+       "value": "51",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 5'2",
        "value": "52",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 5'3",
+       "value": "53",
        "default": false
       },
       {
@@ -36,8 +61,18 @@
        "default": false
       },
       {
+       "label": "⸝⸝ 5'5",
+       "value": "55",
+       "default": false
+      },
+      {
        "label": "⸝⸝ 5'6",
        "value": "56",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 5'7",
+       "value": "57",
        "default": false
       },
       {
@@ -46,8 +81,28 @@
        "default": false
       },
       {
+       "label": "⸝⸝ 5'9",
+       "value": "59",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 5'10",
+       "value": "59.1",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 5'11",
+       "value": "59.2",
+       "default": false
+      },
+      {
        "label": "⸝⸝ 6'0",
        "value": "60",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ 6'1",
+       "value": "61",
        "default": false
       },
       {

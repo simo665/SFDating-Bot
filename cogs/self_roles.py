@@ -7,7 +7,9 @@ from utilities.variables import get_emojis_variables
 import time
 from utilities import colors
 from datetime import timedelta
-
+from utilities import load_roles_ids
+from utilities import Permissions
+from typing import List
 
 class RolesLinkView(discord.ui.View):
     def __init__(self):
@@ -20,6 +22,7 @@ class RolesLinkView(discord.ui.View):
         ))
 
 
+
 class SelfRoles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
@@ -27,21 +30,52 @@ class SelfRoles(commands.Cog):
         # Roles reminder 
         self.last_remind = {}
         self.warns = {}
+
+    async def check_perm(self, interaction, user_perms: List, bot_perms: List, target: discord.Member = None):
+        permissions = Permissions(interaction)
+        return await permissions.check_perm(user_perms, bot_perms, target)
     
+
     self_group = app_commands.Group(name="self", description="Self related commands")
     roles_group = app_commands.Group(name="roles", description="roles related commands", parent=self_group)
+    colors_group = app_commands.Group(name="colors", description="colors roles related commands", parent=self_group)
     
     @roles_group.command(name="setup", description="setup self roles automatically")
     async def setuproles(self, interaction: discord.Interaction, channel: discord.TextChannel = None):
         try:
+            authorized = await self.check_perm(interaction, ["administrator"], [])
+            if not authorized:
+                return 
             await interaction.response.send_message("Ok!", ephemeral=True)
             templates = [
-                "selfroles_age", "selfroles_gender", "selfroles_sexuality", "selfroles_region", "selfroles_occupation", "selfroles_relationship", "selfroles_dms",
-                "selfroles_age_preference", "selfroles_height", "selfroles_height_preference", "selfroles_distance", "selfroles_personality",
-                "selfroles_personality_preference", "selfroles_hobbies", "selfroles_colors",
+               # "selfroles_age", "selfroles_gender", "selfroles_sexuality", "selfroles_region", "selfroles_occupation", "selfroles_relationship", "selfroles_dms",
+               # "selfroles_age_preference", "selfroles_height", "selfroles_height_preference", "selfroles_distance", "selfroles_personality",
+               # "selfroles_personality_preference", "selfroles_hobbies", "selfroles_colors",
+               "selfroles_age", "selfroles_gender", "selfroles_sexuality", "selfroles_height", "selfroles_region", 
+               "selfroles_occupation", "selfroles_age_preference", "selfroles_height_preference", "selfroles_distance", "selfroles_personality_preference", "selfroles_hobbies", 
+               "selfroles_relationship", "selfroles_dms", "selfroles_colors_link"
             ]
             channel = channel if channel else interaction.channel
             
+            for template in templates:
+                message_data = get_message_from_template(template)
+                await channel.send(message_data["content"], embeds=message_data["embeds"], view=message_data["view"])
+                #await asyncio.sleep(1)
+            
+        except Exception:
+            await error_send(interaction)
+            
+    @colors_group.command(name="setup", description="setup self roles automatically")
+    async def setuproles(self, interaction: discord.Interaction, channel: discord.TextChannel = None):
+        try:
+            authorized = await self.check_perm(interaction, ["administrator"], [])
+            if not authorized:
+                return 
+            await interaction.response.send_message("Ok!", ephemeral=True)
+            templates = [
+                "selfroles_premium_colors", "selfroles_boosters_colors", "selfroles_basic_roles"
+            ]
+            channel = channel if channel else interaction.channel
             for template in templates:
                 message_data = get_message_from_template(template)
                 await channel.send(message_data["content"], embeds=message_data["embeds"], view=message_data["view"])
@@ -66,23 +100,8 @@ class SelfRoles(commands.Cog):
             if current_time - self.last_remind[user.id] < 60:
                 return 
             
-            age_roles_ids = {
-                "age18": 1350851110021238795,
-                "age19": 1350851112437026876,
-                "age20": 1350851115096473651,
-                "age21": 1350851117000425562,
-                "age22": 1350851119215280139,
-                "age23": 1350851123531218965,
-                "age24": 1350851127897358410,
-                "age25": 1350851131961511957
-            }
-            gender_roles_ids = {
-                "male": 1350851135501766746,
-                "female": 1350851138139852810,
-                "transmale": 1359888608508510430,
-                "transfemale": 1359888703211704431,
-                "none": 1359888867750318160
-            }
+            age_roles_ids = load_roles_ids("age", message.guild.id)
+            gender_roles_ids = load_roles_ids("gender_roles", message.guild.id)
            
             
             emojis = get_emojis_variables()

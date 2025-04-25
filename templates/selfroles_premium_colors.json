@@ -1,15 +1,13 @@
 {
- "content": null,
  "embeds": [
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/colors/premium%20colors.png"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/PremiumRoles.png"
    },
    "footer": {
     
-   },
-   "fields": null
+   }
   }
  ],
  "components": [
@@ -21,16 +19,43 @@
      "custom_id": "premium colors",
      "options": [
       {
-       "label": "𝜗𝜚 Sick black ⋆₊˚ ",
+       "label": "Violet",
        "emoji": {
-        "name": "🖤",
+        "name": "💜",
         "animated": false
        },
-       "value": "black",
+       "value": "violet",
        "default": false
       },
       {
-       "label": "𝜗𝜚 Sick White ⋆₊˚",
+       "label": "Brown",
+       "emoji": {
+        "name": "🤎",
+        "animated": false
+       },
+       "value": "brown",
+       "default": false
+      },
+      {
+       "label": "Navy",
+       "emoji": {
+        "name": "🫐",
+        "animated": false
+       },
+       "value": "navy",
+       "default": false
+      },
+      {
+       "label": "Vivid Blue",
+       "value": "vivid",
+       "default": false,
+       "emoji": {
+        "name": "💙",
+        "animated": false
+       }
+      },
+      {
+       "label": "White",
        "emoji": {
         "name": "🤍",
         "animated": false
@@ -39,48 +64,12 @@
        "default": false
       },
       {
-       "label": "𝜗𝜚 Aqua Mist ⋆₊˚",
+       "label": "Black",
        "emoji": {
-        "name": "🩵",
+        "name": "🖤",
         "animated": false
        },
-       "value": "Aqua",
-       "default": false
-      },
-      {
-       "label": "𝜗𝜚 Deep Blue ⋆₊˚",
-       "value": "deep blue",
-       "default": false,
-       "emoji": {
-        "name": "💙",
-        "animated": false
-       }
-      },
-      {
-       "label": "𝜗𝜚 Pale Lime ⋆₊˚",
-       "emoji": {
-        "name": "💛",
-        "animated": false
-       },
-       "value": "Pale lame",
-       "default": false
-      },
-      {
-       "label": "𝜗𝜚 Pastel Pink ⋆₊˚",
-       "emoji": {
-        "name": "🩷",
-        "animated": false
-       },
-       "value": "pastal pink",
-       "default": false
-      },
-      {
-       "label": "𝜗𝜚 Hot Pink ⋆₊˚",
-       "emoji": {
-        "name": "🩷",
-        "animated": false
-       },
-       "value": "hot pink",
+       "value": "black",
        "default": false
       }
      ],

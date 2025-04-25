@@ -23,6 +23,8 @@ async def boosters_colors(interaction, values):
     user = interaction.user
     guild = interaction.guild
     roles_ids = load_roles_ids("colors_boosters", interaction.guild.id)
+    roles_ids.update(load_roles_ids("colors_basic", guild.id))
+    roles_ids.update(load_roles_ids("colors_premium", guild.id))
     boosters_role_id = load_roles_ids("boosters_role", interaction.guild.id)
     boosters_role = discord.utils.get(guild.roles, id=boosters_role_id)
     try:

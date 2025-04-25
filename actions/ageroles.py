@@ -2,6 +2,12 @@ import discord
 from utilities import colors
 import sqlite3 
 from errors.error_logger import error_send
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+verification_channel = os.getenv("VERIFICATION_CHANNEL")
+
 
 async def send(interaction, embed):
     if interaction.response.is_done():
@@ -29,7 +35,7 @@ async def ageroles(interaction, values):
             if role.id in age_roles_ids.values():
                 embed1 = discord.Embed(title="", color=colors.forbidden)
                 embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
-                embed2 = discord.Embed(title="Unauthorized", description="You already have an age role assigned. If you selected it by mistake or need to update it, you'll need to verify your age first to prevent misuse.\n\n**[Click To Verify](https://discord.com/channels/1349136661971206268/1349244585947299921)**.", color=colors.forbidden)
+                embed2 = discord.Embed(title="Unauthorized", description=f"You already have an age role assigned. If you selected it by mistake or need to update it, you'll need to verify your age first to prevent misuse.\n\n**[Click To Verify]({verification_channel})**.", color=colors.forbidden)
                 await send(interaction, embed=[embed1, embed2])
                 return 
             

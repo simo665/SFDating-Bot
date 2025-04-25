@@ -21,6 +21,8 @@ async def premium_colors(interaction, values):
     user = interaction.user
     guild = interaction.guild
     roles_ids = load_roles_ids("colors_premium", guild.id)
+    roles_ids.update(load_roles_ids("colors_boosters", guild.id))
+    roles_ids.update(load_roles_ids("colors_basic", guild.id))
     premium_role_id = load_roles_ids("premium_role", guild.id)
     try:
         premium_role = discord.utils.get(guild.roles, id=premium_role_id)

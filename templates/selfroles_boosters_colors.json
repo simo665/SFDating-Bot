@@ -1,12 +1,10 @@
 {
- "content": null,
  "embeds": [
   {
-   "color": "ff4af0",
+   "color": "#f26eeb",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/colors/boosters%20colors.png"
-   },
-   "fields": null
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/BoostersRoles.png"
+   }
   }
  ],
  "components": [
@@ -18,39 +16,57 @@
      "custom_id": "boosters colors",
      "options": [
       {
-       "label": "ᡣ𐭩 pink",
+       "label": "Peach",
        "emoji": {
-        "name": "🩷",
+        "name": "🍑",
         "animated": false
        },
-       "value": "pink",
+       "value": "peach",
        "default": false
       },
       {
-       "label": "ᡣ𐭩 Soft Purple",
+       "label": "Teal",
        "emoji": {
-        "name": "💜",
+        "name": "🩵",
         "animated": false
        },
-       "value": "soft purple",
+       "value": "teal",
        "default": false
       },
       {
-       "label": "ᡣ𐭩 Yellow",
+       "label": "Mint",
        "emoji": {
-        "name": "💛",
+        "name": "💚",
         "animated": false
        },
-       "value": "yellow",
+       "value": "mint",
        "default": false
       },
       {
-       "label": "ᡣ𐭩 Orange ",
+       "label": "Being",
+       "emoji": {
+        "name": "🤎",
+        "animated": false
+       },
+       "value": "being",
+       "default": false
+      },
+      {
+       "label": "Sunset",
        "emoji": {
         "name": "🧡",
         "animated": false
        },
-       "value": "orange",
+       "value": "sunset",
+       "default": false
+      },
+      {
+       "label": "Tea green",
+       "emoji": {
+        "name": "🍵",
+        "animated": false
+       },
+       "value": "tea",
        "default": false
       }
      ],

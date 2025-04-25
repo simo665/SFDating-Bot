@@ -3,7 +3,7 @@
  "embeds": [
   {
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/banners/RolesBanner.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/BannerRoles.jpg"
    },
    "color": "ff4af0",
    "fields": null
@@ -11,7 +11,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Age(1).jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/AgeRoles.jpg"
    },
    "fields": null
   }

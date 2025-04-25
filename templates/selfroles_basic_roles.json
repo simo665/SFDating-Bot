@@ -1,9 +1,9 @@
 {
  "embeds": [
   {
-   "color": "#ff00ff",
+   "color": "#2ceff6",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/colors/basic%20colors.png"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/BasicRoles.png"
    },
    "fields": [
     {
@@ -23,7 +23,7 @@
      "custom_id": "basic colors",
      "options": [
       {
-       "label": "୨ৎ Red",
+       "label": "Red",
        "value": "red",
        "default": false,
        "emoji": {
@@ -32,7 +32,7 @@
        }
       },
       {
-       "label": "୨ৎ blue",
+       "label": "blue",
        "value": "blue",
        "default": false,
        "emoji": {
@@ -41,7 +41,7 @@
        }
       },
       {
-       "label": "୨ৎ Green",
+       "label": "Green",
        "value": "green",
        "default": false,
        "emoji": {
@@ -50,13 +50,31 @@
        }
       },
       {
-       "label": "୨ৎ Purple",
+       "label": "Yellow ",
+       "emoji": {
+        "name": "💛",
+        "animated": false
+       },
+       "value": "yellow",
+       "default": false
+      },
+      {
+       "label": "Purple",
        "value": "purple",
        "default": false,
        "emoji": {
         "name": "💜",
         "animated": false
        }
+      },
+      {
+       "label": "Pink",
+       "emoji": {
+        "name": "🩷",
+        "animated": false
+       },
+       "value": "pink",
+       "default": false
       }
      ],
      "placeholder": "🍧─〃★ Basic Colors",

@@ -4,7 +4,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Occupation.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/OccupationRoles.jpg"
    },
    "fields": null
   }
@@ -18,57 +18,78 @@
      "custom_id": "occupation",
      "options": [
       {
-       "label": "⸝⸝ Student",
-       "emoji": {
-        "name": "🧑‍🎓",
-        "animated": false
-       },
+       "label": "✓ Student 𓂃",
        "value": "student",
        "default": false
       },
       {
-       "label": "⸝⸝ college",
-       "emoji": {
-        "name": "👩🏼‍🎓",
-        "animated": false
-       },
-       "value": "college",
+       "label": "✓ Developer 𓂃",
+       "value": "developer",
        "default": false
       },
       {
-       "label": "⸝⸝ Employed",
-       "emoji": {
-        "name": "🧑‍⚕️",
-        "animated": false
-       },
-       "value": "employed",
+       "label": "✓ Artist 𓂃",
+       "value": "artist",
        "default": false
       },
       {
-       "label": "⸝⸝ Self-employment",
-       "emoji": {
-        "name": "💻",
-        "animated": false
-       },
-       "value": "self-employment",
+       "label": "✓ Musician 𓂃",
+       "value": "musician",
        "default": false
       },
       {
-       "label": "⸝⸝ Unemployed",
-       "value": "unemployed",
-       "default": false,
-       "emoji": {
-        "name": "😕",
-        "animated": false
-       }
+       "label": "✓ Designer 𓂃",
+       "value": "designer",
+       "default": false
       },
       {
-       "label": "⸝⸝ Others",
-       "emoji": {
-        "name": "😀",
-        "animated": false
-       },
-       "value": "others",
+       "label": "✓ Teacher 𓂃",
+       "value": "teacher",
+       "default": false
+      },
+      {
+       "label": "✓ Entrepreneur 𓂃",
+       "value": "entrepreneur",
+       "default": false
+      },
+      {
+       "label": "✓ Writer 𓂃",
+       "value": "writer",
+       "default": false
+      },
+      {
+       "label": "✓ Gamer 𓂃",
+       "value": "gamer",
+       "default": false
+      },
+      {
+       "label": "✓ Chef 𓂃",
+       "value": "chef",
+       "default": false
+      },
+      {
+       "label": "✓ Photographer 𓂃",
+       "value": "photographer",
+       "default": false
+      },
+      {
+       "label": "✓ Engineer 𓂃",
+       "value": "engineer",
+       "default": false
+      },
+      {
+       "label": "✓ Scientist 𓂃",
+       "value": "scientist",
+       "default": false
+      },
+      {
+       "label": "✓ Actor 𓂃",
+       "value": "actor",
+       "default": false
+      },
+      {
+       "label": "✓ Other 𓂃",
+       "value": "other",
        "default": false
       }
      ],

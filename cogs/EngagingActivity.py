@@ -8,7 +8,7 @@ from errors.error_logger import error_send
 import time
 import asyncio
 from discord.ui import View, button, Button
-
+from utilities import load_roles_ids
 
 class TruthOrDareView(View):
     def __init__(self, bot, data_path):
@@ -54,7 +54,7 @@ class TruthOrDareView(View):
 class EngageActivity(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
-        self.post_channel = 1349150427106508821
+        self.post_channels = [1349150427106508821]
         self.emojis = get_emojis_variables()
         
         # Games
@@ -87,21 +87,24 @@ class EngageActivity(commands.Cog):
     @tasks.loop(hours=2)
     async def Engage(self):
         try:
-            channel = self.bot.get_channel(self.post_channel)
-            if not channel:
-                return 
-            activities = [
-               "FunQ", "FunPoll", "TruthOrDare", "Trivia"
-            ]
-            activity = random.choice(activities)
-            if activity == "FunQ":
-                await self.FunQuestion(channel)
-            if activity == "FunPoll":
-                await self.FunPoll(channel)
-            if activity == "Trivia":
-                await self.Trivia(channel)
-            if activity == "TruthOrDare":
-                await self.TruthOrDare(channel)
+            activities = ["FunQ", "FunPoll", "TruthOrDare", "Trivia"]
+            with open("./configs/channels/channels_id.json", "r") as f:
+                data = json.load(f)
+                self.post_channels = data.get("engage_post_channels", self.post_channels)
+            for channel_id in self.post_channels:
+                channel = self.bot.get_channel(channel_id)
+                if not channel:
+                    continue 
+                activity = random.choice(activities)
+                if activity == "FunQ":
+                    await self.FunQuestion(channel)
+                if activity == "FunPoll":
+                    await self.FunPoll(channel)
+                if activity == "Trivia":
+                    await self.Trivia(channel)
+                if activity == "TruthOrDare":
+                    await self.TruthOrDare(channel)
+                await asyncio.sleep(1)
         except Exception:
             await error_send()
     
@@ -115,7 +118,8 @@ class EngageActivity(commands.Cog):
             app_commands.Choice(name="Truth Or Dare", value="TruthOrDare")
         ]
     )
-    async def engage_command(self, interaction: discord.Interaction, activity: app_commands.Choice[str], channel: discord.TextChannel):
+    async def engage_command(self, interaction: discord.Interaction, activity: app_commands.Choice[str], channel: discord.TextChannel = None):
+        channel = interaction.channel if not channel else channel
         activities = [
                "FunQ", "FunPoll", "TruthOrDare", "Trivia"
         ]

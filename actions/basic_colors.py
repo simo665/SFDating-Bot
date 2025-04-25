@@ -21,6 +21,8 @@ async def basic_colors(interaction, values):
     user = interaction.user
     guild = interaction.guild
     roles_ids = load_roles_ids("colors_basic", guild.id)
+    roles_ids.update(load_roles_ids("colors_boosters", guild.id))
+    roles_ids.update(load_roles_ids("colors_premium", guild.id))
     try:
         added_roles, removed_roles = await replace_roles(user, guild, values, roles_ids)
         embed = discord.Embed(title="Color Roles!", description=f"The following roles has been added successfully:\n{'\n'.join(added_roles)}"+(f"\nRemoved roles:\n{'\n'.join(removed_roles)}" if removed_roles else ""), color=colors.primary)

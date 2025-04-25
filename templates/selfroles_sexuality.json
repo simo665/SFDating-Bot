@@ -2,7 +2,7 @@
  "embeds": [
   {
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/sexuality.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/SexualityRoles.jpg"
    },
    "color": "ff4af0"
   }
@@ -16,7 +16,7 @@
      "custom_id": "sexuality",
      "options": [
       {
-       "label": "⸝⸝ Straight ",
+       "label": "✓ Straight 𓂃",
        "emoji": {
         "id": "1353612383633018881",
         "name": "MilkMochaHeartHug",
@@ -26,37 +26,17 @@
        "default": false
       },
       {
-       "label": "⸝⸝ Bisexual ",
+       "label": "✓ Bi 𓂃",
        "emoji": {
         "id": "1353616469035843645",
         "name": "NanaLove",
         "animated": false
        },
-       "value": "bisexual",
+       "value": "bi",
        "default": false
       },
       {
-       "label": "⸝⸝ Pansexual ",
-       "emoji": {
-        "id": "1353616270917898283",
-        "name": "lovelysquid",
-        "animated": true
-       },
-       "value": "pansexual",
-       "default": false
-      },
-      {
-       "label": "⸝⸝ Gay ",
-       "emoji": {
-        "id": "1353616634975228024",
-        "name": "HeartEmojisTwo",
-        "animated": true
-       },
-       "value": "gay",
-       "default": false
-      },
-      {
-       "label": "⸝⸝ Lesbian ",
+       "label": "✓ Lesbian 𓂃",
        "emoji": {
         "id": "1355297610034053430",
         "name": "CatChibi",
@@ -66,43 +46,33 @@
        "default": false
       },
       {
-       "label": "⸝⸝ Asexual ",
+       "label": "✓ Gay 𓂃",
+       "emoji": {
+        "id": "1353616634975228024",
+        "name": "HeartEmojisTwo",
+        "animated": true
+       },
+       "value": "gay",
+       "default": false
+      },
+      {
+       "label": "✓ Pan 𓂃",
+       "emoji": {
+        "id": "1353616270917898283",
+        "name": "lovelysquid",
+        "animated": true
+       },
+       "value": "pan",
+       "default": false
+      },
+      {
+       "label": "✓ Ace 𓂃",
        "emoji": {
         "id": "1353725609515417680",
         "name": "FunCaTwink",
         "animated": false
        },
-       "value": "asexual",
-       "default": false
-      },
-      {
-       "label": "⸝⸝ Demisexual ",
-       "emoji": {
-        "id": "1353618751366369300",
-        "name": "AnimeEmiliaHappy",
-        "animated": false
-       },
-       "value": "demisexual",
-       "default": false
-      },
-      {
-       "label": "⸝⸝ Queer ",
-       "emoji": {
-        "id": "1353618672480030802",
-        "name": "AnimeEmiliaSmug",
-        "animated": false
-       },
-       "value": "queer",
-       "default": false
-      },
-      {
-       "label": "⸝⸝ Prefer to not say",
-       "emoji": {
-        "id": "1353719180133793833",
-        "name": "AnimeKonataYawn",
-        "animated": true
-       },
-       "value": "none",
+       "value": "ace",
        "default": false
       }
      ],

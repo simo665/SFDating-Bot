@@ -1,4 +1,4 @@
-primary = 0xff4af0
+primary = 0x800E13
 forbidden = 0xac53eb
 error = 0xda0c0c
 report = 0xe16202

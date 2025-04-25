@@ -9,7 +9,8 @@ from typing import List
 import sqlite3 
 import datetime
 import time
-
+from utilities import load_roles_ids
+import json
 
 class ServerLinkView(discord.ui.View):
     def __init__(self, guild_name, channel_link):
@@ -85,7 +86,15 @@ class Moderation(commands.Cog):
         self.conn = sqlite3.connect("database/data.db")
         self.create_table()
         self.reports_channel_id = 1361091376162410547
-        
+    
+    
+    @commands.Cog.listener()
+    async def on_ready(self):
+        with open("./configs/channels/channels_id.json", "r") as f:
+            data = json.load(f)
+        for guild in self.bot.guilds:
+            self.reports_channel_id = data.get(str(guild.id), {}).get("reports_channel_id", None)
+    
     def create_table(self):
         cur = self.conn.cursor()
         try:
@@ -629,18 +638,18 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
     )
     @app_commands.choices(
         age = [
-            app_commands.Choice(name="18 years old", value=18),
-            app_commands.Choice(name="19 years old", value=19),
-            app_commands.Choice(name="20 years old", value=20),
-            app_commands.Choice(name="21 years old", value=21),
-            app_commands.Choice(name="22 years old", value=22),
-            app_commands.Choice(name="23 years old", value=23),
-            app_commands.Choice(name="24 years old", value=24),
-            app_commands.Choice(name="25+ years old", value=25)
+            app_commands.Choice(name="18 years old", value="age18"),
+            app_commands.Choice(name="19 years old", value="age19"),
+            app_commands.Choice(name="20 years old", value="age20"),
+            app_commands.Choice(name="21 years old", value="age21"),
+            app_commands.Choice(name="22 years old", value="age22"),
+            app_commands.Choice(name="23 years old", value="age23"),
+            app_commands.Choice(name="24 years old", value="age24"),
+            app_commands.Choice(name="25+ years old", value="age25")
         ]
     )
     @app_commands.describe(member="Who is the member you are trying to verify?", gender="What is their gender?", age="What is their age?", proof="Show a proof of their verification (e.g screenshot)")
-    async def verify_cmd(self, interaction: discord.Interaction, member: discord.Member, gender: app_commands.Choice[str], age: app_commands.Choice[int], proof: discord.Attachment):
+    async def verify_cmd(self, interaction: discord.Interaction, member: discord.Member, gender: app_commands.Choice[str], age: app_commands.Choice[str], proof: discord.Attachment):
         try:
             await interaction.response.defer(ephemeral=True)
             authorized = await self.check_perm(interaction, ["moderate_members"], ["manage_roles"])
@@ -654,23 +663,8 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
                 
             
             guild = interaction.guild
-            gender_roles_ids = {
-                "male": 1350851135501766746,
-                "female": 1350851138139852810,
-                "transM": 1359888608508510430,
-                "transF": 1359888703211704431,
-                "none": 1359888867750318160
-            }
-            age_roles_ids = {
-                18: 1350851110021238795,
-                19: 1350851112437026876,
-                20: 1350851115096473651,
-                21: 1350851117000425562,
-                22: 1350851119215280139,
-                23: 1350851123531218965,
-                24: 1350851127897358410,
-                25: 1350851131961511957
-            }
+            gender_roles_ids = load_roles_ids("gender_roles", guild.id)
+            age_roles_ids = load_roles_ids("age", guild.id)
             issues = []
             
             gender_role = discord.utils.get(guild.roles, id=gender_roles_ids[gender.value])
@@ -695,14 +689,7 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             else:
                 issues.append(f"!! • {age.value} role not found.")
             
-            verified_roles = {
-                "male": 1350898361032642641,
-                "female": 1350898277813583932,
-                "transM": 1350898361032642641,
-                "transF": 1350898277813583932,
-                "none": 1359897374289563829
-            }
-            
+            verified_roles = load_roles_ids("verified_roles", guild.id)
             verified_role = discord.utils.get(guild.roles, id=verified_roles[gender.value])
             
             if not verified_role:

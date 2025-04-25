@@ -4,6 +4,7 @@ import time
 from utilities.components_callback import DropDownSelect, CustomButton 
 import os
 import json
+from utilities.colors import *
 
 
 class PersistentView(discord.ui.View):
@@ -98,10 +99,13 @@ def convert_to_message(template, variables={}):
     # check for embeds 
     if "embeds" in template and template["embeds"] is not None:
         for embed in template["embeds"]:
+            color = embed.get("color", "#ff4af0")
+            if "ff4af0" in color:
+                color = primary
             discord_embed = discord.Embed(
                 title = content_format(embed.get("title", "")).format(**variables),
                 description = content_format(embed.get("description", "")).format(**variables),
-                color = int(embed.get("color", "#ff4af0").lstrip("#"), 16) if not isinstance(embed.get("color", "#ff4af0"), int) else embed.get("color", "#ff4af0")
+                color = int(embed.get("color", "#ff4af0").lstrip("#"), 16) if not isinstance(color, int) else color
             )
             # add author
             if "author" in embed and embed["author"] is not None:

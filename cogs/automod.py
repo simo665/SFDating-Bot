@@ -4,6 +4,7 @@ from discord.ext import commands
 from utilities import colors
 from errors.error_logger import error_send
 from utilities import send_log, get_all_variables
+from utilities import load_roles_ids
 
 
 class AutoMod(commands.Cog):
@@ -15,7 +16,7 @@ class AutoMod(commands.Cog):
     async def on_member_update(self, before, after):
         try:
             # auto kick minors 
-            minors_role_id = 1359938581992444164
+            minors_role_id = load_roles_ids("minors_role_id", after.guild.id)
             minors_role = discord.utils.get(before.guild.roles, id=minors_role_id)
             
             if minors_role in after.roles:

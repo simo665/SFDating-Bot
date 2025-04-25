@@ -17,8 +17,6 @@ async def send(interaction, embed):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-    
-
 async def height_preference(interaction, values):
     from utilities import load_roles_ids
     user = interaction.user

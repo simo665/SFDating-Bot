@@ -1,7 +1,11 @@
 import discord
 from utilities import colors
 from errors.error_logger import error_send
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+verification_channel = os.getenv("VERIFICATION_CHANNEL")
 
 async def send(interaction, embed):
     if interaction.response.is_done():
@@ -28,18 +32,17 @@ async def gender_roles(interaction, values):
         tf = discord.utils.get(guild.roles, id=gender_roles_ids["transfemale"])
         none = discord.utils.get(guild.roles, id=gender_roles_ids["none"])
         g_list = [female, male, tm, tf, none]
-        
         if not all(g_list):
             embed1 = discord.Embed(title="", color=colors.forbidden)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
-            embed2 = discord.Embed(title="Oops", description="Technical issues, will be fixed soon 🙏\nReport it in https://discord.com/channels/1349136661971206268/1349244644247998516", color=colors.forbidden)
+            embed2 = discord.Embed(title="Oops", description="Technical issues, will be fixed soon 🙏\nReport it in support channel", color=colors.forbidden)
             await send(interaction, embed=[embed1, embed2])
             return
         
         if any(role in user.roles for role in g_list):
             embed1 = discord.Embed(title="", color=colors.forbidden)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
-            embed2 = discord.Embed(title="Unauthorized", description="You already have a gender role assigned. If you selected it by mistake, you'll need to verify yourself first to prevent catfishing.\n\n**[Click To Verify](https://discord.com/channels/1349136661971206268/1349244585947299921)**.", color=colors.forbidden)
+            embed2 = discord.Embed(title="Unauthorized", description=f"You already have a gender role assigned. If you selected it by mistake, you'll need to verify yourself first to prevent catfishing.\n\n**[Click To Verify]({verification_channel})**.", color=colors.forbidden)
             await send(interaction, embed=[embed1, embed2])
             return 
         

@@ -4,7 +4,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/Distance.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/DistanceRoles.jpg"
    },
    "fields": null
   }
@@ -33,6 +33,15 @@
         "animated": false
        },
        "value": "Long distance",
+       "default": false
+      },
+      {
+       "label": "⸝⸝ Doesn't Matter",
+       "emoji": {
+        "name": "😘",
+        "animated": false
+       },
+       "value": "none",
        "default": false
       }
      ],

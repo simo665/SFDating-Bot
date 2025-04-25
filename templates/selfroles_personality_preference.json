@@ -3,7 +3,7 @@
   {
    "color": "ff4af0",
    "image": {
-    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/titles/roles/PersonalityPreference.jpg"
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/PersonalityRoles.jpg"
    }
   }
  ],
@@ -16,44 +16,69 @@
      "custom_id": "partner personality",
      "options": [
       {
-       "label": "⸝⸝ Introvert Lover",
-       "value": "introvert partner",
+       "label": "✓ Funny 𓂃",
+       "value": "funny",
        "default": false
       },
       {
-       "label": "⸝⸝ Extrovert Lover",
-       "value": "extrovert partner",
+       "label": "✓ Chill 𓂃",
+       "value": "chill",
        "default": false
       },
       {
-       "label": "⸝⸝ Optimist Lover",
-       "value": "optimistic partner",
+       "label": "✓ Dominant 𓂃",
+       "value": "dominant",
        "default": false
       },
       {
-       "label": "⸝⸝ Ambivert Lover",
-       "value": "ambivert partner",
+       "label": "✓ Submissive 𓂃",
+       "value": "submissive",
        "default": false
       },
       {
-       "label": "⸝⸝ Realist Lover",
-       "value": "realist partner",
+       "label": "✓ Caring 𓂃",
+       "value": "caring",
        "default": false
       },
       {
-       "label": "⸝⸝ Intellectual Lover",
-       "value": "intellectual partner",
+       "label": "✓ Mysterious 𓂃",
+       "value": "mysterious",
        "default": false
       },
       {
-       "label": "⸝⸝ Goofy & Fun",
-       "value": "goofy partner",
+       "label": "✓ Introvert 𓂃",
+       "value": "introvert",
+       "default": false
+      },
+      {
+       "label": "✓ Extrovert 𓂃",
+       "value": "extrovert",
+       "default": false
+      },
+      {
+       "label": "✓ Creative 𓂃",
+       "value": "creative",
+       "default": false
+      },
+      {
+       "label": "✓ Outgoing 𓂃",
+       "value": "outgoing",
+       "default": false
+      },
+      {
+       "label": "✓ Talkative 𓂃",
+       "value": "talkative",
+       "default": false
+      },
+      {
+       "label": "✓ Reserved 𓂃",
+       "value": "reserved",
        "default": false
       }
      ],
      "placeholder": "💞─〃★ Personality you prefer in a partner?",
      "min_values": 1,
-     "max_values": 3
+     "max_values": 6
     }
    ]
   }

@@ -8,12 +8,11 @@ import asyncio
 import datetime
 from utilities import colors
 from utilities import send_log, get_account_age, format_time
-
+import sqlite3
 
 class Joins(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
-        self.welcome_channel = 1349150427106508821
         self.images = {
             1: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_052616_753.gif",
             2: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/w5.gif",
@@ -21,6 +20,32 @@ class Joins(commands.Cog):
             4: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_202406_009.gif"
         }
         self.next_image = 1
+        self.table_init()
+    
+    def table_init(self):
+        con = sqlite3.connect("database/data.db")
+        try:
+            cur = con.cursor()
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS welcome_channel (
+                guild_id INTEGER PRIMARY KEY,
+                channel_id INTEGER
+            )
+            """)
+            con.commit()
+        finally:
+            con.close()
+    
+    def get_welcome_channel_id(self, guild_id):
+        con = sqlite3.connect("database/data.db")
+        try:
+            cur = con.cursor()
+            cur.execute("SELECT channel_id FROM welcome_channel WHERE guild_id = ?", (guild_id,))
+            row = cur.fetchone()
+        finally:
+            con.close()
+        return row[0] if row else None
+    
     
     def get_gif(self):
         gif = self.images[self.next_image]
@@ -34,13 +59,16 @@ class Joins(commands.Cog):
         variables.update(get_emojis_variables())
         variables.update({"randomwelcomegif":self.get_gif()})
         data = get_message_from_template("joins_welcome", variables)
-        channel = discord.utils.get(member.guild.text_channels, id=self.welcome_channel)
+        channel_id = self.get_welcome_channel_id(member.guild.id)
+        if not channel_id:
+            return  
+        channel = self.bot.get_channel(channel_id)
+        if not channel:
+            return 
         await channel.send(data["content"], embeds=data["embeds"], view=data["view"])
-    
-    
+
     async def is_account_new(self, member):
         try: 
-            
             min_age = 1
             
             variables = get_all_variables(member, member.guild, member)
@@ -102,6 +130,24 @@ class Joins(commands.Cog):
             await interaction.response.send_message("Sent successfully!", ephemeral=True)
         except Exception:
             await error_send(interaction)
+    
+    @welcome.command(name="channel", description="Set the welcome channel for this server.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def set_welcome_channel(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        try:
+            con = sqlite3.connect("database/data.db")
+            cur = con.cursor()
+            cur.execute("""
+            INSERT INTO welcome_channel (guild_id, channel_id)
+            VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET channel_id = excluded.channel_id
+            """, (interaction.guild.id, channel.id))
+            con.commit()
+            con.close()
+            await interaction.response.send_message(f"Welcome channel set to {channel.mention}", ephemeral=True)
+        except Exception:
+            await error_send(interaction)
+    
 
 async def setup(bot):
     await bot.add_cog(Joins(bot))

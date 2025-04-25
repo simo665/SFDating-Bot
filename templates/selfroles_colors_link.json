@@ -1,0 +1,30 @@
+{
+ "content": null,
+ "embeds": [
+  {
+   "color": "ff4af0",
+   "image": {
+    "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/ColorsBanner.jpg"
+   },
+   "fields": null
+  }
+ ],
+ "components": [
+  {
+   "type": 1,
+   "components": [
+    {
+     "type": 2,
+     "style": 5,
+     "label": "Get a color!",
+     "url": "https://discord.com/channels/1364310690046939197/1364887956787040276",
+     "emoji": {
+      "id": "1353616270917898283",
+      "name": "lovelysquid",
+      "animated": true
+     }
+    }
+   ]
+  }
+ ]
+}

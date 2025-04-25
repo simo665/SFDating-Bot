@@ -10,6 +10,10 @@ import traceback
 from database_backup import upload_database
 import sys
 import time
+from utilities.matching_database import setup_database, check_pending_matches_table
+import config
+from discord import app_commands
+from utilities.utils2 import MatchAcceptView, OptOutView, UnmatchAndContinueView
 
 
 databae_f = "database"
@@ -17,7 +21,7 @@ if not os.path.exists(databae_f):
     os.makedirs(databae_f)
 
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN2")
 
 intents = discord.Intents.default()
 intents.presences = True
@@ -29,7 +33,7 @@ prefix = "s!"
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 
-def _print(*args, sep=' ', end='\n', delay=0.005):
+def _print(*args, sep=' ', end='\n', delay=0.002):
     text = sep.join(str(arg) for arg in args)
     for char in text:
         sys.stdout.write(char)
@@ -45,13 +49,21 @@ async def on_ready():
         db = Database()
         await db.init_database(bot)
         load_components()
-        
+        setup_database()
         _print("\n" + "="*50)
         _print(f"Bot connected as: {bot.user}")
         _print(f"Discord.py version: {discord.__version__}")
         _print(f"Command prefix: {prefix}")
         _print("="*50)
-        
+        try:
+            # Add persistent views for buttons to work after restart
+            bot.add_view(MatchAcceptView(match_id=None, target_user=None, requester_user=None, score=0, score_percentage=0))
+            bot.add_view(OptOutView())
+            bot.add_view(UnmatchAndContinueView(match_id=None, matched_user=None))
+            _print("✓ Added persistent views.")
+        except Exception as e:
+            _print("X Persistent views not added.")
+            traceback.print_exc()
         _print("\nREGISTERED COMMANDS:")
         _print("-"*50)
 
@@ -155,7 +167,29 @@ async def main():
         traceback.print_exc()
         os._exit(1)
 
-
+@bot.tree.error
+async def on_app_command_error(interaction, error):
+    if isinstance(error, app_commands.CommandOnCooldown):
+        # Calculate when the cooldown will end
+        cooldown_end_timestamp = int(time.time() + error.retry_after)
+        
+        # Create an embed with better formatting
+        embed = discord.Embed(
+            title="❄️ Cooldown Active",
+            description=f"You need to wait before using this command again.\n\n**Try again:** <t:{cooldown_end_timestamp}:R>\n**Available at:** <t:{cooldown_end_timestamp}:f>",
+            color=config.Colors.WARNING
+        )
+        
+        await interaction.response.send_message(
+            embed=embed,
+            ephemeral=True
+        )
+    else:
+        logger.error(f"App command error: {error}")
+        await interaction.response.send_message(
+            "An error occurred while executing the command. Please try again later.",
+            ephemeral=True
+        )
 
 if __name__ == "__main__":
     try:

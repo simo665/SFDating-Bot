@@ -1,7 +1,6 @@
 import traceback 
 import logging
 import discord 
-from utilities import colors
 
 # Configure logging
 logging.basicConfig(
@@ -13,6 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 async def error_send(interaction = None, notify_user = True, ephemeral=True):
+    from utilities import colors
     ## Notify user
     try:
         if notify_user and interaction:

@@ -3,40 +3,48 @@ from discord.ext import commands, tasks
 import asyncio
 import os
 import json
+import sys
+import time
+import traceback
+import logging
 from dotenv import load_dotenv
 from utilities import PersistentView
 from utilities.database import Database
-import traceback
 from database_backup import upload_database
-import sys
-import time
 from utilities.matching_database import setup_database, check_pending_matches_table, cleanup_expired_matches
 import config
 from discord import app_commands
 from utilities.utils2 import MatchAcceptView, OptOutView, UnmatchAndContinueView
-import logging
 
+# Configure logging
 logging.basicConfig(
-    filename="errors/errors.log", 
-    filemode="a", 
+    filename="errors/errors.log",
+    filemode="a",
     format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.ERROR 
+    level=logging.ERROR
 )
 logger = logging.getLogger(__name__)
 
-databae_f = "database"
-if not os.path.exists(databae_f):
-    os.makedirs(databae_f)
+# Create database directory if it doesn't exist
+database_dir = "database"
+if not os.path.exists(database_dir):
+    os.makedirs(database_dir)
 
+# Load environment variables
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN2")
+TOKEN = os.getenv("BOT_TOKEN2") or os.getenv("DISCORD_TOKEN")
+if not TOKEN:
+    logger.error("No Discord token provided in environment variables")
+    sys.exit(1)
 
+# Set up intents
 intents = discord.Intents.default()
 intents.presences = True
 intents.members = True
 intents.guilds = True
 intents.message_content = True
 
+# Initialize the bot
 prefix = "s!"
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
@@ -50,7 +58,7 @@ async def cleanup_matches_task():
         logger.info(f"Cleaned up {expired_count} expired matches")
     except Exception as e:
         logger.error(f"Error in cleanup task: {e}")
-        
+
 def _print(*args, sep=' ', end='\n', delay=0.002):
     text = sep.join(str(arg) for arg in args)
     for char in text:
@@ -77,47 +85,62 @@ def load_config():
     except Exception as e:
         logger.error(f"Error loading config: {e}")
         return {"guilds": {}}
-        
+
 @bot.event
 async def on_guild_join(guild):
     logger.info(f"Joined new guild: {guild.name} (ID: {guild.id})")
     
     # Add guild to config if not present
-    config = load_config()
-    if str(guild.id) not in config["guilds"]:
-        config["guilds"][str(guild.id)] = {
+    config_data = load_config()
+    if str(guild.id) not in config_data["guilds"]:
+        config_data["guilds"][str(guild.id)] = {
             "ticket_channel_id": None,
             "ticket_category_id": None,
             "ticket_log_channel_id": None,
             "staff_roles": []
         }
         with open('config.json', 'w') as f:
-            json.dump(config, f, indent=4)
-            
-@bot.event 
+            json.dump(config_data, f, indent=4)
+
+@bot.event
+async def on_guild_remove(guild):
+    logger.info(f"Removed from guild: {guild.name} (ID: {guild.id})")
+
+@bot.event
 async def on_ready():
     try:
+        # First sync all commands
         commands = await bot.tree.sync()
+        
+        # Initialize database
         db = Database()
         await db.init_database(bot)
-        load_components()
+        
+        # Make sure setup is complete
         setup_database()
+        
+        # Load JSON components and templates
+        load_components()
+        
+        # Start tasks
         if not cleanup_matches_task.is_running():
             cleanup_matches_task.start()
+        
+        # Set bot activity
+        await bot.change_presence(activity=discord.Activity(
+            type=discord.ActivityType.watching,
+            name="for tickets 💕"
+        ))
+        
         _print("\n" + "="*50)
         _print(f"Bot connected as: {bot.user}")
         _print(f"Discord.py version: {discord.__version__}")
         _print(f"Command prefix: {prefix}")
         _print("="*50)
-        try:
-            # Add persistent views for buttons to work after restart
-            bot.add_view(MatchAcceptView(match_id=None, target_user=None, requester_user=None, score=0, score_percentage=0))
-            bot.add_view(OptOutView())
-            bot.add_view(UnmatchAndContinueView(match_id=None, matched_user=None))
-            _print("✓ Added persistent views.")
-        except Exception as e:
-            _print("X Persistent views not added.")
-            traceback.print_exc()
+        
+        # NOTE: Persistent views are now added in the main() function
+        # before starting the bot to ensure they're registered correctly
+            
         _print("\nREGISTERED COMMANDS:")
         _print("-"*50)
 
@@ -155,8 +178,8 @@ async def on_ready():
         _print(f"{bot.user} is now online and ready!")
         _print("="*50 + "\n")
         
-        
-        #upload_backup.start()
+        # Uncomment to enable database backup
+        # upload_backup.start()
     except Exception as e:
         _print(f"Error in on_ready: {e}")
         traceback.print_exc()
@@ -191,7 +214,7 @@ async def load_cogs(selected_cogs=None):
             except Exception as e:
                 _print(f"  ✗ {cog}.py - Error loading cog: {str(e)}\n\n", "="*50,"\n\n")
                 traceback.print_exc()
-                os._exit(1)
+                sys.exit(1)
     else:
         # Original behavior: load all cogs
         for file in os.listdir("./cogs"):
@@ -202,24 +225,8 @@ async def load_cogs(selected_cogs=None):
                 except Exception as e:
                     _print(f"  ✗ {file} - Error loading cog: {str(e)}")
                     traceback.print_exc()
-                    os._exit(1)
+                    sys.exit(1)
     _print("All cogs loaded successfully!\n")
-
-async def main():
-    try:
-        async with bot:
-            # Get cog names from command-line arguments (exclude script name)
-            args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
-            selected_cogs = args if args else None  # Use args if provided
-            await load_cogs(selected_cogs)
-            await bot.start(TOKEN)
-    except KeyboardInterrupt:
-        _print("Bot has shut down.")
-        os._exit(0)
-    except Exception as e:
-        _print(f"Fatal error: {e}")
-        traceback.print_exc()
-        os._exit(1)
 
 @bot.tree.error
 async def on_app_command_error(interaction, error):
@@ -238,6 +245,11 @@ async def on_app_command_error(interaction, error):
             embed=embed,
             ephemeral=True
         )
+    elif isinstance(error, commands.errors.MissingPermissions):
+        await interaction.response.send_message(
+            "💔 You don't have the required permissions to use this command.",
+            ephemeral=True
+        )
     else:
         logger.error(f"App command error: {error}")
         await interaction.response.send_message(
@@ -245,14 +257,46 @@ async def on_app_command_error(interaction, error):
             ephemeral=True
         )
 
+async def main():
+    try:
+        # Create a separate function to load cogs before starting the bot session
+        # Get cog names from command-line arguments (exclude script name)
+        args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
+        selected_cogs = args if args else None  # Use args if provided
+        
+        # Start bot session
+        async with bot:
+            # Load cogs first - this was the crucial part missing
+            await load_cogs(selected_cogs)
+            
+            # Register persistent views (moved here to ensure they're registered after cogs are loaded)
+            try:
+                # Add persistent views for buttons to work after restart
+                bot.add_view(MatchAcceptView(match_id=None, target_user=None, requester_user=None, score=0, score_percentage=0))
+                bot.add_view(OptOutView())
+                bot.add_view(UnmatchAndContinueView(match_id=None, matched_user=None))
+                _print("✓ Added persistent views before bot start.")
+            except Exception as e:
+                _print("X Failed to add persistent views before bot start.")
+                traceback.print_exc()
+            
+            # Start the bot
+            bot.start(TOKEN)
+    except KeyboardInterrupt:
+        _print("Bot has shut down.")
+        sys.exit(0)
+    except Exception as e:
+        _print(f"Fatal error: {e}")
+        traceback.print_exc()
+        sys.exit(1)
+
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         _print("Bot has shut down.")
-        os._exit(0)
+        sys.exit(0)
     except Exception as e:
         _print(f"Uncaught exception: {e}")
         traceback.print_exc()
-        os._exit(1)
-        
+        sys.exit(1)

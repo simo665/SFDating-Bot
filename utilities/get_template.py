@@ -93,9 +93,12 @@ def convert_to_message(template, variables={}):
     # define variables
     content = ""
     embeds = []
+    view = None  # Initialize view as None
+    
     # check if there's a text content 
     if "content" in template and template["content"] is not None:
         content = template.get("content", " ").format(**variables)
+    
     # check for embeds 
     if "embeds" in template and template["embeds"] is not None:
         for embed in template["embeds"]:
@@ -149,10 +152,16 @@ def convert_to_message(template, variables={}):
                 else:
                     discord_embed.timestamp = None
             embeds.append(discord_embed)
-        
-        # Add components 
-        view = None
-        if "components" in template and template["components"] is not None:
-            view = PersistentView(template["components"])
+    
+    # Add components 
+    if "components" in template and template["components"] is not None:
+        view = PersistentView(template["components"])
             
-    return {"content": content, "embeds": embeds, "view": view}
+    # Create a result dictionary based on what we have
+    result = {"content": content, "embeds": embeds}
+    
+    # Only include view if it's used in components
+    if view is not None:
+        result["view"] = view
+        
+    return result

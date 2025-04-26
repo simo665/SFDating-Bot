@@ -14,7 +14,15 @@ from utilities.matching_database import setup_database, check_pending_matches_ta
 import config
 from discord import app_commands
 from utilities.utils2 import MatchAcceptView, OptOutView, UnmatchAndContinueView
+import logging
 
+logging.basicConfig(
+    filename="errors/errors.log", 
+    filemode="a", 
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.ERROR 
+)
+logger = logging.getLogger(__name__)
 
 databae_f = "database"
 if not os.path.exists(databae_f):
@@ -51,7 +59,41 @@ def _print(*args, sep=' ', end='\n', delay=0.002):
         time.sleep(delay)
     sys.stdout.write(end)
     sys.stdout.flush()
+
+# Load configuration
+def load_config():
+    try:
+        if os.path.exists('config.json'):
+            with open('config.json', 'r') as f:
+                return json.load(f)
+        else:
+            # Create default config if it doesn't exist
+            default_config = {
+                "guilds": {}
+            }
+            with open('config.json', 'w') as f:
+                json.dump(default_config, f, indent=4)
+            return default_config
+    except Exception as e:
+        logger.error(f"Error loading config: {e}")
+        return {"guilds": {}}
+        
+@bot.event
+async def on_guild_join(guild):
+    logger.info(f"Joined new guild: {guild.name} (ID: {guild.id})")
     
+    # Add guild to config if not present
+    config = load_config()
+    if str(guild.id) not in config["guilds"]:
+        config["guilds"][str(guild.id)] = {
+            "ticket_channel_id": None,
+            "ticket_category_id": None,
+            "ticket_log_channel_id": None,
+            "staff_roles": []
+        }
+        with open('config.json', 'w') as f:
+            json.dump(config, f, indent=4)
+            
 @bot.event 
 async def on_ready():
     try:

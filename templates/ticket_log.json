@@ -1,0 +1,31 @@
+{
+  "content": "",
+  "embeds": [
+    {
+      "title": "💖 Ticket Closed 💖",
+      "description": "A ticket has been closed. The transcript is attached below.",
+      "color": "c40000",
+      "fields": [
+        {
+          "name": "Ticket",
+          "value": "{ticket_channel}",
+          "inline": true
+        },
+        {
+          "name": "Status",
+          "value": "{status}",
+          "inline": true
+        },
+        {
+          "name": "Closed By",
+          "value": "{closed_by} (ID: {closed_by_id})",
+          "inline": true
+        }
+      ],
+      "footer": {
+        "text": "Ticket closed"
+      },
+      "timestamp": "{timestamp}"
+    }
+  ]
+}

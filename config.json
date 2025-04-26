@@ -1,0 +1,13 @@
+{
+    "guilds": {
+        "1364310690046939197": {
+            "ticket_channel_id": 1364379379710431294,
+            "ticket_category_id": 1365383508020691075,
+            "ticket_log_channel_id": 1365245031404802139,
+            "staff_roles": [
+                "1364327733752102912"
+            ],
+            "trial_staff_role_id": 1364327724801462384
+        }
+    }
+}

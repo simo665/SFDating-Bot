@@ -1,4 +1,5 @@
 primary = 0x800E13
+secondary = 0xFF6B8E 
 forbidden = 0xac53eb
 error = 0xda0c0c
 report = 0xe16202
@@ -8,3 +9,7 @@ purple = 0xaf43f1
 orange = 0xf6a630
 softpink = 0xf297ec
 black = 0x000000
+danger = 0xE74C3C
+info = 0x3498DB 
+success = 0x2ECC71
+warning = 0xF1C40F

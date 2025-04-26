@@ -1,0 +1,36 @@
+{
+  "closed": {
+    "content": "",
+    "embeds": [
+      {
+        "title": "🔒 Ticket Closed 🔒",
+        "description": "Your ticket in **{server_name}** has been closed by a staff member.\n\nIf you have any further questions or need more assistance, feel free to open a new ticket.",
+        "color": "c40000",
+        "thumbnail": {
+          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
+        },
+        "footer": {
+          "text": "Dating Server Support • Thank you for your patience"
+        },
+        "timestamp": "{timestamp}"
+      }
+    ]
+  },
+  "resolved": {
+    "content": "",
+    "embeds": [
+      {
+        "title": "✅ Ticket Resolved ✅",
+        "description": "Your ticket in **{server_name}** has been marked as resolved by a staff member.\n\nWe hope your issue has been addressed to your satisfaction. If you need further assistance, feel free to open a new ticket.",
+        "color": "c40000",
+        "thumbnail": {
+          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
+        },
+        "footer": {
+          "text": "Dating Server Support • We hope we could help"
+        },
+        "timestamp": "{timestamp}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "accepted": {
+    "content": "",
+    "embeds": [
+      {
+        "title": "✅ Staff Application Accepted! ✅",
+        "description": "Congratulations! Your application to join the staff team at **{server_name}** has been accepted!\n\nYou have been given the trial staff role and will undergo a probationary period to ensure you're a good fit for our team. During this time, a senior staff member will guide you through your duties and responsibilities.\n\nWelcome to the team! 💖",
+        "color": "c40000",
+        "thumbnail": {
+          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
+        },
+        "footer": {
+          "text": "Dating Server Support • Welcome to the team!"
+        },
+        "timestamp": "{timestamp}"
+      }
+    ]
+  },
+  "rejected": {
+    "content": "",
+    "embeds": [
+      {
+        "title": "❌ Staff Application Status ❌",
+        "description": "Thank you for your interest in joining the staff team at **{server_name}**.\n\nAfter careful consideration, we've decided not to move forward with your application at this time. This doesn't reflect on you personally, and we encourage you to apply again in the future as you continue to be an active member of our community.\n\nIf you have any questions about our decision, feel free to reach out to a server admin.\n\nThank you for your understanding. 💕",
+        "color": "c40000",
+        "thumbnail": {
+          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
+        },
+        "footer": {
+          "text": "Dating Server Support • Thank you for understanding"
+        },
+        "timestamp": "{timestamp}"
+      }
+    ]
+  }
+}

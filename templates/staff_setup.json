@@ -1,0 +1,14 @@
+{
+  "content": "",
+  "embeds": [
+    {
+      "title": "💖 Staff Setup for {server_name} 💖",
+      "description": "Please select the roles that should have access to tickets. These roles will be able to view and manage all tickets.\n\nOnce you've selected the roles, click 'Confirm' to finish the setup.",
+      "color": "c40000",
+      "footer": {
+        "text": "Setup started"
+      },
+      "timestamp": "{timestamp}"
+    }
+  ]
+}

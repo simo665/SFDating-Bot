@@ -100,7 +100,7 @@ def convert_to_message(template, variables={}):
     if "embeds" in template and template["embeds"] is not None:
         for embed in template["embeds"]:
             color = embed.get("color", "#ff4af0")
-            if "ff4af0" in color:
+            if "ff4af0" in str(color):
                 color = primary
             discord_embed = discord.Embed(
                 title = content_format(embed.get("title", "")).format(**variables),

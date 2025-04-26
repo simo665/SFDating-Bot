@@ -10,7 +10,7 @@ import traceback
 from database_backup import upload_database
 import sys
 import time
-from utilities.matching_database import setup_database, check_pending_matches_table
+from utilities.matching_database import setup_database, check_pending_matches_table, cleanup_expired_matches
 import config
 from discord import app_commands
 from utilities.utils2 import MatchAcceptView, OptOutView, UnmatchAndContinueView
@@ -32,7 +32,17 @@ intents.message_content = True
 prefix = "s!"
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-
+# Define the automated match cleanup task
+@tasks.loop(minutes=config.MATCH_CLEANUP_INTERVAL)
+async def cleanup_matches_task():
+    """Periodic task to clean up expired matches"""
+    try:
+        logger.info("Running automated match cleanup...")
+        expired_count = cleanup_expired_matches()
+        logger.info(f"Cleaned up {expired_count} expired matches")
+    except Exception as e:
+        logger.error(f"Error in cleanup task: {e}")
+        
 def _print(*args, sep=' ', end='\n', delay=0.002):
     text = sep.join(str(arg) for arg in args)
     for char in text:
@@ -50,6 +60,8 @@ async def on_ready():
         await db.init_database(bot)
         load_components()
         setup_database()
+        if not cleanup_matches_task.is_running():
+            cleanup_matches_task.start()
         _print("\n" + "="*50)
         _print(f"Bot connected as: {bot.user}")
         _print(f"Discord.py version: {discord.__version__}")

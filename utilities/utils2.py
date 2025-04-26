@@ -403,7 +403,7 @@ class ProfileView(discord.ui.View):
     def __init__(self, matched_user):
         super().__init__(timeout=None)  # No timeout for persistent view
         self.matched_user = matched_user
-    
+
     @discord.ui.button(label="Check Profile", style=discord.ButtonStyle.primary, custom_id="profile_button")
     async def profile_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         # Handle persistent views after restart
@@ -411,14 +411,14 @@ class ProfileView(discord.ui.View):
             # Try to get match info from database
             from .matching_database import has_active_match
             has_match, match_id, other_user_id = has_active_match(interaction.user.id)
-            
+
             if not has_match:
                 await interaction.response.send_message(
                     "You don't have an active match. This button is no longer valid.",
                     ephemeral=True
                 )
                 return
-            
+
             try:
                 # Get user object
                 matched_user = await interaction.client.fetch_user(other_user_id)
@@ -430,7 +430,7 @@ class ProfileView(discord.ui.View):
                     ephemeral=True
                 )
                 return
-                
+
         await interaction.response.send_message(
             content=f"Click here to see their profile: {self.matched_user.mention}",
             ephemeral=True
@@ -523,14 +523,14 @@ class UnmatchAndContinueView(discord.ui.View):
         try:
             # Check if there's an active match first
             has_match, db_match_id, other_user_id = has_active_match(interaction.user.id)
-            
+
             if not has_match:
                 await interaction.response.send_message(
                     "You no longer have an active match. You can use /match find to find a new match.",
                     ephemeral=True
                 )
                 return
-                
+
             # Unmatch using the match ID from the database (not from the view)
             success, user_id, matched_user_id = unmatch_users(db_match_id)
 
@@ -549,7 +549,7 @@ class UnmatchAndContinueView(discord.ui.View):
                         color=config.Colors.WARNING
                     )
                     await self.matched_user.send(embed=embed)
-                    
+
                 except discord.Forbidden:
                     # Can't send DM to the other user
                     pass
@@ -558,7 +558,7 @@ class UnmatchAndContinueView(discord.ui.View):
                     # Disable all buttons in the view
                     for item in self.children:
                         item.disabled = True
-                    
+
                     # Try to edit the message but don't error out if it fails
                     try:
                         await interaction.message.edit(view=self)
@@ -567,7 +567,7 @@ class UnmatchAndContinueView(discord.ui.View):
                         pass
                 except Exception as e:
                     logger.warning(f"Non-critical error disabling buttons: {e}")
-                
+
                 # Now trigger the find_match command with the same parameters
                 if self.partner_gender:
                     # Use the ctx trick to call the command programmatically
@@ -612,14 +612,14 @@ class UnmatchAndContinueView(discord.ui.View):
         try:
             # Check if there's an active match first
             has_match, db_match_id, other_user_id = has_active_match(interaction.user.id)
-            
+
             if not has_match:
                 await interaction.response.send_message(
                     "You no longer have an active match.",
                     ephemeral=True
                 )
                 return
-                
+
             # Unmatch using the match ID from the database (not from the view)
             success, user_id, matched_user_id = unmatch_users(db_match_id)
 
@@ -646,7 +646,7 @@ class UnmatchAndContinueView(discord.ui.View):
                     # Disable all buttons in the view
                     for item in self.children:
                         item.disabled = True
-                    
+
                     # Try to edit the message but don't error out if it fails
                     try:
                         await interaction.message.edit(view=self)
@@ -694,7 +694,7 @@ class UnmatchAndContinueView(discord.ui.View):
                 # Disable all buttons in the view
                 for item in self.children:
                     item.disabled = True
-                
+
                 # Try to edit the message but don't error out if it fails
                 try:
                     await interaction.message.edit(view=self)
@@ -703,7 +703,7 @@ class UnmatchAndContinueView(discord.ui.View):
                     pass
             except Exception as e:
                 logger.warning(f"Non-critical error disabling buttons: {e}")
-                
+
         except Exception as e:
             logger.error(f"Error in keep_match_button: {e}")
             # Send the response via followup if the response was already sent
@@ -773,6 +773,65 @@ def format_user_info(user_data, user):
         parts.append(f"**Sexuality:** {user_data['sexuality']}")
 
     return "\n".join(parts)
+
+async def get_user_match_status(member):
+    """
+    Get match information for a user, including current match count,
+    match limit, and formatted status information.
+    
+    Parameters:
+    - member: discord.Member object
+    
+    Returns:
+    - Dictionary with match information:
+        - active_match_count: Number of active matches
+        - match_limit: User's match limit (0 means unlimited)
+        - is_unlimited: True if user has unlimited matches
+        - has_reached_limit: True if user has reached their match limit
+        - matches_remaining: Number of matches remaining (None if unlimited)
+        - formatted_status: Formatted message about match status
+    """
+    from .matching_database import get_all_active_matches, get_match_limit
+    
+    # Get current active matches
+    active_matches = get_all_active_matches(member.id)
+    
+    # Count unique users in the match list
+    unique_match_users = set()
+    for match in active_matches:
+        unique_match_users.add(match['other_user_id'])
+    
+    active_match_count = len(unique_match_users)
+    
+    # Get user's match limit
+    match_limit = get_match_limit(member)
+    is_unlimited = (match_limit == 0)
+    has_reached_limit = (match_limit > 0 and active_match_count >= match_limit)
+    
+    # Calculate matches remaining
+    matches_remaining = None
+    if not is_unlimited:
+        matches_remaining = match_limit - active_match_count
+    
+    # Format status message
+    formatted_status = ""
+    if is_unlimited:
+        formatted_status = f"You currently have {active_match_count} active match{'es' if active_match_count != 1 else ''} with unlimited capacity 💎"
+    elif active_match_count == 0:
+        formatted_status = f"You don't have any active matches (Limit: {match_limit})"
+    elif has_reached_limit:
+        formatted_status = f"You've reached your limit of {match_limit} active matches."
+    else:
+        formatted_status = f"You have {active_match_count}/{match_limit} active matches (space for {matches_remaining} more)."
+    
+    return {
+        "active_match_count": active_match_count,
+        "match_limit": match_limit,
+        "is_unlimited": is_unlimited,
+        "has_reached_limit": has_reached_limit,
+        "matches_remaining": matches_remaining,
+        "formatted_status": formatted_status
+    }
 
 def create_match_embed(requester, target, score, max_score, user_data):
     """Create an embed for a match"""

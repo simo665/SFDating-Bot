@@ -9,15 +9,28 @@ import datetime
 from utilities import colors
 from utilities import send_log, get_account_age, format_time
 import sqlite3
+import random 
 
 class Joins(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
         self.images = {
-            1: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_052616_753.gif",
-            2: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/w5.gif",
-            3: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/w.gif",
-            4: "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_202406_009.gif"
+            1: {
+                "gif": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_052616_753.gif",
+                "color": 0xf18fa9
+            },
+            2: {
+                "gif": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/w5.gif",
+                "color": 0xb96855
+            },
+            3: {
+                "gif": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/w.gif",
+                "color": 0x22e4dd
+            },
+            4: {
+                "gif": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/gifs/GIF_20250324_202406_009.gif",
+                "color": 0xe0282b
+            }
         }
         self.next_image = 1
         self.table_init()
@@ -48,16 +61,18 @@ class Joins(commands.Cog):
     
     
     def get_gif(self):
-        gif = self.images[self.next_image]
+        gif = self.images[self.next_image]["gif"]
+        color = self.images[self.next_image]["color"]
         self.next_image += 1
         if self.next_image > len(self.images):
             self.next_image = 1
-        return gif
+        return gif, color
     
     async def send_welcome_message(self, member):
         variables = get_member_variables(member)
         variables.update(get_emojis_variables())
-        variables.update({"randomwelcomegif":self.get_gif()})
+        gif, color = self.get_gif()
+        variables.update({"randomwelcomegif":gif})
         data = get_message_from_template("joins_welcome", variables)
         channel_id = self.get_welcome_channel_id(member.guild.id)
         if not channel_id:
@@ -65,7 +80,9 @@ class Joins(commands.Cog):
         channel = self.bot.get_channel(channel_id)
         if not channel:
             return 
-        await channel.send(data["content"], embeds=data["embeds"], view=data["view"])
+        embed = data.get("embeds")[0]
+        embed.color = color
+        await channel.send(data["content"], embed=embed, view=data["view"])
 
     async def is_account_new(self, member):
         try: 
@@ -124,6 +141,7 @@ class Joins(commands.Cog):
     joins = app_commands.Group(name="joins", description="Joins related commands.")
     welcome = app_commands.Group(name="welcome", description="welcome commands.", parent=joins)
     @welcome.command(name="test", description="Test welcome message")
+    @app_commands.checks.has_permissions(administrator=True)
     async def welcometest(self, interaction: discord.Interaction):
         try:
             await self.send_welcome_message(interaction.user)

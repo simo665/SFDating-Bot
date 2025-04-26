@@ -3,7 +3,7 @@ import logging
 import time
 import config
 
-logger = logging.getLogger("./errors/errors.log")
+logger = logging.getLogger(__name__)
 
 
 def setup_database():
@@ -489,36 +489,92 @@ def opt_out_user(user_id, opt_out=True):
 
 
 def has_active_match(user_id):
-    """Check if the user has an active match"""
+    """
+    Check if the user has an active match.
+    For backward compatibility, this function still returns a tuple of (has_match, match_id, matched_user_id)
+    where match_id and matched_user_id refer to the most recent match if one exists.
+    
+    Use get_all_active_matches() instead for a complete list of matches.
+    """
+    all_matches = get_all_active_matches(user_id)
+    
+    if all_matches and len(all_matches) > 0:
+        # Return the most recent match for backward compatibility
+        most_recent = all_matches[0]  # Matches are sorted by timestamp DESC
+        return True, most_recent['match_id'], most_recent['other_user_id']
+    else:
+        return False, None, None
+
+def get_match_limit(member):
+    """
+    Get the match limit for a user based on their roles
+    
+    Parameters:
+    - member: discord.Member object
+    
+    Returns:
+    - Integer representing the match limit (0 means unlimited)
+    """
+    try:
+        # Check for premium roles first (highest tier)
+        for role in member.roles:
+            role_name = role.name.lower().replace(" ", "_")
+            if role_name in config.PREMIUM_ROLE_TYPES:
+                return config.PREMIUM_MATCH_LIMIT  # Unlimited matches (0)
+        
+        # Check for booster roles next
+        for role in member.roles:
+            role_name = role.name.lower().replace(" ", "_")
+            if role_name in config.BOOSTER_ROLE_TYPES or role.name == "Server Booster":
+                return config.BOOSTER_MATCH_LIMIT
+        
+        # Default limit for regular users
+        return config.DEFAULT_MATCH_LIMIT
+    except Exception as e:
+        logger.error(f"Error getting match limit: {e}")
+        # Fall back to default limit if there's an error
+        return config.DEFAULT_MATCH_LIMIT
+
+def get_all_active_matches(user_id):
+    """
+    Get all active matches for a user
+    
+    Returns:
+    - List of dictionaries with match information: 
+      [{'match_id': id, 'other_user_id': id, 'timestamp': timestamp}, ...]
+    - Sorted by timestamp descending (most recent first)
+    - Each match partner appears only once in the list (deduplication)
+    """
     try:
         conn = sqlite3.connect(config.DATABASE_PATH)
         cursor = conn.cursor()
 
-        # Check if user has an active match as either the requester or the target
+        # Get all matches where user is either requester or target and status is 'accepted'
         cursor.execute(
             """
-            SELECT m.id, m.user_id, m.matched_user_id
+            SELECT m.id, m.user_id, m.matched_user_id, m.timestamp
             FROM match_history m
             WHERE (m.user_id = ? OR m.matched_user_id = ?)
             AND m.status = 'accepted'
             ORDER BY m.timestamp DESC
-            LIMIT 1
             """, (user_id, user_id))
 
-        result = cursor.fetchone()
+        matches = cursor.fetchall()
+        active_matches = []
+        seen_users = set()  # Track users we've already added to prevent duplicates
         
-        # If there's a result, we need to also check if there's been any unmatch events AFTER this match
-        if result:
-            match_id, first_user_id, second_user_id = result
-            match_timestamp = cursor.execute(
-                "SELECT timestamp FROM match_history WHERE id = ?", 
-                (match_id,)
-            ).fetchone()[0]
+        # For each potential match, check if there are any unmatch events after it
+        for match in matches:
+            match_id, first_user_id, second_user_id, match_timestamp = match
             
-            # Check for any unmatch events between these users after the match was made
+            # Get the other user's ID
             other_user_id = second_user_id if user_id == first_user_id else first_user_id
             
-            # Look for any 'unmatched', 'unmatched_by_user', or 'unmatched_by_other' records after the match
+            # Skip if we've already added this user to the active matches
+            if other_user_id in seen_users:
+                continue
+                
+            # Check for unmatch events after this match
             cursor.execute(
                 """
                 SELECT COUNT(*) 
@@ -529,21 +585,67 @@ def has_active_match(user_id):
                 """, (user_id, other_user_id, other_user_id, user_id, match_timestamp))
             
             unmatch_count = cursor.fetchone()[0]
-            conn.close()
             
-            # If there are no unmatch events after the match, the match is still active
+            # If there are no unmatch events, this match is still active
             if unmatch_count == 0:
-                return True, match_id, other_user_id
-            else:
-                # There are unmatch events, so the match is no longer active
-                return False, None, None
-        else:
-            conn.close()
-            return False, None, None
+                active_matches.append({
+                    'match_id': match_id,
+                    'other_user_id': other_user_id,
+                    'timestamp': match_timestamp
+                })
+                seen_users.add(other_user_id)  # Mark this user as seen
+        
+        conn.close()
+        return active_matches
     except Exception as e:
-        logger.error(f"Error checking active match: {e}")
-        return False, None, None
+        logger.error(f"Error getting active matches: {e}")
+        return []
 
+
+def get_users_with_pending_matches(user_id):
+    """
+    Get a list of users who have pending match requests with this user.
+    These users will be excluded from new match suggestions until their
+    current request is accepted, declined, or expired.
+    
+    Parameters:
+    - user_id: The ID of the user requesting a match
+    
+    Returns:
+    - List of user IDs that have pending match requests with this user
+    """
+    try:
+        # Ensure the table exists
+        check_pending_matches_table()
+        
+        conn = sqlite3.connect(config.DATABASE_PATH)
+        cursor = conn.cursor()
+        
+        # Get all users where there's a pending match (as either requester or target)
+        cursor.execute(
+            """
+            SELECT requester_id, target_id
+            FROM pending_matches
+            WHERE (requester_id = ? OR target_id = ?)
+            AND status = 'pending'
+            """, (user_id, user_id))
+        
+        results = cursor.fetchall()
+        conn.close()
+        
+        # Collect all user IDs that are not the requester
+        pending_users = []
+        for requester_id, target_id in results:
+            if requester_id == user_id:
+                pending_users.append(target_id)
+            else:
+                pending_users.append(requester_id)
+                
+        # Remove duplicates and return
+        return list(set(pending_users))
+    except Exception as e:
+        logger.error(f"Error getting users with pending matches: {e}")
+        return []
 
 def get_excluded_matches(user_id, days=7):
     """
@@ -552,7 +654,8 @@ def get_excluded_matches(user_id, days=7):
     2. Users who this user recently declined
     3. Users who recently unmatched from this user
     4. Users who this user recently unmatched from
-
+    5. Users who have pending match requests with this user
+    
     Parameters:
     - user_id: The ID of the user requesting a match
     - days: Number of days to consider recent (default is 7 days)
@@ -601,6 +704,10 @@ def get_excluded_matches(user_id, days=7):
             excluded_users.extend([row[0] for row in results2])
 
         conn.close()
+        
+        # Also get users with pending match requests
+        pending_users = get_users_with_pending_matches(user_id)
+        excluded_users.extend(pending_users)
 
         # Remove duplicates and return
         return list(set(excluded_users))

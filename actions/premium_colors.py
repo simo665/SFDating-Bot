@@ -29,7 +29,7 @@ async def premium_colors(interaction, values):
         if premium_role not in user.roles:
             embed1 = discord.Embed(title="", color=colors.error)
             embed1.set_image(url="https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/images/SFDatingSupport2.png")
-            embed2 = discord.Embed(title="Missing Premium", description="These colors are for premium members only. please join the premium membership first.\n\n-> **[Premium Info](https://discord.com/channels/1349136661971206268/1350270161000599612)**", color=colors.error)
+            embed2 = discord.Embed(title="Missing Premium", description="These colors are for premium members only. please join the premium membership first.\n\n-> **[Premium Info](https://discord.com/channels/1364310690046939197/1364379946692382810)**", color=colors.error)
             await send(interaction, embed=[embed1, embed2])
             return 
         added_roles, removed_roles = await replace_roles(user, guild, values, roles_ids)

@@ -1,16 +1,16 @@
 # Bot configuration settings
 
 # Command cooldown in seconds (6 hours = 21600 seconds)
-MATCH_COMMAND_COOLDOWN = 21600 
+MATCH_COMMAND_COOLDOWN = 21600 / 3
 
 # Match threshold (minimum required points for a viable match)
 MIN_MATCH_THRESHOLD = 25
 
 # Channels where the match command can be used (customize these IDs)
 MATCH_COMMAND_CHANNELS = [
-    1354185377371525271,  # match-making channel 
-    1354861828047503461,  # dating-app channel
-    1364349599602442300   # find-match channel
+    1354185377371525271, 
+    1354861828047503461,
+    1364349599602442300 
 ]
 
 # JSON file path for roles configuration
@@ -20,7 +20,10 @@ ROLES_CONFIG_PATH = "./configs/roles/RolesID.json"
 DATABASE_PATH = "./database/matchmaking.db"
 
 # Match acceptance timeout (in seconds) - 24 hours
-MATCH_ACCEPTANCE_TIMEOUT = 86400
+MATCH_ACCEPTANCE_TIMEOUT = 86400 
+
+# Automated match cleanup interval in minutes
+MATCH_CLEANUP_INTERVAL = 30
 
 # Number of days to exclude declined matches from appearing again
 DECLINED_MATCHES_EXCLUSION_DAYS = 7
@@ -31,6 +34,15 @@ EXCLUSION_ROLE_TYPES = [
     "not_looking",
     "friends_only"
 ]
+
+# Match limit configuration
+DEFAULT_MATCH_LIMIT = 5  # Default number of matches for regular users
+BOOSTER_MATCH_LIMIT = 10  # Number of matches for server boosters
+PREMIUM_MATCH_LIMIT = 0  # 0 means unlimited matches for premium users
+
+# Role types for match limit tiers
+PREMIUM_ROLE_TYPES = ["premium", "premium_user", "vip", "subscriber", "premium tier", "supporter"]
+BOOSTER_ROLE_TYPES = ["booster", "server_booster", "nitro_booster", "nitro booster"]
 
 # Required role category groups - users must have at least one role from each category
 REQUIRED_ROLE_CATEGORIES = [

@@ -108,6 +108,19 @@ class Moderation(commands.Cog):
         finally:
             cur.close()
     
+    def get_roles(self, guild_id: int):
+        cur = self.conn.cursor()
+        try:
+            cur.execute("SELECT jail_role_id, sus_role_id FROM configs WHERE guild_id = ?", (guild_id,))
+            result = cur.fetchone()
+            if result:
+                jail_role_id, sus_role_id = result
+                return jail_role_id, sus_role_id
+            else:
+                return None, None
+        finally:
+            cur.close()
+    
     def upsert_config(self, guild_id: int, column: str, value: int):
         cur = self.conn.cursor()
         try:
@@ -131,7 +144,7 @@ class Moderation(commands.Cog):
     #  _______________________ Jail Commands  _______________________ 
     jail_group = app_commands.Group(name="jail", description="Jail related commands")
     @jail_group.command(name="role", description="Jail a member.")
-    @app_commands.describe(role="Jail role. If you don't have one do '/jail create'")
+    @app_commands.describe(role="Jail role. If you don't have one do '/jail setup'")
     async def jailrole(self, interaction: discord.Interaction, role: discord.Role):
         try:
             authorized = await self.check_perm(interaction, ["administrator"], ["manage_roles"])
@@ -151,7 +164,7 @@ class Moderation(commands.Cog):
     async def createjail(self, interaction: discord.Interaction):
         try:
             await interaction.response.defer()
-            authorized = await self.check_perm(interaction, ["administrator"], ["mmanage_roles"])
+            authorized = await self.check_perm(interaction, ["administrator"], ["manage_roles"])
             if not authorized:
                 return 
             response_embed = discord.Embed(title="Setting Up", description="Creating and setting up jail is in progress..", color=colors.primary)
@@ -172,22 +185,35 @@ class Moderation(commands.Cog):
             if highest_role:
                 await role.edit(position=highest_role.position)
             # loop through all channels and add permissions restrictions for the role 
-            for channel in guild.channels:
-                overwrites = channel.overwrites_for(role)
-                if isinstance(channel, discord.TextChannel):
-                    overwrites.view_channel = False
-                    overwrites.send_messages = False
-                elif isinstance(channel, discord.VoiceChannel):
-                    overwrites.view_channel = False
-                    overwrites.connect = False
-                    overwrites.speak = False
+            for category in guild.categories:
+                overwrites = category.overwrites_for(role)
+                overwrites.view_channel = False
                 try:
-                    await channel.set_permissions(role, overwrite=overwrites)
+                    await category.set_permissions(role, overwrite=overwrites)
                 except discord.Forbidden:
-                    response_embed.description = f"Failed to set restrictions for jail role in {channel.mention} due to lack of permissions. (Skipped)"
+                    response_embed.description = f"Failed to set restrictions for jail role in {category.name} due to lack of permissions. (Skipped)"
                     await original_response.edit(embed=response_embed)
                     await asyncio.sleep(5)
-                    continue 
+                    continue
+            
+                for channel in category.channels:
+                    if not channel.permissions_synced:
+                        overwrites = channel.overwrites_for(role)
+                        if isinstance(channel, discord.TextChannel):
+                            overwrites.view_channel = False
+                            overwrites.send_messages = False
+                        elif isinstance(channel, discord.VoiceChannel):
+                            overwrites.view_channel = False
+                            overwrites.connect = False
+                            overwrites.speak = False
+                        try:
+                            await channel.set_permissions(role, overwrite=overwrites)
+                        except discord.Forbidden:
+                            response_embed.description = f"Failed to set restrictions for jail role in {channel.mention} due to lack of permissions. (Skipped)"
+                            await original_response.edit(embed=response_embed)
+                            await asyncio.sleep(5)
+                            continue
+            
             response_embed.title = "Set up finished!"
             response_embed.description = f"Setting up {role.mention} has been successfully finished!"
             await original_response.edit(embed=response_embed)
@@ -303,7 +329,7 @@ class Moderation(commands.Cog):
 
     #  _______________________ Sus Commands  _______________________ 
     sus_group = app_commands.Group(name="sus", description="Sus related commands")
-    @sus_group.command(name="setup", description="Add suspicious role to a specific member.")
+    @sus_group.command(name="setup", description="Make sus role for you.")
     async def sus_setup(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         try:
@@ -319,7 +345,7 @@ class Moderation(commands.Cog):
                 cur.execute("SELECT sus_role_id FROM configs WHERE guild_id = ?", (guild.id,))
                 result = cur.fetchone()
                 self.conn.commit()
-                role = discord.utils.get(result[0]) if result else None
+                role = discord.utils.get(guild.roles, id=result[0]) if result else None
                 if not role:
                     role = await guild.create_role(name="Sus", color=0xfa0606)
                     self.upsert_config(guild.id, "sus_role_id", role.id)
@@ -707,17 +733,25 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             await member.add_roles(verified_role, reason="Verified member role added!")
             
             # Remove jail/sus roles if exists 
-            sus_role = discord.utils.get(guild.roles, id=1350895174124961909)
-            jail_role = discord.utils.get(guild.roles, id=1350169044191285348)
+            jail_role_id, sus_role_id = self.get_roles(guild.id)
+            sus_role = None
+            jail_role = None
+            if jail_role_id:
+                sus_role = discord.utils.get(guild.roles, id=int(sus_role_id))
+            if sus_role_id:
+                jail_role = discord.utils.get(guild.roles, id=int(jail_role_id))
             # get variables 
             variables = get_all_variables(member, guild, interaction.user)
             
-            if sus_role in member.roles:
-                await send_notif(member, variables, "notif_unsus")
-            if jail_role in member.roles:
-                await send_notif(member, variables, "notif_unjail")
-                
-            await member.remove_roles(sus_role, jail_role, reason="Remove previous verification roles. prolly assigned by mistake.")
+            if sus_role:
+                if sus_role in member.roles:
+                    await send_notif(member, variables, "notif_unsus")
+                    await member.remove_roles(sus_role, reason="Remove previous verification roles. prolly assigned by mistake.")
+            if jail_role:
+                if jail_role in member.roles:
+                    await send_notif(member, variables, "notif_unjail")
+                    await member.remove_roles(jail_role, reason="Remove previous verification roles. prolly assigned by mistake.")
+            
             # response 
             embed = discord.Embed(title="<a:TwoHearts:1359827390616047726> Verified Successfully!", description=f"<a:Heartribbon:1359828243947061339> {member.mention} Was verified successfully!", color=colors.primary)
             if issues:

@@ -11,7 +11,7 @@ creds = Credentials.from_service_account_file("service_account.json", scopes=SCO
 service = build("drive", "v3", credentials=creds)
 
 # File details
-LOCAL_FILES = ["database/data.db", "database/data2.db", "database/matchmaking.db"]
+LOCAL_FILES = ["database/data.db", "database/data2.db", "database/matchmaking.db", "database/Currency.db"]
 FOLDER_ID = "11MFLDzhQvLMGTdPe0uThY2dkcQfXvlE9"  
 
 

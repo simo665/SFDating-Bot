@@ -122,7 +122,7 @@ class Joins(commands.Cog):
                 return True 
             return False
         except Exception as e:
-            await error_send()  # Maybe pass `e` if useful for debugging
+            await error_send() 
             return True
     
     @commands.Cog.listener()
@@ -130,7 +130,7 @@ class Joins(commands.Cog):
         try:
             if member.bot:
                 return
-            is_new = await self.is_account_new(member)
+            is_new = False # await self.is_account_new(member)
             if is_new:
                 return 
             await asyncio.sleep(3)

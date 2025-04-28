@@ -83,7 +83,7 @@
           ],
           "placeholder": "💖─〃★ What is your current relationship status?",
           "min_values": 1,
-          "max_values": 2
+          "max_values": 3
         }
       ]
     }

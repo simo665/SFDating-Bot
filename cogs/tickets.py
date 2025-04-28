@@ -11,7 +11,7 @@ import chat_exporter
 from typing import Dict, List, Optional, Union
 import re
 from errors.error_logger import error_send
-from utilities.get_template import get_message_from_template
+from utilities.get_template import get_message_from_template, get_message_from_dict
 from utilities.colors import *
 
 # Configure logging
@@ -60,7 +60,7 @@ class TicketButtonsWithHandlers:
 
         await interaction.channel.send(
             f"{status_emoji} This ticket has been {status_text} by {interaction.user.mention}. "
-            f"The channel will be deleted in 5 seconds."
+            f"The channel will be deleted soon"
         )
 
         # Send a DM to the ticket creator
@@ -74,54 +74,14 @@ class TicketButtonsWithHandlers:
                 if status in all_closure_templates:
                     closure_template = all_closure_templates[status]
                     
-                    # Format variables in the template
-                    # For content
-                    content = closure_template.get("content", "")
-                    if content:
-                        content = content.format(
-                            server_name=interaction.guild.name,
-                            timestamp=int(datetime.now().timestamp())
-                        )
-                    
-                    # For embeds
-                    embeds = []
-                    if "embeds" in closure_template and closure_template["embeds"]:
-                        for embed_data in closure_template["embeds"]:
-                            # Create the embed
-                            embed = discord.Embed(
-                                title=embed_data.get("title", "").format(
-                                    server_name=interaction.guild.name,
-                                    timestamp=int(datetime.now().timestamp())
-                                ),
-                                description=embed_data.get("description", "").format(
-                                    server_name=interaction.guild.name,
-                                    timestamp=int(datetime.now().timestamp())
-                                ),
-                                color=int(embed_data.get("color", "c40000").lstrip("#"), 16)
-                            )
-                            
-                            # Add thumbnail if present
-                            if "thumbnail" in embed_data and embed_data["thumbnail"]:
-                                embed.set_thumbnail(url=embed_data["thumbnail"].get("url", ""))
-                            
-                            # Add footer if present
-                            if "footer" in embed_data and embed_data["footer"]:
-                                embed.set_footer(text=embed_data["footer"].get("text", ""))
-                            
-                            # Add timestamp if present
-                            if "timestamp" in embed_data and embed_data["timestamp"]:
-                                if embed_data["timestamp"] == "{timestamp}":
-                                    embed.timestamp = datetime.fromtimestamp(int(datetime.now().timestamp()))
-                            
-                            embeds.append(embed)
-                    
-                    # Send the DM
-                    if embeds or content:
-                        await ticket_creator.send(content=content, embeds=embeds)
-                        logger.info(f"Sent closure DM for {status} ticket to {ticket_creator.name}")
+                    data = get_message_from_dict(closure_template, {"server_name":interaction.guild.name})
+                    if data.get("embeds") or data.get("content"):
+                        await ticket_creator.send(content=data.get("content"), embeds=data.get("embeds"))
+
             except Exception as e:
                 logger.error(f"Error sending ticket closure DM: {e}")
                 # Continue with ticket closure even if DM fails
+  
 
         # Generate transcript
         try:
@@ -261,10 +221,6 @@ class ApplicationButtonsWithHandlers:
                                 color=int(embed_data.get("color", "c40000").lstrip("#"), 16)
                             )
                             
-                            # Add thumbnail if present
-                            if "thumbnail" in embed_data and embed_data["thumbnail"]:
-                                embed.set_thumbnail(url=embed_data["thumbnail"].get("url", ""))
-                            
                             # Add footer if present
                             if "footer" in embed_data and embed_data["footer"]:
                                 embed.set_footer(text=embed_data["footer"].get("text", ""))
@@ -286,7 +242,7 @@ class ApplicationButtonsWithHandlers:
 
             # Close the ticket
             await interaction.followup.send(
-                f"✅ Application for {applicant.mention} has been accepted! They have been given the {trial_role.mention} role. The ticket will close in 5 seconds."
+                f"✅ Application for {applicant.mention} has been accepted! They have been given the {trial_role.mention} role. The ticket will close soon"
             )
 
             await asyncio.sleep(5)
@@ -361,10 +317,6 @@ class ApplicationButtonsWithHandlers:
                             color=int(embed_data.get("color", "c40000").lstrip("#"), 16)
                         )
                         
-                        # Add thumbnail if present
-                        if "thumbnail" in embed_data and embed_data["thumbnail"]:
-                            embed.set_thumbnail(url=embed_data["thumbnail"].get("url", ""))
-                        
                         # Add footer if present
                         if "footer" in embed_data and embed_data["footer"]:
                             embed.set_footer(text=embed_data["footer"].get("text", ""))
@@ -386,7 +338,7 @@ class ApplicationButtonsWithHandlers:
 
         # Close the ticket
         await interaction.followup.send(
-            f"❌ Application for {applicant.mention} has been rejected. The ticket will close in 5 seconds."
+            f"❌ Application for {applicant.mention} has been rejected. The ticket will close in soon"
         )
 
         await asyncio.sleep(5)
@@ -612,86 +564,9 @@ class TicketView(discord.ui.View):
                     await interaction.response.send_modal(AddMemberModal())
 
                 async def handle_close(self, interaction: discord.Interaction, status: str):
-                    # Check if user has permission to close the ticket
-                    if not any(role.id in [int(r) for r in config["guilds"][str(interaction.guild.id)]["staff_roles"]] 
-                               for role in interaction.user.roles):
-                        await interaction.followup.send(
-                            "❌ You don't have permission to close this ticket.", 
-                            ephemeral=True
-                        )
-                        return
-
-                    # Get ticket information
-                    ticket_creator_id = None
-                    ticket_type = None
-
-                    channel_name_parts = interaction.channel.name.split('-')
-                    if len(channel_name_parts) >= 2:
-                        ticket_type = channel_name_parts[0]
-
-                    # Send closing message
-                    status_emoji = "✅" if status == "resolved" else "🔒"
-                    status_text = "resolved" if status == "resolved" else "closed"
-
-                    await interaction.channel.send(
-                        f"{status_emoji} This ticket has been {status_text} by {interaction.user.mention}. "
-                        f"The channel will be deleted in 5 seconds."
-                    )
-
-                    # Generate transcript
-                    try:
-                        transcript = await chat_exporter.export(
-                            channel=interaction.channel,
-                            limit=None,
-                            tz_info="UTC",
-                            guild=interaction.guild,
-                            bot=self.bot
-                        )
-
-                        if transcript:
-                            transcript_file = discord.File(
-                                io.BytesIO(transcript.encode()),
-                                filename=f"transcript-{interaction.channel.name}.html"
-                            )
-
-                            # Find the log channel
-                            log_channel_id = config["guilds"][str(interaction.guild.id)]["ticket_log_channel_id"]
-                            if log_channel_id:
-                                log_channel = interaction.guild.get_channel(int(log_channel_id))
-                                if log_channel:
-                                    # Send the log with transcript
-                                    ticket_message = get_message_from_template("ticket_log", {
-                                        "ticket_channel": interaction.channel.name,
-                                        "closed_by": interaction.user.name,
-                                        "closed_by_id": interaction.user.id,
-                                        "status": status_text,
-                                        "timestamp": int(datetime.now().timestamp())
-                                    })
-
-                                    await log_channel.send(
-                                        content=ticket_message["content"],
-                                        embeds=ticket_message["embeds"],
-                                        file=transcript_file
-                                    )
-
-                    except Exception as e:
-                        await error_send()
-                        await interaction.followup.send(
-                            "❌ There was an error generating the transcript.", 
-                            ephemeral=True
-                        )
-
-                    # Wait and delete the channel
-                    await asyncio.sleep(5)
-                    try:
-                        await interaction.channel.delete(reason=f"Ticket {status_text} by {interaction.user.name}")
-                    except Exception as e:
-                        await error_send()
-                        await interaction.followup.send(
-                            "❌ There was an error deleting the channel. Please delete it manually.", 
-                            ephemeral=True
-                        )
-
+                    ticket_button_view = TicketButtonsWithHandlers(self.bot)
+                    await ticket_button_view.handle_close(interaction, status)
+                    
             # Send the ticket message with buttons
             ticket_buttons = TicketButtons(self.bot)
             await ticket_channel.send(
@@ -805,7 +680,7 @@ class TicketView(discord.ui.View):
 
                             # Close the ticket
                             await interaction.followup.send(
-                                f"✅ Application for {applicant.mention} has been accepted! They have been given the {trial_role.mention} role. The ticket will close in 5 seconds."
+                                f"✅ Application for {applicant.mention} has been accepted! They have been given the {trial_role.mention} role. The ticket will close soon"
                             )
 
                             await asyncio.sleep(5)
@@ -870,7 +745,7 @@ class TicketView(discord.ui.View):
 
                         # Close the ticket
                         await interaction.followup.send(
-                            f"❌ Application for {applicant.mention} has been rejected. The ticket will close in 5 seconds."
+                            f"❌ Application for {applicant.mention} has been rejected. The ticket will  close soon"
                         )
 
                         await asyncio.sleep(5)
@@ -928,10 +803,6 @@ class TicketView(discord.ui.View):
                                 color=int(embed_data.get("color", "c40000").lstrip("#"), 16)
                             )
                             
-                            # Add thumbnail if present
-                            if "thumbnail" in embed_data and embed_data["thumbnail"]:
-                                embed.set_thumbnail(url=embed_data["thumbnail"].get("url", ""))
-                            
                             # Add footer if present
                             if "footer" in embed_data and embed_data["footer"]:
                                 embed.set_footer(text=embed_data["footer"].get("text", ""))
@@ -963,7 +834,21 @@ class Tickets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         # Register the persistent views on bot startup
-        self.bot.add_view(TicketView(bot))
+        bot.add_view(TicketView(bot))  # Register ticket creation view
+        
+        # Register ticket management buttons
+        class TicketButtons(discord.ui.View):
+            def __init__(self):
+                super().__init__(timeout=None)
+                
+            @discord.ui.button(label="Close", emoji="🔒", style=discord.ButtonStyle.danger, custom_id="close_ticket")
+            async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
+                await interaction.response.defer(ephemeral=True)
+                ticket_handler = TicketButtonsWithHandlers(bot)
+                await ticket_handler.handle_close(interaction, "closed")
+
+        # Add the ticket buttons view
+        bot.add_view(TicketButtons())
 
         # Register the TicketButtons view to handle button interactions in existing tickets
         class TicketButtons(discord.ui.View):
@@ -974,15 +859,8 @@ class Tickets(commands.Cog):
             async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
                 await interaction.response.defer(ephemeral=True)
                 # Get the actual ticket view instance
-                ticket_button_view = None
-                for item in interaction.message.components:
-                    for component in item.components:
-                        if component.custom_id == "close_ticket":
-                            ticket_button_view = TicketButtonsWithHandlers(bot)
-                            await ticket_button_view.handle_close(interaction, "closed")
-                            return
-
-                await interaction.followup.send("❌ Error processing button click. Please try again or contact an admin.", ephemeral=True)
+                ticket_button_view = TicketButtonsWithHandlers(bot)
+                await ticket_button_view.handle_close(interaction, "close")
 
             @discord.ui.button(label="Resolved", emoji="✅", style=discord.ButtonStyle.success, custom_id="resolve_ticket")
             async def resolve_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -1089,17 +967,58 @@ class Tickets(commands.Cog):
 
         self.bot.add_view(ApplicationButtons())
 
+    async def register_persistent_views(self):
+        """Register all persistent views used by the tickets cog"""
+        # Register the ticket creation view
+        self.bot.add_view(TicketView(self.bot))
+        
+        # Register the ticket management view
+        class TicketButtons(discord.ui.View):
+            def __init__(self):
+                super().__init__(timeout=None)
+                
+            @discord.ui.button(label="Close", emoji="🔒", style=discord.ButtonStyle.danger, custom_id="close_ticket")
+            async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
+                await interaction.response.defer(ephemeral=True)
+                ticket_handler = TicketButtonsWithHandlers(self.bot)
+                await ticket_handler.handle_close(interaction, "closed")
+                
+            @discord.ui.button(label="Resolved", emoji="✅", style=discord.ButtonStyle.success, custom_id="resolve_ticket")
+            async def resolve_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
+                await interaction.response.defer(ephemeral=True)
+                ticket_handler = TicketButtonsWithHandlers(self.bot)
+                await ticket_handler.handle_close(interaction, "resolved")
+                
+            @discord.ui.button(label="Add Member", emoji="👤", style=discord.ButtonStyle.primary, custom_id="add_member")
+            async def add_member(self, interaction: discord.Interaction, button: discord.ui.Button):
+                # Add member handler code here
+                pass
+                
+        self.bot.add_view(TicketButtons())
+        
+        # Register the application buttons view
+        class ApplicationButtons(discord.ui.View):
+            def __init__(self):
+                super().__init__(timeout=None)
+                
+            @discord.ui.button(label="Accept Application", emoji="✅", style=discord.ButtonStyle.success, custom_id="accept_application")
+            async def accept_application(self, interaction: discord.Interaction, button: discord.ui.Button):
+                app_handler = ApplicationButtonsWithHandlers(self.bot)
+                await app_handler.accept_application(interaction, button)
+                
+            @discord.ui.button(label="Reject Application", emoji="❌", style=discord.ButtonStyle.danger, custom_id="reject_application")
+            async def reject_application(self, interaction: discord.Interaction, button: discord.ui.Button):
+                app_handler = ApplicationButtonsWithHandlers(self.bot)
+                await app_handler.reject_application(interaction, button)
+                
+        self.bot.add_view(ApplicationButtons())
+        
     @commands.Cog.listener()
     async def on_ready(self):
         logger.info("Tickets cog is ready")
-        
-        # Re-add all persistent views
-        # We need to create the correct persistent views with the same custom_ids
-        # so Discord can match interactions to our code
-        
-        # Re-add select menu view for ticket creation
+        # Re-register the select menu view
         self.bot.add_view(TicketView(self.bot))
-        logger.info("Registered persistent TicketView for ticket creation")
+        logger.info("Re-registered ticket views")
         
         # Re-add ticket management views
         # Define view classes in-line similar to the __init__ method

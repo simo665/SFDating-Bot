@@ -82,6 +82,9 @@ def get_emojis_variables():
         "xp": "<:xp:1360397798184452465>",
         "online": "<a:Online:1363514658136522852>",
         "offline": "<:offline:1363514572572594196>",
+        "sflirt_coin": "<a:Sflirts:1366001450429321276>",
+        "info": "<a:HeartMessage:1359827376644821113>",
+        "line": "<a:heartsline:1366019173645287454>"
     }
 
 def get_all_variables(member, guild, moderator):

@@ -121,7 +121,11 @@ class ConfessButton(ui.View):
             report_embed.set_footer(text=user_id)
             report_embed.timestamp = datetime.utcnow()
             view = DeleteButton(interaction.message, interaction.user)
-            channel = discord.utils.get(interaction.guild.channels, id=1361091376162410547)
+            channels_id = 0
+            with open("./configs/channels/channels_id.json", "r") as f:
+                data = json.load(f)
+                channels_id = data.get(str(interaction.guild.id)).get("reports_channel_id")
+            channel = discord.utils.get(interaction.guild.channels, id=channels_id)
             
             if channel:
                 await channel.send(embed=report_embed, view=view)

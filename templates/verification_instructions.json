@@ -5,11 +5,8 @@
       "title": "✅ Identity Verification Process ✅",
       "description": "To ensure a safe environment, we require some members to verify their age and identity. This process is optional but mandatory for suspicious members. Here's how to verify:\n\n1. **Take a clear selfie** with your **ID, passport, or any official document** that shows your **birthdate**.\n\n2. **Write the following on a piece of paper** and include it in the selfie:\n   - Server name: **{server_name}**\n   - Your **Discord username**\n   - The **date** you're verifying on\n\n3. **Submit the photo** in this ticket channel.\n\nOnce verified, you'll gain full access to the server. Until then, **suspicious members will be placed in the \"Jailed\" role**, where access is restricted to the verification channel only.",
       "color": "c40000",
-      "thumbnail": {
-        "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-      },
       "footer": {
-        "text": "Dating Server Support • Creating a safe environment"
+        "text": "SFDating Support • Creating a safe environment"
       },
       "timestamp": "{timestamp}"
     }

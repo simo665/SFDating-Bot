@@ -15,7 +15,8 @@ from utilities.matching_database import setup_database, check_pending_matches_ta
 import config
 from discord import app_commands
 from utilities.utils2 import MatchAcceptView, OptOutView, UnmatchAndContinueView
-
+from errors.error_logger import error_send
+load_dotenv()
 # Configure logging
 logging.basicConfig(
     filename="errors/errors.log",
@@ -30,16 +31,8 @@ database_dir = "database"
 if not os.path.exists(database_dir):
     os.makedirs(database_dir)
 
-# Load environment variables
-load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN2") or os.getenv("DISCORD_TOKEN")
-if not TOKEN:
-    logger.error("No Discord token provided in environment variables")
-    sys.exit(1)
-
 # Set up intents
 intents = discord.Intents.default()
-intents.presences = True
 intents.members = True
 intents.guilds = True
 intents.message_content = True
@@ -53,13 +46,11 @@ bot = commands.Bot(command_prefix=prefix, intents=intents)
 async def cleanup_matches_task():
     """Periodic task to clean up expired matches"""
     try:
-        logger.info("Running automated match cleanup...")
         expired_count = cleanup_expired_matches()
-        logger.info(f"Cleaned up {expired_count} expired matches")
     except Exception as e:
-        logger.error(f"Error in cleanup task: {e}")
-
-def _print(*args, sep=' ', end='\n', delay=0.002):
+        await error_send()
+# animated print
+def _print(*args, sep=' ', end='\n', delay=0.001):
     text = sep.join(str(arg) for arg in args)
     for char in text:
         sys.stdout.write(char)
@@ -83,13 +74,12 @@ def load_config():
                 json.dump(default_config, f, indent=4)
             return default_config
     except Exception as e:
-        logger.error(f"Error loading config: {e}")
+        traceback.print_exc()
         return {"guilds": {}}
-
 @bot.event
 async def on_guild_join(guild):
     logger.info(f"Joined new guild: {guild.name} (ID: {guild.id})")
-    
+
     # Add guild to config if not present
     config_data = load_config()
     if str(guild.id) not in config_data["guilds"]:
@@ -102,92 +92,105 @@ async def on_guild_join(guild):
         with open('config.json', 'w') as f:
             json.dump(config_data, f, indent=4)
 
-@bot.event
-async def on_guild_remove(guild):
-    logger.info(f"Removed from guild: {guild.name} (ID: {guild.id})")
-
+# when the bot starts
 @bot.event
 async def on_ready():
     try:
-        # First sync all commands
-        commands = await bot.tree.sync()
-        
-        # Initialize database
-        db = Database()
-        await db.init_database(bot)
-        
-        # Make sure setup is complete
-        setup_database()
-        
-        # Load JSON components and templates
-        load_components()
-        
-        # Start tasks
-        if not cleanup_matches_task.is_running():
-            cleanup_matches_task.start()
-        
-        # Set bot activity
-        await bot.change_presence(activity=discord.Activity(
-            type=discord.ActivityType.watching,
-            name="for tickets 💕"
-        ))
-        
-        _print("\n" + "="*50)
-        _print(f"Bot connected as: {bot.user}")
-        _print(f"Discord.py version: {discord.__version__}")
-        _print(f"Command prefix: {prefix}")
-        _print("="*50)
-        
-        # NOTE: Persistent views are now added in the main() function
-        # before starting the bot to ensure they're registered correctly
-            
-        _print("\nREGISTERED COMMANDS:")
-        _print("-"*50)
-
-        cog_commands = {}
-        for cmd in commands:
-            try:
-                cog_name = getattr(cmd, "cog_name", None) or getattr(cmd, "module", None) or "No Category"
-                if cog_name not in cog_commands:
-                    cog_commands[cog_name] = []
-                cog_commands[cog_name].append(cmd)
-            except Exception as e:
-                _print(f"Error processing command {cmd}: {e}")
-                continue
-
-        for cog_name, cmds in sorted(cog_commands.items()):
-            _print(f"\n[{cog_name}]")
-            for cmd in sorted(cmds, key=lambda x: getattr(x, "name", "")):
-                cmd_description = getattr(cmd, "description", "No description")
-                _print(f"  /{getattr(cmd, 'name', 'unknown')} - {cmd_description}")
-    
-        std_commands = []
-        try:
-            std_commands = [cmd for cmd in bot.commands if not getattr(cmd, "hidden", False)]
-        except Exception as e:
-            _print(f"Error processing standard commands: {e}")
-            
-        if std_commands:
-            _print("\n[Standard Commands]")
-            for cmd in sorted(std_commands, key=lambda x: x.name):
-                cmd_help = getattr(cmd, "help", None) or "No description"
-                _print(f"  {prefix}{cmd.name} - {cmd_help}")
-        
-        _print("\n" + "-"*50)
-        _print(f"Total: {len(commands)} application commands, {len(std_commands)} standard commands")
-        _print(f"{bot.user} is now online and ready!")
-        _print("="*50 + "\n")
-        
-        # Uncomment to enable database backup
-        # upload_backup.start()
+        os.system("clear")
+        await load_all()
+        await load_cogs()
+        if os.getenv("SYNC_COMMANDS", "false").lower() == "true":
+            commands = await bot.tree.sync()
+        else:
+            commands = bot.tree.get_commands()
+        print("Done")
+        matching_view()
+        visualize(commands)
     except Exception as e:
         _print(f"Error in on_ready: {e}")
         traceback.print_exc()
 
+# Function to load all the important things 
+async def load_all():
+    from database.db_manager import DatabaseManager
+    # Initialize database manager and make it available to all cogs
+    bot.db_manager = DatabaseManager()
+        
+    load_components()
+    # Initialize database
+    db = Database()
+    await db.init_database(bot)
+    # Make sure setup is complete
+    setup_database()
+    await bot.change_presence(activity=discord.Activity(
+        type=discord.ActivityType.watching,
+        name="lol! 💕"
+    ))
+    if not upload_backup.is_running():
+        #upload_backup.start()
+        pass
+    if not cleanup_matches_task.is_running():
+        cleanup_matches_task.start()
+
+# matching view
+def matching_view():
+    bot.add_view(MatchAcceptView(match_id=None, target_user=None, requester_user=None, score=0, score_percentage=0))
+    bot.add_view(OptOutView())
+    bot.add_view(UnmatchAndContinueView(match_id=None, matched_user=None))
+
+# Print loaded commands and infos for debugging 
+def visualize(commands):
+    _print("\n" + "="*50)
+    _print(f"Bot connected as: {bot.user}")
+    _print(f"Discord.py version: {discord.__version__}")
+    _print(f"Command prefix: {prefix}")
+    _print("="*50)
+    
+    # add matching views
+
+    _print("\nREGISTERED COMMANDS:")
+    _print("-"*50)
+
+    cog_commands = {}
+    for cmd in commands:
+        try:
+            cog_name = getattr(cmd, "cog_name", None) or getattr(cmd, "module", None) or "No Category"
+            if cog_name not in cog_commands:
+                cog_commands[cog_name] = []
+            cog_commands[cog_name].append(cmd)
+        except Exception as e:
+            _print(f"Error processing command {cmd}: {e}")
+            continue
+
+    for cog_name, cmds in sorted(cog_commands.items()):
+        _print(f"\n[{cog_name}]")
+        for cmd in sorted(cmds, key=lambda x: getattr(x, "name", "")):
+            cmd_description = getattr(cmd, "description", "No description")
+            _print(f"  /{getattr(cmd, 'name', 'unknown')} - {cmd_description}")
+
+    std_commands = []
+    try:
+        std_commands = [cmd for cmd in bot.commands if not getattr(cmd, "hidden", False)]
+    except Exception as e:
+        _print(f"Error processing standard commands: {e}")
+
+    if std_commands:
+        _print("\n[Standard Commands]")
+        for cmd in sorted(std_commands, key=lambda x: x.name):
+            cmd_help = getattr(cmd, "help", None) or "No description"
+            _print(f"  {prefix}{cmd.name} - {cmd_help}")
+
+    _print("\n" + "-"*50)
+    _print(f"Total: {len(commands)} application commands, {len(std_commands)} standard commands")
+    _print(f"{bot.user} is now online and ready!")
+    _print("="*50 + "\n")
+    
+# upload database backup
 @tasks.loop(hours=1)
 async def upload_backup():
     upload_database()
-    
+
+# Load templates components
 def load_components():
     for file in os.listdir("./templates"):
         try:
@@ -201,46 +204,32 @@ def load_components():
             traceback.print_exc()
             _print("="*50)
 
-async def load_cogs(selected_cogs=None):
-    """Load cogs specified in selected_cogs or all if None."""
-    _print("Loading cogs:")
-    if selected_cogs:
-        _print("Loading selected cogs:", ", ".join(selected_cogs))
-        for cog in selected_cogs:
+# Load vbot cogs
+async def load_cogs():
+    for file in os.listdir("./cogs"):
+        if file.endswith(".py"):
             try:
-                # Load the cog by name (without .py)
-                await bot.load_extension(f"cogs.{cog}")
-                _print(f"  ✓ {cog}.py")
-            except Exception as e:
-                _print(f"  ✗ {cog}.py - Error loading cog: {str(e)}\n\n", "="*50,"\n\n")
+                await bot.load_extension(f"cogs.{file[:-3]}")
+                _print(f"✓ {file}")
+            except Exception:
+                _print(f"X {file}")
                 traceback.print_exc()
-                sys.exit(1)
-    else:
-        # Original behavior: load all cogs
-        for file in os.listdir("./cogs"):
-            if file.endswith(".py"):
-                try:
-                    await bot.load_extension(f"cogs.{file[:-3]}")
-                    _print(f"  ✓ {file}")
-                except Exception as e:
-                    _print(f"  ✗ {file} - Error loading cog: {str(e)}")
-                    traceback.print_exc()
-                    sys.exit(1)
-    _print("All cogs loaded successfully!\n")
+                exit(0)
 
+# handle slash commands errors 
 @bot.tree.error
 async def on_app_command_error(interaction, error):
     if isinstance(error, app_commands.CommandOnCooldown):
         # Calculate when the cooldown will end
         cooldown_end_timestamp = int(time.time() + error.retry_after)
-        
+
         # Create an embed with better formatting
         embed = discord.Embed(
             title="❄️ Cooldown Active",
             description=f"You need to wait before using this command again.\n\n**Try again:** <t:{cooldown_end_timestamp}:R>\n**Available at:** <t:{cooldown_end_timestamp}:f>",
             color=config.Colors.WARNING
         )
-        
+
         await interaction.response.send_message(
             embed=embed,
             ephemeral=True
@@ -251,52 +240,35 @@ async def on_app_command_error(interaction, error):
             ephemeral=True
         )
     else:
-        logger.error(f"App command error: {error}")
+        await error_send()
         await interaction.response.send_message(
             "An error occurred while executing the command. Please try again later.",
             ephemeral=True
         )
 
-async def main():
-    try:
-        # Create a separate function to load cogs before starting the bot session
-        # Get cog names from command-line arguments (exclude script name)
-        args = [arg for arg in sys.argv[1:] if not arg.startswith("-")]
-        selected_cogs = args if args else None  # Use args if provided
-        
-        # Start bot session
-        async with bot:
-            # Load cogs first - this was the crucial part missing
-            await load_cogs(selected_cogs)
-            
-            # Register persistent views (moved here to ensure they're registered after cogs are loaded)
-            try:
-                # Add persistent views for buttons to work after restart
-                bot.add_view(MatchAcceptView(match_id=None, target_user=None, requester_user=None, score=0, score_percentage=0))
-                bot.add_view(OptOutView())
-                bot.add_view(UnmatchAndContinueView(match_id=None, matched_user=None))
-                _print("✓ Added persistent views before bot start.")
-            except Exception as e:
-                _print("X Failed to add persistent views before bot start.")
-                traceback.print_exc()
-            
-            # Start the bot
-            bot.start(TOKEN)
-    except KeyboardInterrupt:
-        _print("Bot has shut down.")
-        sys.exit(0)
-    except Exception as e:
-        _print(f"Fatal error: {e}")
-        traceback.print_exc()
-        sys.exit(1)
 
 if __name__ == "__main__":
+    OWNER_ID = os.getenv("OWNER_ID")
+    if OWNER_ID:
+        try:
+            # Convert to int or list of ints if comma-separated
+            if "," in OWNER_ID:
+                bot.owner_ids = set(int(id.strip()) for id in OWNER_ID.split(","))
+            else:
+                bot.owner_id = int(OWNER_ID)
+        except ValueError:
+            traceback.print_exc()
     try:
-        asyncio.run(main())
+        # Load environment variables
+        TOKEN = os.getenv("BOT_TOKEN") 
+        if not TOKEN:
+            print("No Discord token provided in environment variables")
+            exit(0)
+        bot.run(TOKEN)
     except KeyboardInterrupt:
         _print("Bot has shut down.")
-        sys.exit(0)
+        exit(0)
     except Exception as e:
         _print(f"Uncaught exception: {e}")
         traceback.print_exc()
-        sys.exit(1)
+        exit(1)

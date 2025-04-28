@@ -2,15 +2,18 @@
   "support": {
     "content": "",
     "embeds": [
+        {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
       {
         "title": "💕 Support Ticket Created 💕",
         "description": "Thank you for creating a support ticket in **{server_name}**. Our staff team will assist you as soon as possible.\n\nTicket: {ticket_channel}\n\nPlease provide as much detail as possible about your issue to help us assist you better.",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
-          "text": "Dating Server Support • We're here to help"
+          "text": "SFDating Support • We're here to help"
         },
         "timestamp": "{timestamp}"
       }
@@ -19,15 +22,18 @@
   "report": {
     "content": "",
     "embeds": [
+         {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
       {
         "title": "🚫 Report Ticket Created 🚫",
         "description": "Thank you for reporting an issue in **{server_name}**. Our moderation team will review your report as soon as possible.\n\nTicket: {ticket_channel}\n\nPlease provide the following information:\n- Username of the member being reported\n- What happened (with screenshots if possible)\n- When it happened (date/time)",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
-          "text": "Dating Server Support • Your safety is our priority"
+          "text": "SFDating Support • Your safety is our priority"
         },
         "timestamp": "{timestamp}"
       }
@@ -36,15 +42,18 @@
   "application": {
     "content": "",
     "embeds": [
+       {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
       {
         "title": "📝 Staff Application Submitted 📝",
         "description": "Thank you for applying to become a staff member in **{server_name}**. Your application has been received and will be reviewed by our admin team.\n\nTicket: {ticket_channel}\n\nPlease answer the staff application questions in the ticket channel. We'll notify you once a decision has been made.",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
-          "text": "Dating Server Support • Thank you for your interest"
+          "text": "SFDating Support • Thank you for your interest"
         },
         "timestamp": "{timestamp}"
       }
@@ -54,14 +63,17 @@
     "content": "",
     "embeds": [
       {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
+      {
         "title": "✅ Verification Ticket Created ✅",
         "description": "Thank you for initiating the verification process in **{server_name}**.\n\nTicket: {ticket_channel}\n\nTo ensure a safe environment, we require some members to verify their age and identity. Please follow the instructions in the ticket channel carefully.",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
-          "text": "Dating Server Support • Creating a safe environment"
+          "text": "SFDating Support • Creating a safe environment"
         },
         "timestamp": "{timestamp}"
       }

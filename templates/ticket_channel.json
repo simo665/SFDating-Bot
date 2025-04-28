@@ -1,6 +1,12 @@
 {
   "content": "",
   "embeds": [
+     {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner1.jpg"
+        }
+    },
     {
       "title": "💖 Ticket: {reason} 💖",
       "description": "Hello {user}, thank you for creating a ticket.\n\nOur staff team will be with you shortly. Please explain your issue in as much detail as possible so we can assist you better.",

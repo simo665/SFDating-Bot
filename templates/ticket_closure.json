@@ -2,15 +2,18 @@
   "closed": {
     "content": "",
     "embeds": [
+         {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
       {
         "title": "🔒 Ticket Closed 🔒",
         "description": "Your ticket in **{server_name}** has been closed by a staff member.\n\nIf you have any further questions or need more assistance, feel free to open a new ticket.",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
-          "text": "Dating Server Support • Thank you for your patience"
+          "text": "SFDating Support • Thank you for your patience"
         },
         "timestamp": "{timestamp}"
       }
@@ -19,13 +22,16 @@
   "resolved": {
     "content": "",
     "embeds": [
+       {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner2.jpg"
+        }
+      },
       {
         "title": "✅ Ticket Resolved ✅",
         "description": "Your ticket in **{server_name}** has been marked as resolved by a staff member.\n\nWe hope your issue has been addressed to your satisfaction. If you need further assistance, feel free to open a new ticket.",
         "color": "c40000",
-        "thumbnail": {
-          "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-        },
         "footer": {
           "text": "Dating Server Support • We hope we could help"
         },

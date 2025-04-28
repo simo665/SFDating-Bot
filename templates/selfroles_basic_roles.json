@@ -4,14 +4,7 @@
    "color": "#2ceff6",
    "image": {
     "url": "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/BasicRoles.png"
-   },
-   "fields": [
-    {
-     "name": "Basic roles!",
-     "value": "Basic roles are available to everyone to use.",
-     "inline": false
-    }
-   ]
+   }
   }
  ],
  "components": [

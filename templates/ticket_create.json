@@ -2,14 +2,17 @@
   "content": "",
   "embeds": [
     {
+        "color": "c40000",
+        "image": {
+            "url" : "https://raw.githubusercontent.com/simo665/SFD-Assets/refs/heads/main/SFDating2/Banners/Banner1.jpg"
+        }
+    },
+    {
       "title": "💖 {server_name} Support Tickets 💖",
       "description": "Welcome to our ticket system! We're here to help you with any questions, concerns, or reports you might have.\n\nTo create a ticket, select an option from the dropdown menu below. Our staff team will assist you as soon as possible.",
       "color": "c40000",
-      "thumbnail": {
-        "url": "https://cdn-icons-png.flaticon.com/512/5695/5695864.png"
-      },
       "footer": {
-        "text": "Dating Server Support • Your safety and happiness are our priority"
+        "text": "SFDating Support • Your safety and happiness are our priority"
       },
       "timestamp": "{timestamp}"
     }

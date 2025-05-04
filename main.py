@@ -106,6 +106,9 @@ async def on_ready():
         print("Done")
         matching_view()
         visualize(commands)
+        if not upload_backup.is_running():
+            #upload_backup.start()
+            pass
     except Exception as e:
         _print(f"Error in on_ready: {e}")
         traceback.print_exc()
@@ -126,9 +129,6 @@ async def load_all():
         type=discord.ActivityType.watching,
         name="lol! 💕"
     ))
-    if not upload_backup.is_running():
-        #upload_backup.start()
-        pass
     if not cleanup_matches_task.is_running():
         cleanup_matches_task.start()
 
@@ -188,7 +188,7 @@ def visualize(commands):
 # upload database backup
 @tasks.loop(hours=1)
 async def upload_backup():
-    upload_database()
+    await upload_database()
 
 # Load templates components
 def load_components():
@@ -214,7 +214,7 @@ async def load_cogs():
             except Exception:
                 _print(f"X {file}")
                 traceback.print_exc()
-                exit(0)
+                os._exit()
 
 # handle slash commands errors 
 @bot.tree.error
@@ -234,7 +234,7 @@ async def on_app_command_error(interaction, error):
             embed=embed,
             ephemeral=True
         )
-    elif isinstance(error, commands.errors.MissingPermissions):
+    elif isinstance(error, app_commands.MissingPermissions):
         await interaction.response.send_message(
             "💔 You don't have the required permissions to use this command.",
             ephemeral=True
@@ -260,15 +260,15 @@ if __name__ == "__main__":
             traceback.print_exc()
     try:
         # Load environment variables
-        TOKEN = os.getenv("BOT_TOKEN") 
+        TOKEN = os.getenv("BOT_TOKEN2") 
         if not TOKEN:
             print("No Discord token provided in environment variables")
-            exit(0)
+            os._exit()
         bot.run(TOKEN)
     except KeyboardInterrupt:
         _print("Bot has shut down.")
-        exit(0)
+        os._exit()
     except Exception as e:
         _print(f"Uncaught exception: {e}")
         traceback.print_exc()
-        exit(1)
+        os._exit()

@@ -419,11 +419,16 @@ class TicketView(discord.ui.View):
             "verification": "Verification Request"
         }
         ticket_reason = ticket_reason_map.get(ticket_type, "Support")
-
+        emoji = {
+            "support": "🚨",
+            "report": "⚠️",
+            "application": "📝",
+            "verification": "✔️"
+        }
         # Create ticket channel name
         user_name = re.sub(r'[^\w\s]', '', interaction.user.name.lower())
         user_name = re.sub(r'\s+', '-', user_name)
-        channel_name = f"{ticket_type}-{user_name}-{interaction.user.discriminator}"
+        channel_name = f"{emoji.get(ticket_type, '⚠️')}│{user_name}"
 
         # Check if user already has an open ticket of this type
         existing_tickets = [c for c in category.channels if c.name.startswith(f"{ticket_type}-{user_name}")]

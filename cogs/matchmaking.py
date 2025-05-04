@@ -68,7 +68,7 @@ class MatchmakingCog(commands.Cog):
             await self.find_match(interaction, partner_gender)
         except Exception as e:
             logger.error(f"Error in find_match_cmd: {e}")
-            await error_send(interaction, error_text=f"An error occurred: {str(e)}")
+            await error_send(interaction)
 
     async def find_match(self, interaction: discord.Interaction, partner_gender):
         """Find the best match for the user"""
@@ -142,7 +142,7 @@ class MatchmakingCog(commands.Cog):
                         
                         # Include info about premium/booster perks
                         if match_limit == config.DEFAULT_MATCH_LIMIT:
-                            premium_text = f"💎 **Want more matches?**\nServer Boosters: {config.BOOSTER_MATCH_LIMIT} matches\nPremium Users: Unlimited matches"
+                            premium_text = f"💎 **Want more matches?**\n🚀 Server Boosters: {config.BOOSTER_MATCH_LIMIT} matches\n💎 Premium Users: Unlimited matches\n> Premium info from here: {config.PREMIUM_LINK}"
                             embed.add_field(
                                 name="Upgrade Options",
                                 value=premium_text,
@@ -153,7 +153,7 @@ class MatchmakingCog(commands.Cog):
                         return
                     except Exception as e:
                         logger.error(f"Error displaying match limit message: {e}")
-                        await error_send(interaction, error_text=f"Error displaying your matches: {str(e)}")
+                        await error_send(interaction)
                 
                 # If we're here, the user hasn't reached their match limit, so we proceed
                 # Let's show them their current match status
@@ -275,10 +275,16 @@ class MatchmakingCog(commands.Cog):
                     continue
 
                 # Skip users with exclusion roles
-                for role_type in config.EXCLUSION_ROLE_TYPES:
-                    role_id = guild_roles.get("relationship_status", {}).get(role_type)
-                    if role_id and discord.utils.get(member.roles, id=role_id):
-                        continue
+                # Extract member data to check exclusion roles
+                member_data = self.role_parser.extract_user_data(member)
+                
+                # Skip users with exclusion roles (taken, not looking, etc.)
+                if member_data.get("relationship_status") in config.EXCLUSION_ROLE_TYPES:
+                    continue
+                    
+                # Skip users with DMs closed
+                if member_data.get("dms_status") == "dms closed":
+                    continue
 
                 # Skip users who have opted out
                 if get_user_preferences(member.id).get("opt_out", False):
@@ -329,7 +335,8 @@ class MatchmakingCog(commands.Cog):
 
             # Get the best match (highest score)
             best_match, best_score, best_match_data = match_candidates[0]
-
+            best_score = round(best_score, 2)
+            
             # Update the last match time
             update_last_match_time(interaction.user.id)
 
@@ -356,6 +363,7 @@ class MatchmakingCog(commands.Cog):
 
             if not success:
                 # Add follow-up message that DM couldn't be sent
+                
                 embed = discord.Embed(
                     title="Match request failed",
                     description= "I tried to send a match request to this user, but they have DMs disabled. They won't receive your request.",
@@ -372,7 +380,7 @@ class MatchmakingCog(commands.Cog):
 
         except Exception as e:
             logger.error(f"Error in find_match command: {e}")
-            await error_send(interaction, error_text=f"An error occurred during matching: {str(e)}")
+            await error_send(interaction)
 
     @match_group.command(name="opt_out", description="Opt out of the matchmaking system")
     async def opt_out(self, interaction: discord.Interaction):
@@ -738,6 +746,7 @@ Our system uses a point-based algorithm that considers:
 - Regular users: {config.DEFAULT_MATCH_LIMIT} active matches
 - Server Boosters: {config.BOOSTER_MATCH_LIMIT} active matches
 - Premium Users: Unlimited active matches
+  - Premium info: {config.PREMIUM_LINK}
             """,
             inline=False
         )

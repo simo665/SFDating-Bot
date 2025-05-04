@@ -40,6 +40,9 @@ DEFAULT_MATCH_LIMIT = 5  # Default number of matches for regular users
 BOOSTER_MATCH_LIMIT = 10  # Number of matches for server boosters
 PREMIUM_MATCH_LIMIT = 0  # 0 means unlimited matches for premium users
 
+# premium channel info link 
+PREMIUM_LINK = "https://discord.com/channels/1364310690046939197/1364379946692382810"
+
 # Role types for match limit tiers
 PREMIUM_ROLE_TYPES = ["premium", "premium_user", "vip", "subscriber", "premium tier", "supporter"]
 BOOSTER_ROLE_TYPES = ["booster", "server_booster", "nitro_booster", "nitro booster"]

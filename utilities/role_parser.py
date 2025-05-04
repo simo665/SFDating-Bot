@@ -131,7 +131,8 @@ class RoleParser:
             "sexuality": self.sexuality,
             "verified_roles": self.verified_roles,
             "exclusion_roles": self.exclusion_roles,
-            "required_roles": self.required_roles
+            "required_roles": self.required_roles,
+            "relationship_status": relationship_status
         }
         
         logger.info(f"Successfully parsed roles for guild ID {guild_id}")
@@ -146,7 +147,6 @@ class RoleParser:
                 return None
         
         return self.guild_roles[guild_id]
-    
     def extract_user_data(self, member):
         """Extract user data from member roles"""
         guild_roles = self.get_guild_roles(member.guild)

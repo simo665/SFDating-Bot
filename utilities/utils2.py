@@ -867,7 +867,7 @@ def create_match_embed(requester, target, score, max_score, user_data):
 
 async def send_match_request(requester, target, score, max_score, user_data):
     """Send a match request to the target user"""
-    from .matching_database import add_pending_match
+    from .matching_database import add_pending_match, add_match_history, update_match_status
 
     # Format score percentage to always show 2 decimal places
     score_percentage = "{:.2f}".format((score / max_score) * 100)
@@ -930,8 +930,20 @@ async def send_match_request(requester, target, score, max_score, user_data):
         return True, match_id
     except discord.Forbidden:
         logger.warning(f"Could not send DM to target user {target.id}")
+        match_id = add_match_history(
+            requester.id,
+            target.id,
+            score,
+            "declined"  # This will exclude them from future matches
+        )
         return False, None
     except Exception as e:
+        match_id = add_match_history(
+            requester.id,
+            target.id,
+            score,
+            "declined"
+        )
         logger.error(f"Error sending match request: {e}")
         return False, None
 

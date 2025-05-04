@@ -100,6 +100,9 @@ class Thread(commands.Cog):
         if message.author.bot:
             return 
         
+        if isinstance(message.channel, discord.DMChannel):
+            return 
+        
         # Get command prefix
         prefixes = await self.bot.get_prefix(message)
         

@@ -548,7 +548,10 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             await send_log(self.bot, variables, "log_warn")
             await send_notif(member, variables, "notif_warn")
             await asyncio.sleep(max(0, self.delete_delay - (time.time() - sent_time)))
-            await response.delete()
+            try:
+                await response.delete()
+            except discord.NotFound:
+                pass
         except Exception:
             await error_send(interaction)
     async def unwarn_handler(self, interaction: discord.Interaction, member: discord.Member, reason: str, proof: discord.Attachment):
@@ -588,7 +591,10 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
             await send_log(self.bot, variables, "log_unwarn")
             await send_notif(member, variables, "notif_unwarn")
             await asyncio.sleep(max(0, self.delete_delay - (time.time() - sent_time)))
-            await response.delete()
+            try:
+                await response.delete()
+            except discord.NotFound:
+                pass
         except Exception:
             await error_send(interaction)
            

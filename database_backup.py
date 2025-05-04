@@ -4,6 +4,7 @@ from discord.ext import tasks, commands
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2.service_account import Credentials
+import asyncio
 
 # Load Google Drive credentials
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
@@ -22,7 +23,7 @@ def get_file_id(filename):
     files = results.get("files", [])
     return files[0]["id"] if files else None
 
-def upload_database():
+async def upload_database():
     """Upload or update the database file in Google Drive."""
     
     for LOCAL_FILE in LOCAL_FILES:
@@ -52,3 +53,5 @@ def upload_database():
                 print(f"Uploaded: {LOCAL_FILE} to Google Drive")
             except Exception as e:
                 print(f"Failed to upload {LOCAL_FILE}: {e}")
+        
+        await asyncio.sleep(5)

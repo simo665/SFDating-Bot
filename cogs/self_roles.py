@@ -89,6 +89,8 @@ class SelfRoles(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
+            if isinstance(message.channel, discord.DMChannel):
+                return 
             if message.author.bot:
                 return 
             user = message.author

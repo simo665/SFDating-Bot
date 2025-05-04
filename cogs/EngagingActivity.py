@@ -41,7 +41,6 @@ class TruthOrDareView(View):
             json.dump(data, f, indent=2, ensure_ascii=False)
         
         embed = interaction.message.embeds[0]
-        await interaction.message.delete()
         embed.description = f"{interaction.user.mention} **{category[:-1].capitalize()} picked!**\n{question}"
         embed.color = colors.primary
         await interaction.channel.send(
@@ -60,6 +59,7 @@ class EngageActivity(commands.Cog):
         # Games
         self.trivi_games = {}
         self.duration = 60
+        self.Engage.start()
         
     def get_question(self, file_path):
         # Load questions data
@@ -79,20 +79,18 @@ class EngageActivity(commands.Cog):
             json.dump(questions_data, f, indent=2, ensure_ascii=False)
         return question 
         
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.Engage.start()
-        
     # Task function to pick an activity every period of time 
     @tasks.loop(hours=2)
     async def Engage(self):
         try:
+            print("Engage Function")
             activities = ["FunQ", "FunPoll", "TruthOrDare", "Trivia"]
             with open("./configs/channels/channels_id.json", "r") as f:
                 data = json.load(f)
                 self.post_channels = data.get("engage_post_channels", self.post_channels)
+                print("post channel:",self.post_channels)
             for channel_id in self.post_channels:
-                channel = self.bot.get_channel(channel_id)
+                channel = self.bot.get_channel(int(channel_id))
                 if not channel:
                     continue 
                 activity = random.choice(activities)
@@ -107,7 +105,7 @@ class EngageActivity(commands.Cog):
                 await asyncio.sleep(1)
         except Exception:
             await error_send()
-    
+
     @app_commands.command(name="engage", description="Send an engaging activity!")
     @app_commands.choices(
         activity=[

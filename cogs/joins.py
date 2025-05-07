@@ -142,11 +142,9 @@ class Joins(commands.Cog):
     
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        print("heloo")
         try:
             if after.bot:
                 return
-
             # Detect when they pass the rules screening
             if before.pending and not after.pending:
                 is_new = False # await self.is_account_new(after)

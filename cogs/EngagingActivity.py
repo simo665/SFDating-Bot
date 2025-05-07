@@ -71,7 +71,6 @@ class EngageActivity(commands.Cog):
         while str(questions_data["questions"].index(question)) in questions_data["previous_q"]:
             if len(questions_data["previous_q"]) == len(questions_data["questions"]):
                 questions_data["previous_q"] = []
-                print("empty")
             question = random.choice(questions_data["questions"])
         questions_data["previous_q"].append(str(questions_data["questions"].index(question)))
         # Update the questions data 
@@ -83,12 +82,10 @@ class EngageActivity(commands.Cog):
     @tasks.loop(hours=2)
     async def Engage(self):
         try:
-            print("Engage Function")
             activities = ["FunQ", "FunPoll", "TruthOrDare", "Trivia"]
             with open("./configs/channels/channels_id.json", "r") as f:
                 data = json.load(f)
                 self.post_channels = data.get("engage_post_channels", self.post_channels)
-                print("post channel:",self.post_channels)
             for channel_id in self.post_channels:
                 channel = self.bot.get_channel(int(channel_id))
                 if not channel:

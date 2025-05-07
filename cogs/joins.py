@@ -128,6 +128,8 @@ class Joins(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         try:
+            if member.pending:
+                return 
             if member.bot:
                 return
             is_new = False # await self.is_account_new(member)
@@ -135,6 +137,22 @@ class Joins(commands.Cog):
                 return 
             await asyncio.sleep(3)
             await self.send_welcome_message(member)
+        except Exception as e:
+            print(e)
+    
+    @commands.Cog.listener()
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        print("heloo")
+        try:
+            if after.bot:
+                return
+
+            # Detect when they pass the rules screening
+            if before.pending and not after.pending:
+                is_new = False # await self.is_account_new(after)
+                if is_new:
+                    return 
+                await self.send_welcome_message(after)
         except Exception as e:
             print(e)
     

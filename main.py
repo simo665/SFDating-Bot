@@ -107,7 +107,7 @@ async def on_ready():
         matching_view()
         visualize(commands)
         if not upload_backup.is_running():
-            #upload_backup.start()
+            upload_backup.start()
             pass
     except Exception as e:
         _print(f"Error in on_ready: {e}")
@@ -127,7 +127,7 @@ async def load_all():
     setup_database()
     await bot.change_presence(activity=discord.Activity(
         type=discord.ActivityType.watching,
-        name="lol! 💕"
+        name="🌹 What kind of crime is hurting a heart?"
     ))
     if not cleanup_matches_task.is_running():
         cleanup_matches_task.start()
@@ -260,7 +260,7 @@ if __name__ == "__main__":
             traceback.print_exc()
     try:
         # Load environment variables
-        TOKEN = os.getenv("BOT_TOKEN2") 
+        TOKEN = os.getenv("BOT_TOKEN") 
         if not TOKEN:
             print("No Discord token provided in environment variables")
             os._exit()

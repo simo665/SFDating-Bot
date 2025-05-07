@@ -43,9 +43,9 @@ class TruthOrDareView(View):
         embed = interaction.message.embeds[0]
         embed.description = f"{interaction.user.mention} **{category[:-1].capitalize()} picked!**\n{question}"
         embed.color = colors.primary
+        await interaction.message.delete()
         await interaction.channel.send(
             embed=embed,
-            view=TruthOrDareView(self.bot, self.data_path),
             allowed_mentions=discord.AllowedMentions(users=True)
         )
 
@@ -58,7 +58,7 @@ class EngageActivity(commands.Cog):
         
         # Games
         self.trivi_games = {}
-        self.duration = 60
+        self.duration = 120
         self.Engage.start()
         
     def get_question(self, file_path):
@@ -117,6 +117,7 @@ class EngageActivity(commands.Cog):
         ]
     )
     async def engage_command(self, interaction: discord.Interaction, activity: app_commands.Choice[str], channel: discord.TextChannel = None):
+        await interaction.response.defer(ephemeral=True)
         channel = interaction.channel if not channel else channel
         activities = [
                "FunQ", "FunPoll", "TruthOrDare", "Trivia"
@@ -130,7 +131,7 @@ class EngageActivity(commands.Cog):
             await self.Trivia(channel)
         if activity == "TruthOrDare":
             await self.TruthOrDare(channel)
-        await interaction.response.send_message(f"Sent in {channel.mention}", ephemeral=True)
+        await interaction.followup.send(f"Sent in {channel.mention}", ephemeral=True)
     
     
     # random question activity 
@@ -209,8 +210,7 @@ class EngageActivity(commands.Cog):
             await message.edit(embed=embed)
             del self.trivi_games[channel.id]
             
-        await asyncio.sleep(60)
-        await message.delete()
+        await message.clear_reactions()
         
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -244,7 +244,7 @@ class EngageActivity(commands.Cog):
             # Check if the reaction is the correct one
             is_correct = data["options"][options_names[emojis.index(reaction.emoji)]]
             if is_correct:
-                await channel.send(f"{self.emojis['Crown']} {user.mention} Your answer is correct!", delete_after=20) 
+                await channel.send(f"{self.emojis['Crown']} {user.mention} Your answer is correct! You won!") 
                 self.trivi_games[channel_id]["event"].set() 
                 del self.trivi_games[channel_id]
             else:

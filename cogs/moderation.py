@@ -661,11 +661,11 @@ That's it! Now, suspicious users won't be able to see or interact in those chann
     @verify.command(name="add", description="Verify a member.")
     @app_commands.choices(
         gender = [
-            app_commands.Choice(name="♀️ Female", value="female"),
-            app_commands.Choice(name="♂️ Male", value="male"),
-            app_commands.Choice(name="🏳️‍⚧️ Trans Male", value="transM"),
-            app_commands.Choice(name="🏳️‍⚧️ Trans Female", value="transF"),
-            app_commands.Choice(name="🌈 Non-binary", value="none"),
+            app_commands.Choice(name="Female", value="female"),
+            app_commands.Choice(name="Male", value="male"),
+            app_commands.Choice(name="Trans Male", value="transM"),
+            app_commands.Choice(name="Trans Female", value="transF"),
+            app_commands.Choice(name="Non-binary", value="none"),
         ]
     )
     @app_commands.choices(
